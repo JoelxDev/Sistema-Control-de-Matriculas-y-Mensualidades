@@ -1,19 +1,25 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
     container_name: my-backend
     restart: always
     env_file: .env
     ports:
       - "${BACKEND_PORT}:3000"
-    # volumes:
-      # - ./backend:/usr/src/app
+    volumes:
+      - ./frontend:/usr/src/frontend
+      # Quitar para produccion
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
     depends_on:
       - db
     networks:
       - my-network
+    command: ["npx", "nodemon", "--legacy-watch", "app.js"]
 
   frontend:
     build: ./frontend

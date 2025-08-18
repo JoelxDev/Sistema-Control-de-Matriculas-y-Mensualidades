@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriculas</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/matriculasAdmin.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>ADMINISTRADOR</h3>
+                </div>
+                <ul>
+                    <li><a href="/admin/perfil">Perfil</a></li>
+                    <li><a href="/admin/matriculas">Matriculas</a></li>
+                    <li><a href="/admin/estudiantes">Estudiantes</a></li>
+                    <li><a href="/admin/mensualidades">Mensualidades</a></li>
+                    <li><a href="/admin/personal_administrativo">Personal Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>Matriculas</h1>
+                </div>
+                <div class="matriculas">
+                    <div class="encabezado">
+                        <div class="filtrar">
+                            <div class="filtro-por-dni">
+                                <input type="text" placeholder="Buscar por DNI">
+                            </div>
+                        </div>
+                        <div class="datosadicionales">
+                            <div class="vacantes">
+                            <p>Vacantes Disponibles: </p>
+                        </div>
+                        <div class="total-matriculados">
+                            <p>Total Matriculados: </p>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="detalles-matriculas">
+                        <div class="tabla-detalles">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>N° de matricula</th>
+                                        <th>Estudiante</th>
+                                        <th>Responsable Legal</th>
+                                        <th>DNI Estudiante</th>
+                                        <th>Fecha Matricula</th>
+                                        <th>Ingresado por</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><a href="/admin/matriculas/informacion_matricula"><button>Mas Inf.</button></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

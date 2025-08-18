@@ -48,6 +48,10 @@ html, body {
     color: white;
     font-weight: bold;
 }
+a{
+    text-decoration: none;
+    color: white;
+}
 .side-menu{
     display: block;
     align-items: center;
@@ -74,7 +78,7 @@ html, body {
     width: 100%;
     flex-wrap:wrap;
     justify-content: space-evenly;
-    margin:10px; 
+    margin:7px; 
 }
 
 .lower-body{
@@ -91,15 +95,47 @@ html, body {
     display: flex;
     text-align: center;
     justify-content: center;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    border-bottom: 3px solid black;
+    border-top: 3px solid black;
     top:0;
     margin-bottom: 30px;
+    background-color: #0f8f98;
 }
 
-button{
-    margin : 5px;
+.upper-body button{
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+}
+button{
+    cursor: pointer;
+}
+button:hover{
+    background-color: #0f8f98;
+    color: white;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabla-detalles{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+    margin:5px;
+    overflow-y: auto;
+    color:white;
+
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 18px;
+    text-align: center;
+}
+input{
+    padding: 5px;
+    border-radius: 5px;
+    border: 2px solid black;
 }

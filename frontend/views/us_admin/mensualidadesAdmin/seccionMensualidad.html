@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensualidades</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/perfilAdmin.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>ADMINISTRADOR</h3>
+                </div>
+                <ul>
+                    <li><a href="/admin/perfil">Perfil</a></li>
+                    <li><a href="/admin/matriculas">Matriculas</a></li>
+                    <li><a href="/admin/estudiantes">Estudiantes</a></li>
+                    <li><a href="/admin/mensualidades">Mensualidades</a></li>
+                    <li><a href="/admin/personal_administrativo">Personal Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+            </div>  
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>MENSUALIDADES DEL SALON: </h1>
+                </div>
+                <div class="mensualidades-body">
+                    <div class="filtros">
+                        <div class="filtro-buscar">
+                            <input type="text" id="buscar" name="buscar" placeholder="Buscar...">
+                        </div>
+                        <div class="filtro-mes">
+                            <label name="Mes" for="mes">Filtrar</label>
+                            <select name="Mes" id="mes">
+                                <option value="" >Seleccionar Mes</option>
+                                <option value="enero">Enero</option>
+                                <option value="febrero">Febrero</option>
+                                <option value="marzo">Marzo</option>
+                                <option value="abril">Abril</option>
+                                <option value="mayo">Mayo</option>
+                                <option value="junio">Junio</option>
+                                <option value="julio">Julio</option>
+                                <option value="agosto">Agosto</option>
+                                <option value="setiembre">Setiembre</option>
+                                <option value="octubre">Octubre</option>
+                                <option value="noviembre">Noviembre</option>
+                                <option value="diciembre">Diciembre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="vista-datos">
+                        <div class="tabla-detalles">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Nivel</th>
+                                        <th>Grado</th>
+                                        <th>Seccion</th>
+                                        <th>Mes</th>
+                                        <th>Estado Pago</th>
+                                        <th>Comprobante</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Los datos de las mensualidades se llenarán aquí -->
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <!-- Más filas pueden ser añadidas aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
