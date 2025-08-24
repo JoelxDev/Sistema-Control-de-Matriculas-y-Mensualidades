@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Crear</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/personalAdmin.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>ADMINISTRADOR</h3>
+                </div>
+                <ul>
+                    <li><a href="/admin/perfil">Perfil</a></li>
+                    <li><a href="/admin/matriculas">Matriculas</a></li>
+                    <li><a href="/admin/estudiantes">Estudiantes</a></li>
+                    <li><a href="/admin/mensualidades">Mensualidades</a></li>
+                    <li><a href="/admin/personal_administrativo">Personal Admin</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+                <div class="botones">
+                </div>
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>FORMULARIO EDITAR USUARIO</h1>
+                </div>
+                <div>
+                    <form id="form-editar-personal">
+                        <label for="">Nombre</label>
+                        <input type="text" name="nombre_per" placeholder="Nombre" required>
+                        <label for="">Apellido</label>
+                        <input type="text" name="apellido" placeholder="Apellido" required>
+                        <label for="cargo_per">Cargo</label>
+                        <select name="cargo_per" id="cargo_per" required>
+                            <option value="administrador">Administrador</option>
+                            <option value="secretario">Secretario</option>
+                        </select>
+                        <label for="">DNI</label>
+                        <input type="text" name="dni" placeholder="DNI" required>
+                        <label for="">Nombre de usuario</label>
+                        <input type="text" name="nombre_usuario" placeholder="Usuario" required>
+                        <label for="roll">Roll</label>
+                        <select name="roll" id="roll" required>
+                            <option value="administrador">Administrador</option>
+                            <option value="secretario">Secretario</option>
+                        </select>
+                        <label for="estado">Estado</label>
+                        <select name="estado_us" id="estado" required>
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                        <button type="submit">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/api/user_admin/apiPersonalAdmin.js"></script>
+
+</body>
+
+</html>

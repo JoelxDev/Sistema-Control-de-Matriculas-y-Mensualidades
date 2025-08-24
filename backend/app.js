@@ -10,12 +10,18 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+
+const cors = require('cors');
+
 require('dotenv').config();
+
+app.use(cors());
 
 // API RUTA ADMIN
 app.use(express.json());
 const persAdminRoutes = require('./modules/user-admin/personalAdmin/persAdmin.routes');
 app.use('/api/admin',persAdminRoutes);
+
 //////////////////////////////////////////////////////////////
 // RUTAS PROTEGIDAS PARA EL ADMIN
 //////////////////////////////////////////////////////////////

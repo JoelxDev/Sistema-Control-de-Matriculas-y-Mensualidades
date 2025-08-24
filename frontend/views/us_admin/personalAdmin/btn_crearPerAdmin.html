@@ -34,10 +34,34 @@
                 <div class="title-lower-body">
                     <h1>FORMULARIO AÑADIR UN NUEVO PERSONAL</h1>
                 </div>
+                <div class="crear-usuario">
+                    <div class="formulario-crear-usuario">
+                        <form id="form-crear-personal">
+                            <label for="">Nombre:</label>
+                            <input type="text" name="nombre" placeholder="Nombre" required>
+                            <label for="">Apellido:</label>
+                            <input type="text" name="apellido" placeholder="Apellido" required>
+                            <label for="cargo">Cargo</label>
+                            <select name="cargo" id="cargo">
+                                <option value="" disabled selected>Seleccione un cargo</option>
+                                <option value="administrador">Administrador</option>
+                                <option value="secretario">Secretario</option>
+                            </select>
+                            <label for="">DNI</label>
+                            <input type="text" name="dni" placeholder="DNI" required>
+                            <label for="estado">Estado</label>
+                            <select name="estado" id="estado">
+                                <option value="activo">Activo</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                            <button type="submit">registrar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <script src="/js/main.js"></script>
+    <script src="/js/api/user_admin/apiPersonalAdmin.js"></script>
 </body>
 
 </html>
