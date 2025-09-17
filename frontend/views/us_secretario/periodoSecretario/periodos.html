@@ -31,22 +31,35 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-
+                <a href="/secretario/periodos/crear"><button>Crear Periodo Academico</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>FORMULARIO CREAR NIVEL</h1>
+                    <h1>PERIODOS ACADEMICOS</h1>
                 </div>
-                <div>
-                    <form id="form-crear-nivel">
-                        <input type="text" name="nombre_niv" placeholder="Nombre del nivel" required>
-                        <button type="submit">Crear</button>
-                    </form>
+                <div class="contenido-periodos contenido">
+                    <div class="tabla-detalles">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Año del Periodo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="periodos-list">
+                                <!-- Los periodos se agregarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_secretario/apiNiveles.js"></script>
+    <script src="/js/api/user_secretario/apiPeriodos.js"></script>
 </body>
 
 </html>

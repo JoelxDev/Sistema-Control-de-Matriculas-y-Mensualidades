@@ -31,22 +31,34 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-
+                <a href="/secretario/anio_academico/crear"><button>Crear Año Académico</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>FORMULARIO CREAR NIVEL</h1>
+                    <h1>CREAR AÑO ACADÉMICO</h1>
                 </div>
-                <div>
-                    <form id="form-crear-nivel">
-                        <input type="text" name="nombre_niv" placeholder="Nombre del nivel" required>
-                        <button type="submit">Crear</button>
-                    </form>
-                </div>
+               <div>
+                <form action="" id="form-crear-anio">
+                    <label for="nombre">Nombre del Año Académico:</label>
+                    <input type="text" id="nombre" name="anio_acad" required>
+                    <label for="fecha_inicio">Fecha de Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio_anio" required>
+                    <label for="fecha_fin">Fecha de Fin:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin_anio" required>
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion_anio" required></textarea>
+                    <label for="estado_anio">Estado:</label>
+                    <select id="estado_anio" name="estado" required>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                    <button type="submit">Crear</button>
+                </form>
+               </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_secretario/apiNiveles.js"></script>
+    <script src="/js/api/user_secretario/apiAnioAcademico.js"></script>
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mensualidades</title>
+    <title>Aulas/Secciones</title>
     <link rel="stylesheet" href="/public/css/globalStyle.css">
     <link rel="stylesheet" href="/public/css/aulasSecretario.css">
 </head>
@@ -14,20 +14,25 @@
         <div class="side-menu">
             <nav>
                 <div class="title-menu">
-                    <h3>ADMINISTRADOR</h3>
+                    <h3>USUARIO: </h3>
                 </div>
                 <ul>
-                    <li><a href="/admin/perfil">Perfil</a></li>
-                    <li><a href="/admin/matriculas">Matriculas</a></li>
-                    <li><a href="/admin/estudiantes">Estudiantes</a></li>
-                    <li><a href="/admin/mensualidades">Mensualidades</a></li>
-                    <li><a href="/admin/personal_administrativo">Personal Admin</a></li>
+                    <li><a href="/secretario/perfil">Perfil</a></li>
+                    <li><a href="/secretario/aulas">Aulas/Secciones</a></li>
+                    <li><a href="/secretario/matriculas">Matriculas</a></li>
+                    <li><a href="/secretario/registrar_matricula">Registrar Matricula</a></li>
+                    <li><a href="/secretario/anio_academico">Año Academico</a></li>
+                    <li><a href="/secretario/periodos">Periodos</a></li>
+                    <li><a href="/secretario/mensualidades">Mensualidades</a></li>
+                    <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
                 </ul>
             </nav>
         </div>
         <div class="main-content">
             <div class="upper-body">
-            </div>  
+                <a href="/secretario/mensualidades/registrar_pago"><button>Registrar Pago</button></a>
+            </div>
             <div class="lower-body">
                 <div class="title-lower-body">
                     <h1>MENSUALIDADES</h1>
@@ -77,56 +82,53 @@
                                 <div class="titulo-nivel">
                                     <h2>Secundario</h4>
                                 </div>
-                                <!-- <div class="vacan-dispo">
-                                    <p>Vacantes Disponibles: 20</p>
-                                </div> -->
                                 <div class="tot-est">
                                     <p>Total de Estudiantes: 30</p>
                                 </div>
+                                
                             </div>
                             <div class="secciones">
                                 <div class="datos-seccion">
                                     <div class="titulo-seccion">
                                         <h3>1ro B</h4>
                                     </div>
-                                    <!-- <div class="vact-disp-seccion">
-                                        <p>Vacantes Disp: 10</p>
-                                    </div> -->
                                     <div class="tot-estud-seccion">
                                         <p>Total Estud: 20</p>
                                     </div>
                                     <div class="estado-seccion">
                                         <p>Estado: Activo</p>
+                                    </div>
+                                    <div class="pdf-deudores">
+                                        <button>Descargar PDF Deudores</button>
                                     </div>
                                 </div>
                                 <div class="datos-seccion">
                                     <div class="titulo-seccion">
                                         <h3>1ro B</h4>
                                     </div>
-                                    <!-- <div class="vact-disp-seccion">
-                                        <p>Vacantes Disp: 10</p>
-                                    </div> -->
                                     <div class="tot-estud-seccion">
                                         <p>Total Estud: 20</p>
                                     </div>
                                     <div class="estado-seccion">
                                         <p>Estado: Activo</p>
+                                    </div>
+                                    <div class="pdf-deudores">
+                                        <button>Descargar PDF Deudores</button>
                                     </div>
                                 </div>
                                 <div class="datos-seccion">
                                     <div class="titulo-seccion">
                                         <h3>1ro B</h4>
                                     </div>
-                                    <!-- <div class="vact-disp-seccion">
-                                        <p>Vacantes Disp: 10</p>
-                                    </div> -->
                                     <div class="tot-estud-seccion">
                                         <p>Total Estud: 20</p>
                                     </div>
                                     <div class="estado-seccion">
                                         <p>Estado: Activo</p>
                                     </div>
-                                </div>
+                                    <div class="pdf-deudores">
+                                        <button>Descargar PDF Deudores</button>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -134,6 +136,7 @@
             </div>
         </div>
     </div>
+    <script src="/js/api/user_secretario/apiPeriodos.js"></script>
 </body>
 
 </html>

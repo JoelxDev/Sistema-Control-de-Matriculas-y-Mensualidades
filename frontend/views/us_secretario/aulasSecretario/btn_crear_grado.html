@@ -25,20 +25,27 @@
                     <li><a href="/secretario/periodos">Periodos</a></li>
                     <li><a href="/secretario/mensualidades">Mensualidades</a></li>
                     <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
                 </ul>
             </nav>
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/secretario/aulas/crear_nivel"><button>Crear Nivel</button></a>
-                <a href="/secretario/aulas/crear_grado"><button>Crear Grado</button></a>
-                <a href="/secretario/aulas/crear_seccion"><button>Crear Seccion</button></a>
+
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
                     <h1>FORMULARIO CREAR GRADO</h1>
                 </div>
-               
+                <div>
+                    <form id="form-crear-grado">
+                        <input type="text" name="nombre_grad" placeholder="Nombre del grado" required>
+                        <label for="select-nivel">Nivel:</label>
+                        <select name="niveles_id_nivel" id="select-nivel" required></select>
+                        <button type="submit">Crear</button>
+                    </form>
+                    <script src="/js/api/user_secretario/apiGrados.js"></script>
+                </div>
             </div>
         </div>
     </div>

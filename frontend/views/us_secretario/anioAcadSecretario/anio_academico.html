@@ -31,22 +31,36 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-
+                <a href="/secretario/anio_academico/crear"><button>Crear Año Académico</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>FORMULARIO CREAR NIVEL</h1>
+                    <h1>AÑO ACADÉMICO</h1>
                 </div>
-                <div>
-                    <form id="form-crear-nivel">
-                        <input type="text" name="nombre_niv" placeholder="Nombre del nivel" required>
-                        <button type="submit">Crear</button>
-                    </form>
+                <div class="contenido-anio_academico contenido">
+                    <div class="tabla-detalles">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha Inicio</th>
+                                    <th>Fecha Fin</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anio-academico-list">
+                                <!-- Los años académicos se agregarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_secretario/apiNiveles.js"></script>
+    <script src="/js/api/user_secretario/apiAnioAcademico.js"></script>
 </body>
 
 </html>

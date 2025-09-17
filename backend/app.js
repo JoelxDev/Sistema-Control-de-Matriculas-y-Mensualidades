@@ -17,10 +17,50 @@ require('dotenv').config();
 
 app.use(cors());
 
+//////////////////////////////////////////////////////////////
 // API RUTA ADMIN
+
 app.use(express.json());
 const persAdminRoutes = require('./modules/user-admin/personalAdmin/persAdmin.routes');
 app.use('/api/admin',persAdminRoutes);
+//////////////////////////////////////////////////////////////
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+// API RUTAS SECRETARIO
+
+const nivelRoutes = require('./modules/user-secretary/aulas_seccionesSecr/nivel.routes');
+app.use('/api/niveles', nivelRoutes);
+
+const gradoRoutes = require('./modules/user-secretary/aulas_seccionesSecr/grado.routes');
+app.use('/api/grados', gradoRoutes);
+
+const aulaRoutes = require('./modules/user-secretary/aulas_seccionesSecr/aula.routes');
+app.use('/api/aulas', aulaRoutes);
+
+const seccionRoutes = require('./modules/user-secretary/aulas_seccionesSecr/seccion.routes');
+app.use('/api/secciones', seccionRoutes);
+
+const anioAcademicoRoutes = require('./modules/user-secretary/anio_academicoSecr/anioAcademico.routes');
+app.use('/api/anio_academico', anioAcademicoRoutes);
+
+const periodoRoutes = require('./modules/user-secretary/periodo_academicoSecr/periodo.routes');
+app.use('/api/periodos', periodoRoutes);
+
+const matriculaRoutes = require('./modules/user-secretary/matriculasSecr/matricula.routes');
+app.use('/api/matriculas', matriculaRoutes);
+
+const estudianteRoutes = require('./modules/user-secretary/estudiantesSecr/estudiante.routes');
+app.use('/api/estudiantes', estudianteRoutes);
+
+const descuentoRoutes = require('./modules/user-secretary/descuentosSecr/descuento.routes');
+app.use('/api/descuentos', descuentoRoutes);
+
+
+//////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////
 // RUTAS PROTEGIDAS PARA EL ADMIN
@@ -83,23 +123,52 @@ app.get('/secretario/aulas', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/aulasSecretario.html');
 });
 
-app.get('/secretario/aulas/crear_grado', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_grado.html');
+app.get('/secretario/aulas/grados', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_grados.html');
 });     
 
-app.get('/secretario/aulas/crear_nivel', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_nivel.html');
+app.get('/secretario/aulas/niveles', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_niveles.html');
 });
 
-app.get('/secretario/aulas/crear_seccion', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_seccion.html');
+app.get('/secretario/aulas/secciones', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_secciones.html');
 });
+app.get('/secretario/aulas/aulas', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_aulas.html');
+});
+
+app.get('/secretario/aulas/niveles/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_nivel.html');
+});
+app.get('/secretario/aulas/niveles/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_editar_nivel.html');
+});
+app.get('/secretario/aulas/aulas/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_aula.html');
+});
+app.get('/secretario/aulas/aulas/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_editar_aula.html');
+});
+
+app.get('/secretario/aulas/grados/crear', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_grado.html');
+})
+app.get('/secretario/aulas/grados/editar', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_editar_grado.html');
+})
+app.get('/secretario/aulas/secciones/crear', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_crear_seccion.html');
+})
+app.get('/secretario/aulas/secciones/editar', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_editar_seccion.html');
+})
 
 app.get('/secretario/matriculas', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/matriculasSecretario/matriculasSecretario.html');
 });
-app.get('/secretario/matriculas/mas_informacion', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_secretario/matriculasSecretario/btn_masInformacionMat.html');
+app.get('/secretario/matriculas/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/matriculasSecretario/btn_EditarMat.html');
 });
 
 app.get('/secretario/registrar_matricula', (req, res) => {
@@ -114,6 +183,36 @@ app.get('/secretario/estudiantes', (req, res) => {
 
 app.get('/secretario/estudiantes/informacion_estudiante', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/estudSecretario/btn_informEstudiante.html');
+});
+app.get('/secretario/anio_academico', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/anioAcadSecretario/anio_academico.html');
+});
+app.get('/secretario/anio_academico/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/anioAcadSecretario/anio_academico_crear.html');
+});
+app.get('/secretario/anio_academico/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/anioAcadSecretario/anio_academico_editar.html');
+});
+app.get('/secretario/periodos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/periodoSecretario/periodos.html');
+});
+app.get('/secretario/periodos/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/periodoSecretario/periodos_crear.html');
+});
+app.get('/secretario/periodos/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/periodoSecretario/periodo_editar.html');
+});
+app.get('/secretario/mensualidades', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/mensSecretario/mensualidadesSecr.html');
+});
+app.get('/secretario/descuentos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/descuentosSecretario/descuentosSecretario.html');
+});
+app.get('/secretario/descuentos/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/descuentosSecretario/btn_crear_descuentos.html');
+});
+app.get('/secretario/descuentos/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/descuentosSecretario/btn_editar_descuento.html');
 });
 
 const PORT = process.env.BACKEND_PORT ;
