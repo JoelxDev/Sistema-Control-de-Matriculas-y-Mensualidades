@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aulas/Secciones</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/aulasSecretario.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>USUARIO: </h3>
+                </div>
+                <ul>
+                    <li><a href="/secretario/perfil">Perfil</a></li>
+                    <li><a href="/secretario/aulas">Aulas/Secciones</a></li>
+                    <li><a href="/secretario/matriculas">Matriculas</a></li>
+                    <li><a href="/secretario/registrar_matricula">Registrar Matricula</a></li>
+                    <li><a href="/secretario/anio_academico">Año Academico</a></li>
+                    <li><a href="/secretario/periodos">Periodos</a></li>
+                    <li><a href="/secretario/mensualidades">Mensualidades</a></li>
+                    <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
+                    <li><a href="/secretario/definir_monto">Definir Montos</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>EDITAR MONTO</h1>
+                </div>
+                <div>
+                    <div class="contenido-crear-montos-definidos">
+                        <div class="formulario-editar-monto">
+                            <form id="form-editar-monto">
+                                <div>
+                                    <label for="tipo">Tipo:</label>
+                                    <select id='tipo' name='tipo'>
+                                        <option value='matricula'>Matricula</option>
+                                        <option value='mensualidad'>Mensualidad</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="monto_base">Monto Base:</label>
+                                    <input type="number" id="monto_base" name="monto_base" required>
+                                </div>
+                                <div>
+                                    <label for="descripcion">Descripción:</label>
+                                    <input type="text" id="descripcion" name="descripcion" required>
+                                </div>
+                                <div>
+                                    <label for="nivel_grado">Nivel y Grado:</label>
+                                    <select id="nivel_grado" name="nivel_grado" required>
+                                        <option value="">Seleccione Nivel y Grado</option>
+                                    </select>
+                                </div>
+                                <button type="submit">Editar Monto</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/api/user_secretario/apiDefMontos.js"></script>
+</body>
+
+</html>

@@ -59,6 +59,9 @@ app.use('/api/estudiantes', estudianteRoutes);
 const descuentoRoutes = require('./modules/user-secretary/descuentosSecr/descuento.routes');
 app.use('/api/descuentos', descuentoRoutes);
 
+const montoRoutes = require('./modules/user-secretary/defMonstosSecr/monto.routes');
+app.use('/api/definir_monto', montoRoutes);
+
 
 //////////////////////////////////////////////////////////////
 
@@ -214,6 +217,16 @@ app.get('/secretario/descuentos/crear', (req, res) => {
 app.get('/secretario/descuentos/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/descuentosSecretario/btn_editar_descuento.html');
 });
+
+app.get('/secretario/definir_monto', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/defMontoSecretario/defMontoSecr.html');
+})
+app.get('/secretario/definir_monto/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/defMontoSecretario/btn_crearMonto.html');
+})
+app.get('/secretario/definir_monto/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/defMontoSecretario/btn_editMonto.html');
+})
 
 const PORT = process.env.BACKEND_PORT ;
 app.listen(PORT, () => {
