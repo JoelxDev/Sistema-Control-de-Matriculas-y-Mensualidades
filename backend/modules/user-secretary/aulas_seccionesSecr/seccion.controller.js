@@ -60,3 +60,25 @@ exports.eliminarSeccion = async (req, res) => {
   }
 };
 
+exports.listarEstudiantesPorSeccion = async (req, res) => {
+  try {
+    const idSeccion = req.params.id;
+    const estudiantes = await Seccion.obtenerEstudiantesPorSeccion(idSeccion);
+    res.json(estudiantes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.obtenerDatosSeccion = async (req, res) => {
+    try {
+        const idSeccion = req.params.id;
+        const datos = await Seccion.obtenerDatosSeccion(idSeccion);
+        if (!datos) return res.status(404).json({ error: 'Sección no encontrada' });
+        // Calcula vacantes y estado
+        datos.vacantes_disponibles = datos.capacidad_maxima - datos.total_estudiantes;
+        datos.estado_aula = datos.vacantes_disponibles === 0 ? 'Completo' : 'Disponible';
+        res.json(datos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

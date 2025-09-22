@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aulas/Secciones</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/aulasSecretario.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>USUARIO: </h3>
+                </div>
+                <ul>
+                    <li><a href="/secretario/perfil">Perfil</a></li>
+                    <li><a href="/secretario/aulas">Aulas/Secciones</a></li>
+                    <li><a href="/secretario/matriculas">Matriculas</a></li>
+                    <li><a href="/secretario/registrar_matricula">Registrar Matricula</a></li>
+                    <li><a href="/secretario/anio_academico">Año Academico</a></li>
+                    <li><a href="/secretario/periodos">Periodos</a></li>
+                    <li><a href="/secretario/mensualidades">Mensualidades</a></li>
+                    <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
+                    <li><a href="/secretario/definir_monto">Definir Montos</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>Estudiantes de la seccion: </h1>
+                </div>
+                <div class="tabla-list-est-seccion">
+                    <div class="tabla-detalles">
+                        <table id="tabla-estudiantes-seccion">
+                            <thead>
+                                <tr>
+                                    <th>Nombre estudiante</th>
+                                    <th>Apellido estudiante</th>
+                                    <th>DNI</th>
+                                    <th>Fecha nacimiento</th>
+                                    <th>Titular</th>
+                                    <th>Discapacidad</th>
+                                    <th>Estado</th>
+                                    <th>Detalles Discapacidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/api/user_secretario/apiSeccionSelecc.js"></script>
+</body>
+
+</html>

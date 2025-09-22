@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Cargar secciones, grados y niveles al cargar la página principal de aulas
     if (window.location.pathname.endsWith('/secretario/aulas')) {
         fetch('/api/secciones')
             .then(res => res.json())
             .then(secciones => {
-                // Aquí puedes organizar los datos por nivel y grado
-                // Ejemplo: agrupar por nivel y luego por grado
+                // Organizar secciones por niveles y grados
                 const niveles = {};
                 secciones.forEach(sec => {
                     if (!niveles[sec.nombre_niv]) niveles[sec.nombre_niv] = {};
@@ -27,16 +25,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     Object.entries(grados).forEach(([grado, secciones]) => {
                         secciones.forEach(sec => {
                             htmlNivel += `
-                            <div class="datos-seccion">
-                            <div class="titulo-seccion"><h3>${grado} - ${sec.nombre}</h3></div>
-                            <div class="vact-disp-seccion"><p>Vacantes Disp: ${sec.capacidad_maxima || ''}</p></div>
-                            <div class="estado-seccion"><p>Estado Aula: ${sec.estado_aula || ''}</p></div>
+                            <div class="datos-seccion" data-id-seccion="${sec.id_seccion}">
+                                <div class="titulo-seccion"><h3>${grado} - ${sec.nombre}</h3></div>
+                                <div class="vact-disp-seccion"><p>Vacantes Disp: ${sec.vacantes_disponibles || 0}</p></div>
+                                <div class="tot-estud-seccion"><p>Total Estud: ${sec.total_estudiantes || 0}</p></div>
+                                <div class="estado-seccion">
+                                    <p>Estado Aula: <span class="${sec.estado_aula === 'Completo' ? 'estado-completo' : 'estado-disponible'}">${sec.estado_aula || 'Disponible'}</span></p>
+                                </div>
                             </div>
                         `;
                         });
                     });
                     htmlNivel += `</div></div>`;
                     contenedor.innerHTML += htmlNivel;
+                });
+                
+                // Agregar eventos para redirigir al hacer clic en una sección
+                document.querySelectorAll('.datos-seccion').forEach(div => {
+                    div.addEventListener('click', function () {
+                        const id = div.dataset.idSeccion;
+                        window.location.href = `/secretario/aulas/detalles_seccion?id=${id}`;
+                    });
                 });
             })
             .catch(err => {

@@ -137,6 +137,9 @@ app.get('/secretario/aulas/niveles', (req, res) => {
 app.get('/secretario/aulas/secciones', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_secciones.html');
 });
+app.get('/secretario/aulas/detalles_seccion', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/modSeccionSeleccionada.html');
+});
 app.get('/secretario/aulas/aulas', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/aulasSecretario/btn_aulas.html');
 });

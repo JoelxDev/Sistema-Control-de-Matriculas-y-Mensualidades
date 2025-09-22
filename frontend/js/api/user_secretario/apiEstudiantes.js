@@ -268,19 +268,16 @@ function crearSeccionTutor(tutor) {
         contenedorDatos.appendChild(seccionTutor);
     }
 }
-
-// Función auxiliar para calcular la edad
 function calcularEdad(fechaNacimiento) {
-    if (!fechaNacimiento) return null;
-    
+    if (!fechaNacimiento) return '';
+    // Extrae solo la fecha si viene con hora
+    const soloFecha = fechaNacimiento.split('T')[0];
+    const fecha = new Date(soloFecha);
     const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
-    let edad = hoy.getFullYear() - nacimiento.getFullYear();
-    const m = hoy.getMonth() - nacimiento.getMonth();
-    
-    if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const m = hoy.getMonth() - fecha.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
         edad--;
     }
-    
     return edad;
 }
