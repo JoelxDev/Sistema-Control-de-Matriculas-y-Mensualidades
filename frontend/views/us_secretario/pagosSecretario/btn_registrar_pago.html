@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagos</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/pagosSecretario.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>USUARIO: </h3>
+                </div>
+                <ul>
+                    <li><a href="/secretario/perfil">Perfil</a></li>
+                    <li><a href="/secretario/aulas">Aulas/Secciones</a></li>
+                    <li><a href="/secretario/matriculas">Matriculas</a></li>
+                    <li><a href="/secretario/registrar_matricula">Registrar Matricula</a></li>
+                    <li><a href="/secretario/anio_academico">Año Academico</a></li>
+                    <li><a href="/secretario/periodos">Periodos</a></li>
+                    <li><a href="/secretario/mensualidades">Mensualidades</a></li>
+                    <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
+                    <li><a href="/secretario/definir_monto">Definir Montos</a></li>
+                    <li><a href="/secretario/pagos">Pagos</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+                <!-- <a href="/secretario/mensualidades/registrar_pago"><button>Registrar pago mensualidad</button></a> -->
+                <!-- <a href="/secretario/registrar_matricula"><button>Registrar pago matricula</button></a> -->
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>REGISTRAR PAGO</h1>
+                </div>
+                <div class="contenido-pagos contenido">
+                    <div class="modulo-pagos">
+                        <div class="datos-pago">
+                            <div class="titulo-pago">
+                                <h2>Datos Pago</h2>
+                            </div>
+                            <div class="formulario-pagos">
+                                <form action="">
+                                    <div class="datos-registro-pago">
+                                        <div>
+                                            <label for="">Estudiante</label>
+                                            <input type="text" name="estudiante" placeholder="Estudiante...">
+                                        </div>
+                                        <div>
+                                            <label for="tipo_pago">Tipo de Pago</label>
+                                            <select name="tipo_pago" id="tipo_pago" required>
+                                                <option value="Matricula">Matricula</option>
+                                                <option value="Mensualidad">Mensualidad</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="monto_estimado">Monto estimado</label>
+                                            <select name="monto_estimado" id="monto_estimado" required>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="">Monto</label>
+                                            <input type="number" name="monto" placeholder="Monto..." step="0.01" required>
+                                        </div>
+                                        <div>
+                                            <label for="metodo_pago">Metodo de Pago</label>
+                                            <select name="metodo_pago" id="metodo_pago" required>
+                                                <option value="Efectivo">Efectivo</option>
+                                                <option value="Tarjeta">Tarjeta</option>
+                                                <option value="Transferencia">Transferencia</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="descuentos_aplicado">Descuento:</label>
+                                            <input type="text" id="descuento_aplicado" name="descuento_aplicado" readonly placeholder="Descuento..." />
+                                        </div>
+                                        <div>
+                                            <label for="monto_final">Monto final:</label>
+                                            <input type="text" id="monto_final" name="monto_final" readonly />
+                                        </div>
+                                        <div>
+                                            <label for="">Descripcion</label>
+                                            <input type="text" name="descripcion" placeholder="Descripcion...">
+                                        </div>
+                                        <div>
+                                            <label for="">Comprobante</label>
+                                            <input type="file" name="comprobante" placeholder="Comprobante...">
+                                        </div>
+                                        <div class="pago-mensual">
+                                            <div>
+                                                <label for="mes_a_pagar">Mes a pagar</label>
+                                                <select name="mes_a_pagar" id="mes_a_pagar" required>
+                                                    <option value="Enero">Enero</option>
+                                                    <option value="Febrero">Febrero</option>
+                                                    <option value="Marzo">Marzo</option>
+                                                    <option value="Abril">Abril</option>
+                                                    <option value="Mayo">Mayo</option>
+                                                    <option value="Junio">Junio</option>
+                                                    <option value="Julio">Julio</option>
+                                                    <option value="Agosto">Agosto</option>
+                                                    <option value="Septiembre">Septiembre</option>
+                                                    <option value="Octubre">Octubre</option>
+                                                    <option value="Noviembre">Noviembre</option>
+                                                    <option value="Diciembre">Diciembre</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-crear-pago">Registrar Pago</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="tabla-matriculas-pendientes">
+                            <div class="tabla-detalles">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>N° de matricula</th>
+                                            <th>Estudiante</th>
+                                            <th>Titular</th>
+                                            <th>Tipo Matricula</th>
+                                            <th>Estado</th>
+                                            <th>DNI Estudiante</th>
+                                            <th>Fecha Matricula</th>
+                                            <th>Ingresado por</th>
+                                            <th>Nivel</th>
+                                            <th>Grado</th>
+                                            <th>Sección</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="matriculas-pendientes-list">
+                                        <!-- Las matriculas se agregarán aquí dinámicamente -->
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/api/user_secretario/apiPagos.js"></script>
+</body>
+
+</html>

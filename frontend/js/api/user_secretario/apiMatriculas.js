@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Matrícula
             const matricula = {
                 fecha_matricula: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                estado_matr: "Activo",
+                estado_matr: "Pendiente",
                 tipo_mat: formData.get('tip_mat'),
                 periodos_id_periodo: formData.get('periodo'),
                 usuarios_id_usuarios: 1,
@@ -338,6 +338,9 @@ function cargarMatriculas() {
           <td>${m.dni_est}</td>
           <td>${m.fecha_matricula.split('T')[0]}</td>
           <td>${m.nombre_usuario}</td>
+          <td>${m.nombre_niv}</td>
+          <td>${m.nombre_grad}</td>
+          <td>${m.nombre_seccion}</td>
           <td>
             <a href="/secretario/matriculas/editar?id=${m.id_matricula}">
               <button>Editar</button>

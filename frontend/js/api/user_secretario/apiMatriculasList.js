@@ -15,6 +15,9 @@ function cargarMatriculas() {
           <td>${m.dni_est}</td>
           <td>${m.fecha_matricula.split('T')[0]}</td>
           <td>${m.nombre_usuario}</td>
+          <td>${m.nombre_niv}</td>
+          <td>${m.nombre_grad}</td>
+          <td>${m.seccion_nombre}</td>
           <td>
             <a href="/secretario/matriculas/editar?id=${m.id_matricula}">
               <button>Editar</button>

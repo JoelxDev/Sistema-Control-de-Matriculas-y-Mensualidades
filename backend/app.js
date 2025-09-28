@@ -62,6 +62,9 @@ app.use('/api/descuentos', descuentoRoutes);
 const montoRoutes = require('./modules/user-secretary/defMonstosSecr/monto.routes');
 app.use('/api/definir_monto', montoRoutes);
 
+const pagoRoutes = require('./modules/user-secretary/pagosSecr/pago.routes');
+app.use('/api/pagos', pagoRoutes);
+
 
 //////////////////////////////////////////////////////////////
 
@@ -230,6 +233,14 @@ app.get('/secretario/definir_monto/crear', (req, res) => {
 app.get('/secretario/definir_monto/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/defMontoSecretario/btn_editMonto.html');
 })
+app.get('/secretario/pagos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/pagosSecretario/pagosSecretario.html');
+})
+app.get('/secretario/pagos/registrar_pago', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/pagosSecretario/btn_registrar_pago.html');
+})
+
+
 
 const PORT = process.env.BACKEND_PORT ;
 app.listen(PORT, () => {
