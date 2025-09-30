@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Mes</title>
+    <link rel="stylesheet" href="/public/css/globalStyle.css">
+    <link rel="stylesheet" href="/public/css/aulasSecretario.css">
+</head>
+
+<body>
+    <div class="content">
+        <div class="side-menu">
+            <nav>
+                <div class="title-menu">
+                    <h3>USUARIO: </h3>
+                </div>
+                <ul>
+                    <li><a href="/secretario/perfil">Perfil</a></li>
+                    <li><a href="/secretario/aulas">Aulas/Secciones</a></li>
+                    <li><a href="/secretario/matriculas">Matriculas</a></li>
+                    <li><a href="/secretario/registrar_matricula">Registrar Matricula</a></li>
+                    <li><a href="/secretario/anio_academico">Año Academico</a></li>
+                    <li><a href="/secretario/periodos">Periodos</a></li>
+                    <li><a href="/secretario/mensualidades">Mensualidades</a></li>
+                    <li><a href="/secretario/estudiantes">Estudiantes</a></li>
+                    <li><a href="/secretario/descuentos">Descuentos</a></li>
+                    <li><a href="/secretario/definir_monto">Definir Montos</a></li>
+                    <li><a href="/secretario/pagos">Pagos</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="main-content">
+            <div class="upper-body">
+                
+            </div>
+            <div class="lower-body">
+                <div class="title-lower-body">
+                    <h1>REGISTRAR MES</h1>
+                </div>
+                <div class="formulario-registrar-mes">
+                    <form id="form-crear-mes" action="">
+                            <div>
+                                <label for="mes">Mes:</label>
+                                <select name="mes" id="mes">
+                                    <option value="enero">Enero</option>
+                                    <option value="febrero">Febrero</option>
+                                    <option value="marzo">Marzo</option>
+                                    <option value="abril">Abril</option>
+                                    <option value="mayo">Mayo</option>
+                                    <option value="junio">Junio</option>
+                                    <option value="julio">Julio</option>
+                                    <option value="agosto">Agosto</option>
+                                    <option value="septiembre">Septiembre</option>
+                                    <option value="octubre">Octubre</option>
+                                    <option value="noviembre">Noviembre</option>
+                                    <option value="diciembre">Diciembre</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="fecha_limite">Fecha Limite de Pago:</label>
+                                <input type="number" placeholder="Dia limite de pago" id="fecha_limite">
+                            </div>
+                            <div>
+                                <label for="descripcion_mes">Descripcion:</label>
+                                <input type="text" placeholder="Descripcion" id="descripcion_mes">
+                            </div>
+                            <button type="submit">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/api/user_secretario/apiMeses.js"></script>
+</body>
+
+</html>
