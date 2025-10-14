@@ -53,6 +53,20 @@
                                             <label for="">Estudiante</label>
                                             <input type="text" name="estudiante" placeholder="Estudiante...">
                                         </div>
+                                        <div> 
+                                            <div>
+                                                <label for="">Nivel</label>
+                                                <input type="text" name="nivel" placeholder="Nivel..." style="max-width:100px">
+                                            </div>
+                                            <div>
+                                                <label for="">Grado</label>
+                                                <input type="text" name="grado" placeholder="Grado..." style="max-width:100px">
+                                            </div>
+                                            <div>
+                                                <label for="">Seccion</label>
+                                                <input type="text" name="seccion" placeholder="Seccion..." style="max-width:100px">
+                                            </div>
+                                        </div>
                                         <div>
                                             <label for="tipo_pago">Tipo de Pago</label>
                                             <select name="tipo_pago" id="tipo_pago" required>
@@ -67,7 +81,8 @@
                                         </div>
                                         <div>
                                             <label for="">Monto</label>
-                                            <input type="number" name="monto" placeholder="Monto..." step="0.01" required>
+                                            <input type="number" name="monto" placeholder="Monto..." step="0.01"
+                                                required>
                                         </div>
                                         <div>
                                             <label for="metodo_pago">Metodo de Pago</label>
@@ -79,7 +94,8 @@
                                         </div>
                                         <div>
                                             <label for="descuentos_aplicado">Descuento:</label>
-                                            <input type="text" id="descuento_aplicado" name="descuento_aplicado" readonly placeholder="Descuento..." />
+                                            <input type="text" id="descuento_aplicado" name="descuento_aplicado"
+                                                readonly placeholder="Descuento..." />
                                         </div>
                                         <div>
                                             <label for="monto_final">Monto final:</label>
@@ -96,19 +112,8 @@
                                         <div class="pago-mensual">
                                             <div>
                                                 <label for="mes_a_pagar">Mes a pagar</label>
-                                                <select name="mes_a_pagar" id="mes_a_pagar" required>
-                                                    <option value="Enero">Enero</option>
-                                                    <option value="Febrero">Febrero</option>
-                                                    <option value="Marzo">Marzo</option>
-                                                    <option value="Abril">Abril</option>
-                                                    <option value="Mayo">Mayo</option>
-                                                    <option value="Junio">Junio</option>
-                                                    <option value="Julio">Julio</option>
-                                                    <option value="Agosto">Agosto</option>
-                                                    <option value="Septiembre">Septiembre</option>
-                                                    <option value="Octubre">Octubre</option>
-                                                    <option value="Noviembre">Noviembre</option>
-                                                    <option value="Diciembre">Diciembre</option>
+                                                <select name="mes_a_pagar" id="mes_a_pagar">
+                                                    
                                                 </select>
                                             </div>
                                         </div>
@@ -117,30 +122,62 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="tabla-matriculas-pendientes">
-                            <div class="tabla-detalles">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>N° de matricula</th>
-                                            <th>Estudiante</th>
-                                            <th>Titular</th>
-                                            <th>Tipo Matricula</th>
-                                            <th>Estado</th>
-                                            <th>DNI Estudiante</th>
-                                            <th>Fecha Matricula</th>
-                                            <th>Ingresado por</th>
-                                            <th>Nivel</th>
-                                            <th>Grado</th>
-                                            <th>Sección</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="matriculas-pendientes-list">
-                                        <!-- Las matriculas se agregarán aquí dinámicamente -->
+                        <div class="tabla-pagos-pendientes">
+                            <div class="titulo-pagos-pendientes">
+                                <h2>Pagos pendientes</h2>
+                            </div>
+                            <div class="tablas-pagos-pendientes">
+                                <div class="tabla-matriculas-pendientes">
+                                <div class="tabla-detalles">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>N° de matricula</th>
+                                                <th>Estudiante</th>
+                                                <th>Titular</th>
+                                                <th>Tipo Matricula</th>
+                                                <th>Estado</th>
+                                                <th>DNI Estudiante</th>
+                                                <th>Fecha Matricula</th>
+                                                <th>Ingresado por</th>
+                                                <th>Nivel</th>
+                                                <th>Grado</th>
+                                                <th>Sección</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="matriculas-pendientes-list">
+                                            <!-- Las matriculas se agregarán aquí dinámicamente -->
 
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tabla-mensualidades-pendientes">
+                                <div class="tabla-detalles">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Estudiante</th>
+                                                <th>DNI Estudiante</th>
+                                                <th>Fecha matricula</th>
+                                                <th>Nivel</th>
+                                                <th>Grado</th>
+                                                <th>Sección</th>
+                                                <th>Ultimo pago</th>
+                                                <th>Pago pendiente</th>
+                                                <th>Vencimiento</th>
+                                                <th>Descuento</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="mensualidades-pendientes-list">
+                                            <!-- Las mensualidades se agregarán aquí dinámicamente -->
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                             </div>
                         </div>
                     </div>

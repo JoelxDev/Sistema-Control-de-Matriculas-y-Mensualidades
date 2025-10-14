@@ -12,6 +12,13 @@ class MensualidadModel {
         if (result && Array.isArray(result.rows)) return result.rows;
         return result;
     }
+    static async obtenerPorMes(mesLower) {
+        const query = 'SELECT * FROM mensualidades WHERE LOWER(mes) = ? LIMIT 1';
+        const result = await db.query(query, [mesLower]);
+        const rows = MensualidadModel._unwrap(result);
+        if (Array.isArray(rows)) return rows[0] || null;
+        return null;
+    }
 
     // Crear nueva mensualidad
     static async crear(datos) {
