@@ -1,19 +1,24 @@
 {
   "name": "my-backend",
   "version": "1.0.0",
+  "description": "Backend Node.js con Express y MySQL dockerizado usando pnpm",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "nodemon --legacy-watch app.js",
     "start": "node app.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^4.18.2",
-    "mysql2": "^3.14.3"
+    "bcrypt": "5.1.0",
+    "cors": "2.8.5",
+    "dotenv": "17.2.1",
+    "express": "4.18.2",
+    "mysql2": "3.14.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
   }
 }

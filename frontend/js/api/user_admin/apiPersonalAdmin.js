@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // Rol según cargo
             if (data.cargo.toLowerCase().includes('admin')) {
                 data.roll = 'administrador';
-            } else if (data.cargo.toLowerCase().includes('secretario')) {
-                data.roll = 'secretario';
+            } else if (data.cargo.toLowerCase().includes('secretaria')) {
+                data.roll = 'secretaria';
             } else {
                 data.roll = 'otro';
             }

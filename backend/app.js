@@ -68,6 +68,14 @@ app.use('/api/pagos', pagoRoutes);
 const mensuaRoutes = require('./modules/user-secretary/mensualidadesSecr/mensua.routes');
 app.use('/api/mensualidades', mensuaRoutes);
 
+const deudoresRoutes = require('./modules/user-secretary/deudoresSecr/deudores.routes');
+app.use('/api/deudores', deudoresRoutes);
+
+
+
+// const deudoresRoutes = require('./modules/user-secretary/deudoresSecr/deudores.routes');
+// app.use('/api/deudores', deudoresRoutes);
+
 
 //////////////////////////////////////////////////////////////
 
@@ -226,6 +234,15 @@ app.get('/secretario/mensualidades/meses/crear', (req, res) => {
 app.get('/secretario/mensualidades/meses/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/mensSecretario/btn_editar_mes.html');
 });
+app.get('/secretario/mensualidades/deudores', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/mensSecretario/btn_lista_deudores.html');
+});
+app.get('/secretario/mensualidades/detalles_seccion', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/mensSecretario/modSeccionSelecDeu.html');
+});
+
+
+
 app.get('/secretario/descuentos', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/descuentosSecretario/descuentosSecretario.html');
 });

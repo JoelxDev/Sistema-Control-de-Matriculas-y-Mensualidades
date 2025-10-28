@@ -176,10 +176,8 @@ const Pago = {
             AND MONTH(p.fecha_pago) = ?
             AND YEAR(p.fecha_pago) = ?
         ) AS pagado_mes,
-
         d.id_descuento,
-        d.porcentaje_desc,
-        d.fecha_limite AS fecha_limite_descuento
+        d.porcentaje_desc
       FROM matriculas m
       JOIN estudiantes e ON m.estudiantes_id_estudiante = e.id_estudiante
       LEFT JOIN secciones s ON m.secciones_id_seccion = s.id_seccion

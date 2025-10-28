@@ -4,7 +4,7 @@ services:
   backend:
     build: 
       context: ./backend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: my-backend
     restart: always
     env_file: .env
@@ -19,7 +19,8 @@ services:
       - db
     networks:
       - my-network
-    command: ["npx", "nodemon", "--legacy-watch", "app.js"]
+    command: ["npm", "run", "dev"]
+    # command: ["dev", "nodemon", "--legacy-watch", "app.js"]
 
   frontend:
     build: ./frontend

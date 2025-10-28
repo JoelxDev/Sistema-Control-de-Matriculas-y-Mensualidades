@@ -2,8 +2,8 @@ const DescuentoModel = require("./descuento.model");
 
 exports.crearDescuento = async (req, res) => {
   try {
-    const { nombre_desc, porcentaje_desc, fecha_limite, descripcion_desc } = req.body;
-    const nuevoDescuento = await DescuentoModel.crearDescuento({ nombre_desc, porcentaje_desc, fecha_limite, descripcion_desc });
+    const { nombre_desc, porcentaje_desc, descripcion_desc } = req.body;
+    const nuevoDescuento = await DescuentoModel.crearDescuento({ nombre_desc, porcentaje_desc, descripcion_desc });
     res.status(201).json(nuevoDescuento);
   } catch (error) {
     console.error("Error al crear descuento:", error);
@@ -36,8 +36,8 @@ exports.obtenerDescuentoPorId = async (req, res) => {
 exports.editarDescuento = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre_desc, porcentaje_desc, fecha_limite, descripcion_desc } = req.body;
-    const actualizado = await DescuentoModel.editarDescuento({ id, nombre_desc, porcentaje_desc, fecha_limite, descripcion_desc });
+    const { nombre_desc, porcentaje_desc, descripcion_desc } = req.body;
+    const actualizado = await DescuentoModel.editarDescuento({ id, nombre_desc, porcentaje_desc, descripcion_desc });
     if (actualizado) {
       res.status(200).json({ message: "Descuento actualizado" });
     } else {

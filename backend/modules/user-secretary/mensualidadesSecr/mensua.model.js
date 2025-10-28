@@ -1,6 +1,10 @@
 // ...existing code...
 const db = require('../../../config/db'); // Ajusta la ruta según tu configuración
 
+const ORDER_MES = `FIELD(UPPER(men.mes),
+  'ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO',
+  'JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE')`;
+
 class MensualidadModel {
     // helper para unificar resultados de db.query (mysql2 -> [rows, fields], mysql -> rows)
     static _unwrap(result) {
@@ -89,6 +93,53 @@ class MensualidadModel {
         const result = await db.query(query, [id]);
         return MensualidadModel._unwrap(result);
     }
+
+
+
+    // NUEVO: todos los estudiantes activos de la sección y sus mensualidades hasta 'mesTope'
+   static async obtenerMeses() {
+    const sql = `
+      SELECT DISTINCT mes
+      FROM mensualidades
+      ORDER BY FIELD(UPPER(mes),
+        'ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO',
+        'JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE')
+    `;
+    const [rows] = await pool.query(sql);
+    return rows.map(r => r.mes);
+  }
+
+  static async obtenerPagosPorSeccion(idSeccion, mesTope) {
+    const sql = `
+      SELECT
+        e.id_estudiante,
+        e.nombre_est,
+        e.apellido_est,
+        m.id_matricula,
+        men.id_mes AS mensualidad_id,
+        men.mes,
+        IF(p.id_pagos IS NULL, 0, 1) AS pagado,
+        p.id_pagos,
+        p.monto_pago,
+        p.metodo_pago,
+        p.comprobante_pago
+      FROM matriculas m
+        JOIN estudiantes e ON e.id_estudiante = m.estudiantes_id_estudiante
+        JOIN secciones  s  ON s.id_seccion   = m.secciones_id_seccion
+        LEFT JOIN mensualidades men
+          ON men.matriculas_id_matricula = m.id_matricula
+         AND ${ORDER_MES} BETWEEN 1 AND ?
+        LEFT JOIN pagos p
+          ON p.mensualidades_id_pago = men.id_mes
+      WHERE s.id_seccion = ?
+        AND m.estado_matr = 'activo'
+        AND men.id_mes IS NOT NULL
+      ORDER BY e.apellido_est, e.nombre_est, ${ORDER_MES}
+    `;
+    const [rows] = await pool.query(sql, [mesTope, idSeccion]);
+    return rows;
+  }
+
 }
 
 module.exports = MensualidadModel;

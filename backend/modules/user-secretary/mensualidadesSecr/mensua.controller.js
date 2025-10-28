@@ -227,6 +227,32 @@ class MensuaController {
             });
         }
     }
+    static async listarMeses(req, res) {
+        try {
+            const meses = await MensualidadModel.obtenerMeses();
+            res.json({ meses });
+        } catch (err) {
+            console.error('listarMeses:', err);
+            res.status(500).json({ error: 'Error interno' });
+        }
+    }
+
+    static async listarPagosPorSeccion(req, res) {
+        try {
+            const idSeccion = Number(req.params.id);
+            if (!idSeccion) return res.status(400).json({ error: 'id de sección inválido' });
+
+            const incluirFuturos = req.query.incluirFuturos === '1' || req.query.incluirFuturos === 'true';
+            const hastaMes = Number(req.query.hastaMes);
+            const mesTope = incluirFuturos ? 12 : (hastaMes || (new Date().getMonth() + 1));
+
+            const rows = await MensualidadModel.obtenerPagosPorSeccion(idSeccion, mesTope);
+            res.json({ rows });
+        } catch (err) {
+            console.error('listarPagosPorSeccion:', err);
+            res.status(500).json({ error: 'Error interno' });
+        }
+    }
 }
 
 module.exports = MensuaController;

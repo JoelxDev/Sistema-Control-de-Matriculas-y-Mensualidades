@@ -10,7 +10,6 @@ function cargarDescuentos() {
                     <td>${descuento.id_descuento}</td>
                     <td>${descuento.nombre_desc}</td>
                     <td>${descuento.porcentaje_desc}</td>
-                    <td>${descuento.fecha_limite.split('T')[0]}</td>
                     <td>${descuento.descripcion_desc}</td>
                     <td>
                         <a href="/secretario/descuentos/editar?id=${descuento.id_descuento}"><button>Editar</button></a>
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = {
                 nombre_desc: form.nombre_desc.value,
                 porcentaje_desc: form.porcentaje_desc.value,
-                fecha_limite: form.fecha_limite.value,
                 descripcion_desc: form.descripcion_desc.value
             }
             fetch('/api/descuentos', {
@@ -63,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(descuento => {
                 form.nombre_desc.value = descuento.nombre_desc;
                 form.porcentaje_desc.value = descuento.porcentaje_desc;
-                form.fecha_limite.value = descuento.fecha_limite;
                 form.descripcion_desc.value = descuento.descripcion_desc;
             });
         form.addEventListener('submit', function (event) {
@@ -71,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = {
                 nombre_desc: form.nombre_desc.value,
                 porcentaje_desc: form.porcentaje_desc.value,
-                fecha_limite: form.fecha_limite.value,
                 descripcion_desc: form.descripcion_desc.value
             };
             fetch(`/api/descuentos/${id}`, {
