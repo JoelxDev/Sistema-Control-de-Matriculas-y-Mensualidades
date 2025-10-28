@@ -128,6 +128,46 @@ app.get('/admin/mensualidades/seccion_mensualidad', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/seccionMensualidad.html');
 });
 
+app.get('/admin/anioAcademico', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/anioAcademicoAdmin/anioAcademicoAdmin.html');
+});
+// ----------------------------
+app.get('/admin/aulasSecciones', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasSeccionesAdmin.html');
+});
+
+    app.get('/admin/aulasSecciones/niveles', (req, res) => {
+        res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/nivelesAdmin/nivrelesAdmin.html');
+    });
+
+    app.get('/admin/aulasSecciones/grados', (req, res) => {
+        res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/gradosAdmin/gradosAdmin.html');
+    });
+
+    app.get('/admin/aulasSecciones/secciones', (req, res) => {
+        res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/seccionesAdmin/seccionesAdmin.html');
+    });
+
+    app.get('/admin/aulasSecciones/aulas', (req, res) => {
+        res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasAdmin/aulasAdmin.html');
+    });
+
+app.get('/admin/descuentos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/descuentosAdmin/descuentosAdmin.html');
+});
+
+app.get('/admin/montosDefinidos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/montosDefinidosAdmin/montosDefinidosAdmin.html');
+});
+
+app.get('/admin/pagos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/pagosAdmin/pagosAdmin.html');
+});
+
+app.get('/admin/periodos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/periodosAdmin/periodosAdmin.html');
+});
+
 //////////////////////////////////////////////////////////////
 // RUTAS PROTEGIDAS PARA EL SECRETARIO
 //////////////////////////////////////////////////////////////
