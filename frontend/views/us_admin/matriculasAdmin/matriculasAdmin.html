@@ -58,24 +58,24 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>N° de matricula</th>
+                                        <th>ID</th>
                                         <th>Estudiante</th>
-                                        <th>Responsable Legal</th>
+                                        <th>Titular</th>
+                                        <th>Tipo Matricula</th>
+                                        <th>Estado</th>
                                         <th>DNI Estudiante</th>
                                         <th>Fecha Matricula</th>
                                         <th>Ingresado por</th>
-                                        <th>Acciones</th>
+                                        <th>Nivel</th>
+                                        <th>Grado</th>
+                                        <th>Seccion</th>
+                                        <th>Periodo</th>
+                                        <th>Anio Academico</th>
+                                        <!-- <th>Acciones</th> -->
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="matriculas-list">
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td><a href="/admin/matriculas/informacion_matricula"><button>Mas Inf.</button></a></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -85,6 +85,7 @@
             </div>
         </div>
     </div>
+    <script src="/js/api/user_admin/apiMatriculasListAdmin.js"></script>
 </body>
 
 </html>

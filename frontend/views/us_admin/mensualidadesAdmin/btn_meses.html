@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aulas/Secciones</title>
+    <title>Meses</title>
     <link rel="stylesheet" href="/public/css/globalStyle.css">
     <link rel="stylesheet" href="/public/css/aulasSecretario.css">
 </head>
@@ -32,27 +32,27 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/periodos/crear"><button>Crear Periodo Academico</button></a>
+                <div>
+                    <a href="/secretario/mensualidades/meses/crear"><button>Registrar Mes</button></a>
+                </div>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>PERIODOS ACADEMICOS</h1>
+                    <h1>LISTA DE MESES</h1>
                 </div>
-                <div class="contenido-periodos contenido">
+                <div class="tabla-lista-meses">
                     <div class="tabla-detalles">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Año del Periodo</th>
+                                    <th>Mes</th>
+                                    <th>Fecha limite</th>
+                                    <th>Fecha creacion</th>
+                                    <th>Descripcion</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="periodos-list">
-                                <!-- Los periodos se agregarán aquí dinámicamente -->
+                            <tbody>
                             </tbody>
                         </table>
                     </div>
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    <script src="/js/api/user_admin/apiPeriodosAdmin.js"></script>
+    <script src="/js/api/user_admin/apiMesesAdmin.js"></script>
 </body>
 
 </html>

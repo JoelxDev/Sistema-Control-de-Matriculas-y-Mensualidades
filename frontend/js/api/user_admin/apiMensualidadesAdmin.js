@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  if (!location.pathname.endsWith('/secretario/mensualidades')) return;
+  if (!location.pathname.endsWith('/admin/mensualidades')) return;
 
   fetch('/api/secciones')
     .then(r => r.json())
@@ -47,21 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
       cont.querySelectorAll('.datos-seccion').forEach(el => {
         el.addEventListener('click', () => {
           const id = el.dataset.id;
-          location.href = `/secretario/mensualidades/detalles_seccion?id=${encodeURIComponent(id)}`;
+          location.href = `/admin/mensualidades/detalles_seccion?id=${encodeURIComponent(id)}`;
         });
       });
 
-      cont.querySelectorAll('.datos-seccion').forEach(el => {
-        el.addEventListener('click', () => {
-          const id = el.dataset.id;
-          location.href = `/secretario/mensualidades/detalles_seccion?id=${encodeURIComponent(id)}`;
-        });
-      });
+    //   cont.querySelectorAll('.datos-seccion').forEach(el => {
+    //     el.addEventListener('click', () => {
+    //       const id = el.dataset.id;
+    //       location.href = `/secretario/mensualidades/detalles_seccion?id=${encodeURIComponent(id)}`;
+    //     });
+    //   });
     })
     .catch(err => console.error('Error cargando secciones:', err));
 });
 document.addEventListener('DOMContentLoaded', async () => {
-  if (!window.location.pathname.includes('/secretario/mensualidades/detalles_seccion')) return;
+  if (!window.location.pathname.includes('/admin/mensualidades/detalles_seccion')) return;
 
   // Asegura la tabla
   const contTabla = document.querySelector('.tabla-list-est-seccion');

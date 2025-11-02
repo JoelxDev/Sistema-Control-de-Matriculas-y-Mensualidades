@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Solo ejecuta esto si estamos en la página de personal admin
     if (window.location.pathname === '/admin/personal_administrativo') {
-        fetch('/api/admin/personal')
+        fetch('/api/admin/usuarios/personal')
             .then(response => response.json())
             .then(result => {
                 // result: { total: N, data: [...] }
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const username = item.usuario ? item.usuario.nombre_usuario : '';
                     const dni = item.dni;
                     const cargo_per = item.usuario ? item.usuario.roll : '';
-                    const estado = item.cargo_per;
+                    const estado = item.usuario?.estado_us ?? item.estado_us ?? item.estado ?? '';
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
             <td>${nombreCompleto}</td>
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.roll = 'otro';
             }
 
-            fetch('/api/admin/usuarios', {
+            fetch('/api/admin/usuarios/usuarios', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

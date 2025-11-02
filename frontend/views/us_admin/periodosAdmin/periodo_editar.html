@@ -32,31 +32,33 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/periodos/crear"><button>Crear Periodo Academico</button></a>
+                <!-- <a href="/admin/periodos/crear"><button>Crear Periodo Academico</button></a> -->
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>PERIODOS ACADEMICOS</h1>
+                    <h1>EDITAR PERIODO ACADEMICOS</h1>
                 </div>
-                <div class="contenido-periodos contenido">
-                    <div class="tabla-detalles">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                    <th>Año del Periodo</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="periodos-list">
-                                <!-- Los periodos se agregarán aquí dinámicamente -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+               <div>
+                <form action="" id="form-editar-periodo">
+                    <label for="nombre">Nombre del Periodo:</label>
+                    <input type="text" id="nombre" name="nombre_per" required>
+
+                    <label for="fecha_inicio">Fecha de Inicio:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio_per" required>
+
+                    <label for="fecha_fin">Fecha de Fin:</label>
+                    <input type="date" id="fecha_fin" name="fecha_fin_per" required>
+                    <label for="anio_academico_id_anio_escolar">Año Academico:</label>
+                    <select id="anio_academico_id_anio_escolar" name="anio_academico_id_anio_escolar"></select>
+                    <label for="estado">Estado:</label>
+                    <select id="estado" name="estado_per" required>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="Culminado">Culminado</option>    
+                    </select>
+
+                    <button type="submit">Actualizar Periodo</button>
+                </form>
             </div>
         </div>
     </div>

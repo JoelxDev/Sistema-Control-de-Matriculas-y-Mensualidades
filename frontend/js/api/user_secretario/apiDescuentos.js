@@ -77,14 +77,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 body: JSON.stringify(formData)
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.id) {
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+                if (response.ok) {
                     alert('Descuento editado exitosamente');
                     window.location.href = '/secretario/descuentos';
                 } else {
-                    alert(data.error || 'Error al editar el descuento');
+                    // mostrar mensaje devuelto por backend o genérico
+                    alert(data.error || data.message || 'Error al editar el descuento');
                 }
+            })
+            .catch(() => {
+                alert('Error de red al editar el descuento');
             });
         });
     }

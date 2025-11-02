@@ -21,54 +21,55 @@ app.use(cors());
 // API RUTA ADMIN
 
 app.use(express.json());
-const persAdminRoutes = require('./modules/user-admin/personalAdmin/persAdmin.routes');
-app.use('/api/admin',persAdminRoutes);
-//////////////////////////////////////////////////////////////
+const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
+app.use('/api/admin/usuarios',persAdminRoutes);
 
+// const estudiantesAdminRoutes = require('./modules/user-admin/estudiantesAdmin/estudiantes.routes');
+// app.use('/api/admin/estudiantes', estudiantesAdminRoutes)
 
-
-
+// const matriculasAdminRoutes = require('./modules/user-admin/matriculasAdmin/matriculas.routes');
+// app.use('/api/admin/matriculas', matriculasAdminRoutes);
 
 //////////////////////////////////////////////////////////////
 // API RUTAS SECRETARIO
 
-const nivelRoutes = require('./modules/user-secretary/aulas_seccionesSecr/nivel.routes');
+const nivelRoutes = require('./modules/aulas_seccionesSecr/nivel.routes');
 app.use('/api/niveles', nivelRoutes);
 
-const gradoRoutes = require('./modules/user-secretary/aulas_seccionesSecr/grado.routes');
+const gradoRoutes = require('./modules/aulas_seccionesSecr/grado.routes');
 app.use('/api/grados', gradoRoutes);
 
-const aulaRoutes = require('./modules/user-secretary/aulas_seccionesSecr/aula.routes');
+const aulaRoutes = require('./modules/aulas_seccionesSecr/aula.routes');
 app.use('/api/aulas', aulaRoutes);
 
-const seccionRoutes = require('./modules/user-secretary/aulas_seccionesSecr/seccion.routes');
+const seccionRoutes = require('./modules/aulas_seccionesSecr/seccion.routes');
 app.use('/api/secciones', seccionRoutes);
 
-const anioAcademicoRoutes = require('./modules/user-secretary/anio_academicoSecr/anioAcademico.routes');
+const anioAcademicoRoutes = require('./modules/anio_academicoSecr/anioAcademico.routes');
 app.use('/api/anio_academico', anioAcademicoRoutes);
 
-const periodoRoutes = require('./modules/user-secretary/periodo_academicoSecr/periodo.routes');
+const periodoRoutes = require('./modules/periodo_academicoSecr/periodo.routes');
 app.use('/api/periodos', periodoRoutes);
 
-const matriculaRoutes = require('./modules/user-secretary/matriculasSecr/matricula.routes');
+const matriculaRoutes = require('./modules/matriculasSecr/matricula.routes');
 app.use('/api/matriculas', matriculaRoutes);
 
-const estudianteRoutes = require('./modules/user-secretary/estudiantesSecr/estudiante.routes');
+const estudianteRoutes = require('./modules/estudiantesSecr/estudiante.routes');
 app.use('/api/estudiantes', estudianteRoutes);
 
-const descuentoRoutes = require('./modules/user-secretary/descuentosSecr/descuento.routes');
+const descuentoRoutes = require('./modules/descuentosSecr/descuento.routes');
 app.use('/api/descuentos', descuentoRoutes);
 
-const montoRoutes = require('./modules/user-secretary/defMonstosSecr/monto.routes');
+const montoRoutes = require('./modules/defMonstosSecr/monto.routes');
 app.use('/api/definir_monto', montoRoutes);
 
-const pagoRoutes = require('./modules/user-secretary/pagosSecr/pago.routes');
+const pagoRoutes = require('./modules/pagosSecr/pago.routes');
 app.use('/api/pagos', pagoRoutes);
 
-const mensuaRoutes = require('./modules/user-secretary/mensualidadesSecr/mensua.routes');
+const mensuaRoutes = require('./modules/mensualidadesSecr/mensua.routes');
 app.use('/api/mensualidades', mensuaRoutes);
 
-const deudoresRoutes = require('./modules/user-secretary/deudoresSecr/deudores.routes');
+const deudoresRoutes = require('./modules/deudoresSecr/deudores.routes');
 app.use('/api/deudores', deudoresRoutes);
 
 
@@ -80,7 +81,7 @@ app.use('/api/deudores', deudoresRoutes);
 //////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////
-// RUTAS PROTEGIDAS PARA EL ADMIN
+// VISTAS CON RUTAS PROTEGIDAS PARA EL ADMIN
 //////////////////////////////////////////////////////////////
 
 // Servir archivos estáticos desde la carpeta frontend
@@ -93,21 +94,37 @@ app.get('/admin/perfil', (req, res) => {
 app.get('/admin/matriculas', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/matriculasAdmin/matriculasAdmin.html');
 });
-app.get('/admin/matriculas/informacion_matricula', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_admin/matriculasAdmin/btn_informMatricula.html');
-});
 
 app.get('/admin/estudiantes', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/estudiantesAdmin/estudiantesAdmin.html');
 });
 
-app.get('/admin/informacion_estudiante', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_admin/estudiantesAdmin/btn_informEstudiante.html')
-})
+app.get('/admin/estudiantes/informacion_estudiante', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/estudiantesAdmin/btn_informEstudiante.html');
+});
+
 
 app.get('/admin/mensualidades', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/mensualidadesAdmin.html');
 });
+
+app.get('/admin/mensualidades/meses', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_meses.html');
+});
+
+app.get('/admin/mensualidades/meses/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_editar_mes.html');
+});
+
+app.get('/admin/mensualidades/deudores', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_lista_deudores.html');
+});
+
+app.get('/admin/mensualidades/detalles_seccion', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/modSeccionSelecDeu.html');
+});
+
+
 
 app.get('/admin/personal_administrativo', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/personalAdmin.html');
@@ -115,6 +132,18 @@ app.get('/admin/personal_administrativo', (req, res) => {
 
 app.get('/admin/personal_administrativo/crear_personal', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/btn_crearPerAdmin.html');
+});
+
+
+
+app.get('/admin/periodos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/periodosAdmin/periodosAdmin.html');
+});
+app.get('/admin/periodos/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/periodosAdmin/periodos_crear.html');
+});
+app.get('/admin/periodos/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/periodosAdmin/periodo_editar.html');
 });
 
 // Puedes agregar rutas cortas para otras vistas:
@@ -169,7 +198,7 @@ app.get('/admin/periodos', (req, res) => {
 });
 
 //////////////////////////////////////////////////////////////
-// RUTAS PROTEGIDAS PARA EL SECRETARIO
+// VISTAS CON RUTAS PROTEGIDAS PARA EL SECRETARIO
 //////////////////////////////////////////////////////////////
 
 app.get('/secretario/perfil', (req, res) => {
@@ -262,6 +291,9 @@ app.get('/secretario/periodos/crear', (req, res) => {
 app.get('/secretario/periodos/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/periodoSecretario/periodo_editar.html');
 });
+
+
+
 app.get('/secretario/mensualidades', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/mensSecretario/mensualidadesSecr.html');
 });
