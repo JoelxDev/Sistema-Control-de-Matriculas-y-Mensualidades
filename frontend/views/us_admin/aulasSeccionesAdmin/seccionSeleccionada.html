@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Administrador</title>
     <link rel="stylesheet" href="/public/css/globalStyle.css">
-    <link rel="stylesheet" href="/public/css/perfilAdmin.css">
+    <link rel="stylesheet" href="/public/css/aulasSecretario.css">
 </head>
 
 <body>
@@ -32,17 +32,36 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/aulasSecciones/aulas/crear"><button>Crear Aula</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE TODAS LAS AULAS</h1>
+                    <h1>Estudiantes de la seccion: </h1>
                 </div>
-               
+                <div class="tabla-list-est-seccion">
+                    <div class="tabla-detalles">
+                        <table id="tabla-estudiantes-seccion">
+                            <thead>
+                                <tr>
+                                    <th>Nombre estudiante</th>
+                                    <th>Apellido estudiante</th>
+                                    <th>DNI</th>
+                                    <th>Fecha nacimiento</th>
+                                    <th>Titular</th>
+                                    <th>Discapacidad</th>
+                                    <th>Estado</th>
+                                    <th>Detalles Discapacidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_admin/apiAulasAdmin.js"></script>
+    <script src="/js/api/user_admin/apiSeccionSeleccionada.js"></script>
 </body>
 
 </html>

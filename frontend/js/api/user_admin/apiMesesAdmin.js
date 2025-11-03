@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(result => {
                         if (result && result.success) {
                             alert('Mensualidad creada');
-                            window.location.href = '/secretario/mensualidades';
+                            window.location.href = '/admin/mensualidades';
                         } else {
                             alert(result?.message || result?.error || 'Error al crear');
                         }
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(result => {
                     if (result && result.success) {
                         alert('Mensualidad actualizada');
-                        window.location.href = '/secretario/mensualidades';
+                        window.location.href = '/admin/mensualidades';
                     } else {
                         alert(result?.message || result?.error || 'Error al actualizar');
                     }

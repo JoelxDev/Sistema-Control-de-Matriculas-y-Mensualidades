@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Administrador</title>
     <link rel="stylesheet" href="/public/css/globalStyle.css">
-    <link rel="stylesheet" href="/public/css/perfilAdmin.css">
+    <link rel="stylesheet" href="/public/css/aulasSecretario.css">
 </head>
 
 <body>
@@ -32,15 +32,89 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-            </div>  
+                <a href="/admin/aulasSecciones/niveles"><button>Niveles</button></a>
+                <a href="/admin/aulasSecciones/grados"><button>Grados</button></a>
+                <a href="/admin/aulasSecciones/secciones"><button>Secciones</button></a>
+                <a href="/admin/aulasSecciones/aulas"><button>Aulas</button></a>
+            </div>
             <div class="lower-body">
                 <div class="title-lower-body">
                     <h1>Aulas/Secciones</h1>
                 </div>
-                
+                <div class="aulas">
+                    <div class="filtros">
+                        <div class="filtro-nivel">
+                            <label for="filtro-nivel">Nivel:</label>
+                            <select id="filtro-nivel">
+                                <option value="todos">Todos</option>
+                                <option value="primaria">Primaria</option>
+                                <option value="secundaria">Secundaria</option>
+                            </select>
+                        </div>
+                        <div class="filtro-grado">
+                            <label for="filtro-grado">Grado:</label>
+                            <select id="filtro-grado">
+                                <option value="todos">Todos</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="filtro-anio-academico">
+                            <label for="filtro-grado">Año Academico:</label>
+                            <select id="filtro-grado">
+                                <option value="todos">Todos</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="filtro-periodo">
+                            <label for="filtro-grado">Periodo:</label>
+                            <select id="filtro-grado">
+                                <option value="todos">Todos</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="nivel-secciones">
+                        <div class="nivel">
+                            <div class="datos-nivel">
+                                <div class="titulo-nivel" id="info-seccion">
+                                    <h2>Secundario</h4>
+                                </div>
+                                <div class="vacan-dispo">
+                                    <p>Vacantes Disponibles: 20</p>
+                                </div>
+                                <div class="tot-est">
+                                    <p>Total de Estudiantes: 30</p>
+                                </div>
+                            </div>
+                            <div class="secciones">
+                                <div class="datos-seccion">
+                                    <div class="titulo-seccion">
+                                        <h3>1ro B</h4>
+                                    </div>
+                                    <div class="vact-disp-seccion">
+                                        <p>Vacantes Disp: 10</p>
+                                    </div>
+                                    <div class="tot-estud-seccion">
+                                        <p>Total Estud: 20</p>
+                                    </div> 
+                                    <div class="estado-seccion">
+                                        <p>Estado: Activo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <script src="/js/api/user_admin/apiAulasSeccionesAdmin.js"></script>
 </body>
 
 </html>

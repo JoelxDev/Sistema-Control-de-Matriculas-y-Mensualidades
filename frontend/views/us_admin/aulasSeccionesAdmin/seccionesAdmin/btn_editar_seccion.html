@@ -32,17 +32,27 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/aulasSecciones/aulas/crear"><button>Crear Aula</button></a>
+
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE TODAS LAS AULAS</h1>
+                    <h1>FORMULARIO CREAR SECCION</h1>
                 </div>
-               
+                <div>
+                    <form id="form-editar-seccion">
+                        <input type="text" name="nombre" placeholder="Nombre de la sección" required>
+                        <label for="select-grado">Grado</label>
+                        <select name="grados_id_grado" required id="select-grado"></select>
+                        <label for="select-aula">Aula</label>
+                        <select name="aulas_id_aula" required id="select-aula"></select>
+                        <button type="submit">Guardar</button>
+                    </form>
+                    <script src="/js/api/user_secretario/apiSeccion.js"></script>
+                </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_admin/apiAulasAdmin.js"></script>
+    <script src="/js/api/user_admin/apiSeccionesAdmin.js"></script>
 </body>
 
 </html>

@@ -112,6 +112,9 @@ app.get('/admin/mensualidades/meses', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_meses.html');
 });
 
+app.get('/admin/mensualidades/meses/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_registrar_meses.html');
+});
 app.get('/admin/mensualidades/meses/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/mensualidadesAdmin/btn_editar_mes.html');
 });
@@ -133,6 +136,73 @@ app.get('/admin/personal_administrativo', (req, res) => {
 app.get('/admin/personal_administrativo/crear_personal', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/btn_crearPerAdmin.html');
 });
+
+
+
+app.get('/admin/aulasSecciones', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasSeccionesAdmin.html');
+});
+
+app.get('/admin/aulasSecciones/grados', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/gradosAdmin/gradosAdmin.html');
+});
+
+app.get('/admin/aulasSecciones/grados/crear', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/gradosAdmin/btn_crear_grado.html');
+})
+
+app.get('/admin/aulasSecciones/grados/editar', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/gradosAdmin/btn_editar_grado.html');
+})
+
+
+app.get('/admin/aulasSecciones/niveles', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/nivelesAdmin/nivelesAdmin.html');
+});
+
+app.get('/admin/aulasSecciones/niveles/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/nivelesAdmin/btn_crear_nivel.html');
+});
+
+app.get('/admin/aulasSecciones/niveles/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/nivelesAdmin/btn_editar_nivel.html');
+});
+
+
+app.get('/admin/aulasSecciones/secciones', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/seccionesAdmin/seccionesAdmin.html');
+});
+
+app.get('/admin/aulasSecciones/secciones/crear', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/seccionesAdmin/btn_crear_seccion.html');
+})
+
+app.get('/admin/aulasSecciones/secciones/editar', (req, res )=> {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/seccionesAdmin/btn_editar_seccion.html');
+
+})
+
+
+app.get('/admin/aulasSecciones/aulas', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasAdmin/aulasAdmin.html');
+});
+
+app.get('/admin/aulasSecciones/aulas/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasAdmin/btn_crear_aula.html');
+});
+
+app.get('/admin/aulasSecciones/aulas/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/aulasAdmin/btn_editar_aula.html');
+});
+
+
+app.get('/admin/aulasSecciones/detalles_seccion', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/modSeccionSeleccionada.html');
+});
+
+
+
+
 
 
 

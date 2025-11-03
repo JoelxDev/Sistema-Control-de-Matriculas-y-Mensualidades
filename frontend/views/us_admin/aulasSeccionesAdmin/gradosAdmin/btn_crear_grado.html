@@ -32,17 +32,24 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/aulasSecciones/aulas/crear"><button>Crear Aula</button></a>
+
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE TODAS LAS AULAS</h1>
+                    <h1>FORMULARIO CREAR GRADO</h1>
                 </div>
-               
+                <div>
+                    <form id="form-crear-grado">
+                        <input type="text" name="nombre_grad" placeholder="Nombre del grado" required>
+                        <label for="select-nivel">Nivel:</label>
+                        <select name="niveles_id_nivel" id="select-nivel" required></select>
+                        <button type="submit">Crear</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <script src="/js/api/user_admin/apiAulasAdmin.js"></script>
+    <script src="/js/api/user_admin/apiGradosAdmin.js"></script>
 </body>
 
 </html>

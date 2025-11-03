@@ -32,13 +32,24 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/aulasSecciones/aulas/crear"><button>Crear Aula</button></a>
+
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE TODAS LAS AULAS</h1>
+                    <h1>FORMULARIO CREAR AULA</h1>
                 </div>
-               
+                <div>
+                    <form id="form-crear-aula">
+                        <input type="number" name="capacidad_maxima" placeholder="Capacidad máxima" required>
+                        <label for="estado">Estado</label>
+                        <select name="estado" id="estado" required>
+                            <option value="inactivo">Inactivo</option>
+                            <option value="completo">Completo</option>
+                            <option value="incompleto">Incompleto</option>
+                        </select>
+                        <button type="submit">Crear</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
