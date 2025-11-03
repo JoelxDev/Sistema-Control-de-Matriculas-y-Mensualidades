@@ -202,6 +202,20 @@ app.get('/admin/aulasSecciones/detalles_seccion', (req, res) => {
 
 
 
+app.get('/admin/descuentos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/descuentosAdmin/descuentosAdmin.html');
+});
+
+app.get('/admin/descuentos/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/descuentosAdmin/btn_crear_descuento.html');
+});
+
+app.get('/admin/descuentos/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/descuentosAdmin/btn_editar_descuento.html');
+});
+
+
+
 
 
 

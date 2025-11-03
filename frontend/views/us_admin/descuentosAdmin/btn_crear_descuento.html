@@ -32,32 +32,23 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/descuentos/crear"><button>Crear Descuento</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE DESCUENTOS</h1>
+                    <h1>CREAR DESCUENTO</h1>
                 </div>
                 <div>
-                    <div class="contenido-descuentos">
-                        <div class="tabla-detalles">
-                            <table id="tabla-descuentos">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre descuento</th>
-                                        <th>Porcentaje %</th>
-                                        <!-- <th>Fecha límite</th> -->
-                                        <th>Descripción</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabla-descuentos-list">
-                                    <!-- Los datos se llenarán dinámicamente con JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <form action="" id="form-crear-descuento">
+                        <label for="nombre_desc">Nombre descuento</label>
+                        <input type="text"  name="nombre_desc" placeholder="Nombre descuento...">
+                        <label for="">Porcentaje descuento</label>
+                        <input type="number" name="porcentaje_desc" placeholder="Porcentaje descuento..." step="0.01">
+                        <!-- <label for="">Fecha limite</label>
+                        <input type="date" name="fecha_limite" placeholder="Fecha limite..."> -->
+                        <label for="">Descripcion</label>
+                        <input type="text" name="descripcion_desc" placeholder="Descripcion...">
+                        <button type="submit">Crear</button>
+                    </form>
                 </div>
             </div>
         </div>
