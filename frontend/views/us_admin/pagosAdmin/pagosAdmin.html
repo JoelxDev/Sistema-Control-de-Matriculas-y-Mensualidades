@@ -32,15 +32,45 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-            </div>  
+                <!-- <a href="/secretario/mensualidades/registrar_pago"><button>Registrar pago mensualidad</button></a> -->
+                <a href="/secretario/pagos/registrar_pago"><button>Registrar Pago</button></a>
+            </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>Lista de pagos registrados</h1>
+                    <h1>LISTA DE PAGOS REGISTRADOS</h1>
                 </div>
-                
+                <div class="contenido-periodos contenido">
+                    <div class="tabla-detalles">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Nivel</th>
+                                    <th>Grado</th>
+                                    <th>Tipo</th>
+                                    <th>Mes</th>
+                                    <th>Fecha limite</th>
+                                    <th>Monto estimado</th>
+                                    <th>Descuento</th>
+                                    <th>Monto Final</th>
+                                    <th>Metodo Pago</th>
+                                    <th>Descripcion</th>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Comprobante</th>
+                                    <!-- <th>Acciones</th> -->
+                                </tr>
+                            </thead>
+                            <tbody id="periodos-list">
+                                <!-- Los periodos se agregarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <script src="/js/api/user_admin/apiPagosListAdmin.js"></script>
 </body>
 
 </html>
