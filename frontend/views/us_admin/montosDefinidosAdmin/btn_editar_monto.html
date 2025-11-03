@@ -32,30 +32,38 @@
         </div>
         <div class="main-content">
             <div class="upper-body">
-                <a href="/admin/montos/crear"><button>Crear Monto</button></a>
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE MONTOS DEFINIDOS</h1>
+                    <h1>EDITAR MONTO</h1>
                 </div>
                 <div>
-                    <div class="contenido-montos-definidos">
-                        <div class="tabla-detalles">
-                            <table id="tabla-montos">
-                                <thead>
-                                    <tr>
-                                        <th>Tipo</th>
-                                        <th>Monto Base</th>
-                                        <th>Descripcion</th>
-                                        <th>Grado</th>
-                                        <th>Nivel</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabla-montos-list">
-                                    <!-- Los datos se llenarán dinámicamente con JavaScript -->
-                                </tbody>
-                            </table>
+                    <div class="contenido-crear-montos-definidos">
+                        <div class="formulario-editar-monto">
+                            <form id="form-editar-monto">
+                                <div>
+                                    <label for="tipo">Tipo:</label>
+                                    <select id='tipo' name='tipo'>
+                                        <option value='matricula'>Matricula</option>
+                                        <option value='mensualidad'>Mensualidad</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="monto_base">Monto Base:</label>
+                                    <input type="number" id="monto_base" name="monto_base" required>
+                                </div>
+                                <div>
+                                    <label for="descripcion">Descripción:</label>
+                                    <input type="text" id="descripcion" name="descripcion" required>
+                                </div>
+                                <div>
+                                    <label for="nivel_grado">Nivel y Grado:</label>
+                                    <select id="nivel_grado" name="nivel_grado" required>
+                                        <option value="">Seleccione Nivel y Grado</option>
+                                    </select>
+                                </div>
+                                <button type="submit">Editar Monto</button>
+                            </form>
                         </div>
                     </div>
                 </div>

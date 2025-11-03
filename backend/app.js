@@ -214,6 +214,18 @@ app.get('/admin/descuentos/editar', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/descuentosAdmin/btn_editar_descuento.html');
 });
 
+app.get('/admin/montos', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/montosDefinidosAdmin/montosDefinidosAdmin.html');
+});
+
+app.get('/admin/montos/crear', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/montosDefinidosAdmin/btn_crear_monto.html');
+});
+
+app.get('/admin/montos/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/montosDefinidosAdmin/btn_editar_monto.html');
+});
+
 
 
 
