@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelectorAll('.datos-seccion').forEach(div => {
                     div.addEventListener('click', function () {
                         const id = div.dataset.idSeccion;
-                        window.location.href = `/secretario/aulas/detalles_seccion?id=${id}`;
+                        window.location.href = `/admin/aulasSecciones/detalles_seccion?id=${id}`;
                     });
                 });
             })

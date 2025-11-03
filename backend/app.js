@@ -197,7 +197,7 @@ app.get('/admin/aulasSecciones/aulas/editar', (req, res) => {
 
 
 app.get('/admin/aulasSecciones/detalles_seccion', (req, res) => {
-    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/modSeccionSeleccionada.html');
+    res.sendFile('/usr/src/frontend/views/us_admin/aulasSeccionesAdmin/seccionSeleccionada.html');
 });
 
 
