@@ -1,147 +1,147 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Solo ejecuta esto si estamos en la página de personal admin
     if (window.location.pathname === '/admin/personal_administrativo') {
         fetch('/api/admin/usuarios/personal')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(result => {
-                // result: { total: N, data: [...] }
                 const tbody = document.querySelector('.tabla-detalles tbody');
                 tbody.innerHTML = '';
-                result.data.forEach(item => {
+                (result.data || []).forEach(item => {
                     const nombreCompleto = `${item.nombre_per} ${item.apellido}`;
-                    const telefono = ''; // Si tienes el campo, cámbialo aquí
                     const username = item.usuario ? item.usuario.nombre_usuario : '';
-                    const dni = item.dni;
-                    const cargo_per = item.usuario ? item.usuario.roll : '';
-                    const estado = item.usuario?.estado_us ?? item.estado_us ?? item.estado ?? '';
+                    const cargo_per = item.cargo_per ?? item.usuario?.roll ?? '';
+                    const correo_elec_per = item.correo_elec_per ?? item.usuario?.correo_elec_per ?? '';
+                    const estado = item.estado_per ?? item.usuario?.estado_us ?? '';
+                    const dni = item.dni ?? '';
+                    const telefono = item.telefono_per ?? '';
+                    const fecha_creacion = item.fecha_creacion_per ? item.fecha_creacion_per.split('T')[0] : '';
+                    const editId = item.personal_id;
+
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
             <td>${nombreCompleto}</td>
-            <td>${telefono}</td>
             <td>${username}</td>
-            <td>${dni}</td>
             <td>${cargo_per}</td>
+            <td>${dni}</td>
+            <td>${telefono}</td>
+            <td>${correo_elec_per}</td>
             <td>${estado}</td>
+            <td>${fecha_creacion}</td>
             <td>
-              <a href="/admin/personal_administrativo/editar_personal?id=${item.personal_id}"><button>Editar</button></a>
+              <a class="link-editar" data-id="${editId}" href="/admin/personal_administrativo/editar?id=${encodeURIComponent(editId)}"><button>Editar</button></a>
               <button data-id="${item.personal_id}" class="btn-eliminar">Eliminar</button>
-            </td>
-          `;
+            </td>`;
                     tbody.appendChild(tr);
+                    tr.querySelector('.link-editar')?.addEventListener('click', (e) => {
+                      const pid = e.currentTarget.getAttribute('data-id');
+                      if (pid) sessionStorage.setItem('personal_edit_id', pid);
+                    });
                 });
 
-                // Ejemplo de manejo para el botón eliminar (opcional)
                 document.querySelectorAll('.btn-eliminar').forEach(btn => {
                     btn.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
                         if (confirm('¿Seguro que deseas eliminar este personal?')) {
-                            fetch(`/api/admin/usuarios-personal/${id}`, { method: 'DELETE' })
-                                .then(res => res.json())
-                                .then(() => location.reload());
+                            fetch(`/api/admin/usuarios/usuarios-personal/${id}`, { method: 'DELETE' })
+                              .then(async res => { if (!res.ok) throw new Error(await res.text()); return res.json().catch(()=>({})); })
+                              .then(() => location.reload())
+                              .catch(err => { console.error(err); alert('Error al eliminar'); });
                         }
                     });
                 });
-            })
-            .catch(error => {
-                console.error('Error al consumir la API:', error);
             });
     }
 });
 
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('form-crear-personal');
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const data = {};
-            formData.forEach((value, key) => { data[key] = value; });
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const d = {}; fd.forEach((v,k)=>d[k]=v);
 
-            // Generar usuario: primer nombre + primer apellido (en minúsculas, sin espacios)
-            const primerNombre = data.nombre.split(' ')[0].toLowerCase();
-            const primerApellido = data.apellido.split(' ')[0].toLowerCase();
-            data.nombre_usuario = primerNombre + primerApellido;
+        // Normalizar a columnas nuevas
+        const payload = {
+          nombre_per: d.nombre_per ?? d.nombre ?? '',
+          apellido: d.apellido ?? '',
+          cargo_per: d.cargo_per ?? d.cargo ?? '',
+          dni: d.dni ?? '',
+          telefono_per: d.telefono_per ?? d.telefono ?? '',
+          correo_elec_per: d.correo_elec_per ?? d.correo ?? d.email ?? '',
+          estado_per: d.estado_per ?? d.estado ?? 'activo'
+        };
 
-            // Contraseña = dni
-            data.contrasenia = data.dni;
+        // Generar usuario inicial
+        const primerNombre = (payload.nombre_per.split(' ')[0] || '').toLowerCase();
+        const primerApellido = (payload.apellido.split(' ')[0] || '').toLowerCase();
+        payload.nombre_usuario = d.nombre_usuario ?? (primerNombre + primerApellido);
+        payload.contrasenia = d.contrasenia ?? payload.dni;
 
-            // Rol según cargo
-            if (data.cargo.toLowerCase().includes('admin')) {
-                data.roll = 'administrador';
-            } else if (data.cargo.toLowerCase().includes('secretaria')) {
-                data.roll = 'secretaria';
-            } else {
-                data.roll = 'otro';
-            }
+        const cargoLow = String(payload.cargo_per).toLowerCase();
+        payload.roll = cargoLow.includes('admin') ? 'administrador'
+                     : cargoLow.includes('secretaria') ? 'secretaria'
+                     : 'otro';
 
-            fetch('/api/admin/usuarios/usuarios', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(res => res.json())
-                .then(result => {
-                    if (result.message) {
-                        alert('¡Personal y usuario creados!');
-                        window.location.href = '/admin/personal_administrativo';
-                    } else {
-                        alert('Error al crear: ' + (result.error || ''));
-                    }
-                })
-                .catch(() => alert('Error al conectar con el servidor'));
-        });
-    }
+        fetch('/api/admin/usuarios/usuarios', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(resp => {
+          if (resp.message) {
+            alert('¡Personal y usuario creados!');
+            window.location.href = '/admin/personal_administrativo';
+          } else {
+            alert('Error al crear');
+          }
+        })
+        .catch(()=>alert('Error al conectar'));
+    });
 });
 
-document.addEventListener('DOMContentLoaded', async function (){
-    const form = document.getElementById('form-editar-personal');
-    if (form){
-        // 1. Obtener el id de la URL
-        const params = new URLSearchParams(window.location.search)
-        const id = params.get('id');
-        if(!id){
-            alert('ID no encontrado');
-            return;
-        }
-        // 2. Traer los datos actuales del personal + usuario
-        const res = await fetch (`/api/admin/personal/${id}`);
-        const data = await res.json();
-        // 3. Llemar eñ formulario con los datos actuales
-        form.nombre_per.value = data.nombre_per;
-        form.apellido.value = data.apellido;
-        form.cargo_per.value = data.cargo_per;
-        form.dni.value = data.dni;
-        form.nombre_usuario.value = data.usuario ? data.usuario.nombre_usuario : '';
-        form.roll.value = data.usuario ? data.usuario.roll : '';
-        form.estado_us.value = data.usuario ? data.usuario.estado_us : '';
-        // 4. Al enviar, hacer PUT a la API 
-        form.addEventListener('submit', async function (e){
-            e.preventDefault();
-            const body = {
-                nombre_per: form.nombre_per.value,
-                apellido: form.apellido.value,
-                cargo_per: form.cargo_per.value,
-                dni: form.dni.value,
-                nombre_usuario: form.nombre_usuario.value,
-                roll: form.roll.value,
-                estado_us: form.estado_us.value
-            
-            };
-            fetch(`/api/admin/usuarios-personal/${data.usuario.usuario_id}`,{
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify(body)
-            })
-            .then(res => res.json())
-            .then(result => {
-                if(result.message){
-                    alert('¡Datos actualizados!')
-                    window.location.href = '/admin/personal_administrativo';
-                }else {
-                    alert('Error al actualizar: ' + (result.error || ''));
-                }
-            })
-            .catch(() => alert('Error al conectar con el servidor'));
-        })
-    }
-})
+document.addEventListener('DOMContentLoaded', async function () {
+  const form = document.getElementById('form-editar-personal');
+  if (!form) return;
+
+  const params = new URLSearchParams(window.location.search);
+  let id = params.get('id') || sessionStorage.getItem('personal_edit_id') || (window.location.pathname.match(/\/editar\/(\d+)/)?.[1] ?? null);
+  if (!id) { alert('ID no encontrado'); return; }
+
+  const setVal = (name, value) => { const el = form.querySelector(`[name="${name}"], #${name}`); if (el) el.value = value ?? ''; };
+  const getVal = (name) => (form.querySelector(`[name="${name}"], #${name}`)?.value ?? '').trim();
+
+  const res = await fetch(`/api/admin/usuarios/personal/${encodeURIComponent(id)}`);
+  if (!res.ok) { alert('No se pudo cargar'); return; }
+  const data = await res.json();
+
+  setVal('nombre_per', data.nombre_per);
+  setVal('apellido', data.apellido);
+  setVal('cargo_per', data.cargo_per);
+  setVal('dni', data.dni);
+  setVal('telefono_per', data.telefono_per);
+  setVal('correo_elec_per', data.correo_elec_per);
+  setVal('estado_per', data.estado_per);
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const body = {
+      nombre_per: getVal('nombre_per'),
+      apellido: getVal('apellido'),
+      cargo_per: getVal('cargo_per'),
+      dni: getVal('dni'),
+      telefono_per: getVal('telefono_per'),
+      correo_elec_per: getVal('correo_elec_per'),
+      estado_per: getVal('estado_per')
+    };
+
+    fetch(`/api/admin/usuarios/usuarios-personal/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    })
+    .then(async r => { if (!r.ok) throw new Error(await r.text()); return r.json().catch(()=>({})); })
+    .then(() => { sessionStorage.removeItem('personal_edit_id'); alert('¡Datos actualizados!'); window.location.href = '/admin/personal_administrativo'; })
+    .catch(err => { console.error(err); alert('Error al actualizar'); });
+  });
+});

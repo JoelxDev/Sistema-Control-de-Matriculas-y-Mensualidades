@@ -20,18 +20,15 @@ app.use(cors());
 //////////////////////////////////////////////////////////////
 // API RUTA ADMIN
 
-app.use(express.json());
-const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
-app.use('/api/admin/usuarios',persAdminRoutes);
 
-// const estudiantesAdminRoutes = require('./modules/user-admin/estudiantesAdmin/estudiantes.routes');
-// app.use('/api/admin/estudiantes', estudiantesAdminRoutes)
-
-// const matriculasAdminRoutes = require('./modules/user-admin/matriculasAdmin/matriculas.routes');
-// app.use('/api/admin/matriculas', matriculasAdminRoutes);
 
 //////////////////////////////////////////////////////////////
-// API RUTAS SECRETARIO
+// API RUTAS 
+
+app.use(express.json());
+
+const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
+app.use('/api/admin/usuarios',persAdminRoutes);
 
 const nivelRoutes = require('./modules/aulas_seccionesSecr/nivel.routes');
 app.use('/api/niveles', nivelRoutes);
@@ -91,6 +88,7 @@ app.use(express.static('/usr/src/frontend'));
 app.get('/admin/perfil', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/perfilAdmin/perfilAdmin.html');
 });
+
 app.get('/admin/matriculas', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/matriculasAdmin/matriculasAdmin.html');
 });
@@ -102,6 +100,7 @@ app.get('/admin/estudiantes', (req, res) => {
 app.get('/admin/estudiantes/informacion_estudiante', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/estudiantesAdmin/btn_informEstudiante.html');
 });
+
 
 
 app.get('/admin/mensualidades', (req, res) => {
@@ -133,8 +132,12 @@ app.get('/admin/personal_administrativo', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/personalAdmin.html');
 });
 
-app.get('/admin/personal_administrativo/crear_personal', (req, res) => {
+app.get('/admin/personal_administrativo/crear', (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/btn_crearPerAdmin.html');
+});
+
+app.get('/admin/personal_administrativo/editar', (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_admin/personalAdmin/btn_editarPerAdmin.html');
 });
 
 
