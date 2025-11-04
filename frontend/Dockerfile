@@ -1,11 +1,11 @@
 # Imagen con servidor web Nginx
 FROM nginx:alpine
 
-# Borra los archivos por defecto de Nginx
+# Borrar contenido por defecto
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copia tus archivos del frontend al directorio de Nginx
-COPY . /usr/share/nginx/html
+# Copiar SOLO la carpeta public al directorio web
+COPY ./public /usr/share/nginx/html
 
-# Expone el puerto 80 (HTTP)
+# Exponer puerto 80
 EXPOSE 80
