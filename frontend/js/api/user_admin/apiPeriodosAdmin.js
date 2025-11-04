@@ -15,14 +15,31 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${p.anio_acad}</td>
             <td>
               <a href="/admin/periodos/editar?id=${p.id_periodo}"><button>Editar</button></a>
-              <a href="/admin/periodos/eliminar?id=${p.id_periodo}"><button>Eliminar</button></a>
-            </td>
-            <td>
+              <button class="btn-eliminar" data-id="${p.id_periodo}">Eliminar</button>
             </td>
             
           `;
           tbody.appendChild(tr);
         });
+
+         document.querySelectorAll('.btn-eliminar').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            if (!id) return;
+            if (!confirm('¿Seguro que deseas eliminar este periodo?')) return;
+            try {
+              const resp = await fetch(`/api/periodos/${encodeURIComponent(id)}`, { method: 'DELETE' });
+              const text = await resp.text(); // puede no ser JSON
+              if (!resp.ok) throw new Error(text || 'Error al eliminar');
+              alert('Periodo eliminado');
+              location.reload();
+            } catch (err) {
+              console.error('Eliminar periodo:', err);
+              alert('Error al eliminar (ver consola)');
+            }
+          });
+        });
+
       });
   }
 });
