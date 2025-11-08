@@ -28,8 +28,8 @@ services:
     restart: always
     ports:
       - "${FRONTEND_PORT}:80"
-    # volumes:
-    #   - ./frontend:/usr/share/nginx/html
+    volumes:
+    - ./frontend/public:/usr/share/nginx/html 
     networks:
       - my-network
 

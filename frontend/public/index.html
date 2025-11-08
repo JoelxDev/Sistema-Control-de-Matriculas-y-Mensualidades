@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-     <style>
+    <style>
         body {
             margin: 0;
             height: 100vh;
@@ -14,6 +15,7 @@
             justify-content: center;
             font-family: 'Segoe UI', Arial, sans-serif;
         }
+
         .login-container {
             background: rgba(30, 60, 80, 0.25);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -25,6 +27,7 @@
             align-items: center;
             position: relative;
         }
+
         .avatar {
             background: #18304a;
             width: 90px;
@@ -38,11 +41,13 @@
             left: 50%;
             transform: translateX(-50%);
         }
+
         .avatar svg {
             width: 50px;
             height: 50px;
             stroke: #fff;
         }
+
         .login-form {
             width: 100%;
             margin-top: 60px;
@@ -50,9 +55,11 @@
             flex-direction: column;
             gap: 18px;
         }
+
         .input-group {
             position: relative;
         }
+
         .input-group input {
             width: 86%;
             padding: 10px 10px 10px 38px;
@@ -63,6 +70,7 @@
             font-size: 1rem;
             outline: none;
         }
+
         .input-group label {
             position: absolute;
             left: 38px;
@@ -72,6 +80,7 @@
             pointer-events: none;
             font-size: 1rem;
         }
+
         .input-group .icon {
             position: absolute;
             left: 8px;
@@ -80,6 +89,7 @@
             color: #fff;
             font-size: 1.1rem;
         }
+
         .login-btn {
             width: 100%;
             padding: 12px 0;
@@ -94,41 +104,44 @@
             margin-top: 10px;
             transition: background 0.2s;
         }
+
         .login-btn:hover {
             background: #25476a;
         }
+
         ::placeholder {
             color: #e0e0e0;
             opacity: 1;
         }
     </style>
 </head>
+
 <body>
-     <div class="login-container">
+    <div class="login-container">
         <div class="avatar">
             <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 20c0-4 8-4 8-4s8 0 8 4"/>
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 8-4 8-4s8 0 8 4" />
             </svg>
         </div>
-        <form class="login-form">
+        <form class="login-form" id="form-login">
             <div class="input-group">
                 <span class="icon">
                     <!-- Email icon SVG -->
                     <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="3" y="5" width="18" height="14" rx="2"/>
-                        <path d="M3 7l9 6 9-6"/>
+                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                        <path d="M3 7l9 6 9-6" />
                     </svg>
                 </span>
-                <input type="email" id="email" placeholder="Email ID" required>
+                <input type="text" id="text-email" placeholder="Nombre de usuario" required>
             </div>
             <div class="input-group">
                 <span class="icon">
                     <!-- Lock icon SVG -->
                     <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="5" y="11" width="14" height="8" rx="2"/>
-                        <path d="M12 15v2"/>
-                        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                        <rect x="5" y="11" width="14" height="8" rx="2" />
+                        <path d="M12 15v2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
                     </svg>
                 </span>
                 <input type="password" id="password" placeholder="Password" required>
@@ -136,5 +149,49 @@
             <button type="submit" class="login-btn">LOGIN</button>
         </form>
     </div>
+    <script type="module">
+        import { API_BASE } from '/js/auth.js';
+
+        // Redirigir si ya hay sesión
+        // (function () {
+        //     const token = localStorage.getItem('auth_token');
+        //     const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+        //     if (token && user?.role) {
+        //         const r = String(user.role).toLowerCase();
+        //         if (r.includes('admin')) return (location.href = 'http://localhost:3000/admin/personal_administrativo');
+        //         if (r.includes('secret')) return (location.href = 'http://localhost:3000/secretario/perfil');
+        //     }
+        // })();
+
+        const form = document.getElementById('form-login');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('text-email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            if (!username || !password) return alert('Ingrese credenciales');
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) return alert(data.error || 'Credenciales inválidas');
+
+                localStorage.setItem('auth_token', data.token);
+                localStorage.setItem('auth_user', JSON.stringify(data.user));
+
+                const role = String(data.user?.role || '').toLowerCase();
+                if (role.includes('admin')) location.href = 'http://localhost:3000/admin/personal_administrativo';
+                else if (role.includes('secret')) location.href = 'http://localhost:3000/secretario/perfil';
+                else location.href = 'http://localhost:8088/';
+            } catch (err) {
+                console.error(err);
+                alert('Error de red');
+            }
+        });
+    </script>
 </body>
+
 </html>

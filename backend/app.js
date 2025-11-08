@@ -17,15 +17,23 @@ require('dotenv').config();
 
 app.use(cors());
 
+app.use(express.json());
+
 //////////////////////////////////////////////////////////////
-// API RUTA ADMIN
+// API RUTAS DE AUTENTICACIÓN
+
+const loginRoutes = require('./modules/login/login.routes');
+app.use('/api/auth', loginRoutes);
+
+// const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
+const { requireAuth } = require('./middleware/auth.middleware');
+// const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
 
 
 
 //////////////////////////////////////////////////////////////
 // API RUTAS 
 
-app.use(express.json());
 
 const persAdminRoutes = require('./modules/personalAdmin/persAdmin.routes');
 app.use('/api/admin/usuarios',persAdminRoutes);
