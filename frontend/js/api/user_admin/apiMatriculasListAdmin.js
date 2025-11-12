@@ -1,5 +1,8 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 function cargarMatriculas() {
-    fetch('/api/matriculas')
+    fetchAuth('/api/matriculas')
         .then(res => res.json())
         .then(matriculas => {
             const tbody = document.getElementById('matriculas-list');

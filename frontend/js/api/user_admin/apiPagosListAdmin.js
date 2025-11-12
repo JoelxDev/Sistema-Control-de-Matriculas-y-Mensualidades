@@ -1,8 +1,11 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.getElementById('periodos-list');
   if (!tbody) return;
 
-  fetch('/api/pagos/todos')
+  fetchAuth('/api/pagos/todos')
     .then(res => {
       if (!res.ok) throw new Error('Error al obtener pagos');
       return res.json();

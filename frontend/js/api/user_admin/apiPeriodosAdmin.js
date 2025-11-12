@@ -1,6 +1,9 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/periodos')) {
-    fetch('/api/periodos')
+    fetchAuth('/api/periodos')
       .then(res => res.json())
       .then(periodos => {
         const tbody = document.getElementById('periodos-list');
@@ -28,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!id) return;
             if (!confirm('¿Seguro que deseas eliminar este periodo?')) return;
             try {
-              const resp = await fetch(`/api/periodos/${encodeURIComponent(id)}`, { method: 'DELETE' });
+              const resp = await fetchAuth(`/api/periodos/${encodeURIComponent(id)}`, { method: 'DELETE' });
               const text = await resp.text(); // puede no ser JSON
               if (!resp.ok) throw new Error(text || 'Error al eliminar');
               alert('Periodo eliminado');
@@ -46,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/periodos/crear')) {
     // Cargar años académicos para el select
-    fetch('/api/anio_academico')
+    fetchAuth('/api/anio_academico')
       .then(res => res.json())
       .then(anios => {
         const select = document.getElementById('anio_academico_id_anio_escolar');
@@ -65,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         estado_per: form.estado_per.value,
         anio_academico_id_anio_escolar: form.anio_academico_id_anio_escolar.value
       };
-      fetch('/api/periodos', {
+      fetchAuth('/api/periodos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -88,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const id = params.get('id');
     const form = document.getElementById('form-editar-periodo');
     // Cargar años académicos para el select
-    fetch('/api/anio_academico')
+    fetchAuth('/api/anio_academico')
       .then(res => res.json())
       .then(anios => {
         const select = document.getElementById('anio_academico_id_anio_escolar');
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
           select.innerHTML += `<option value="${a.id_anio_escolar}">${a.anio_acad}</option>`;
         });
         // Cargar datos actuales del periodo
-        fetch(`/api/periodos/${id}`)
+        fetchAuth(`/api/periodos/${id}`)
           .then(res => res.json())
           .then(periodo => {
             form.nombre_per.value = periodo.nombre_per;
@@ -116,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
         estado_per: form.estado_per.value,
         anio_academico_id_anio_escolar: form.anio_academico_id_anio_escolar.value
       };
-      fetch(`/api/periodos/${id}`, {
+      fetchAuth(`/api/periodos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

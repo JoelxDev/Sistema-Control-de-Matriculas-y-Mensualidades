@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
     const idSeccion = params.get('id');
@@ -5,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!idSeccion) return;
     if (window.location.pathname.endsWith('/admin/aulasSecciones/detalles_seccion')) {
 
-        fetch(`/api/secciones/${idSeccion}`)
+        fetchAuth(`/api/secciones/${idSeccion}`)
             .then(res => res.json())
             .then(seccion => {
                 const titulo = document.querySelector('.title-lower-body h1');
@@ -14,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-        fetch(`/api/secciones/${idSeccion}/estudiantes`)
+        fetchAuth(`/api/secciones/${idSeccion}/estudiantes`)
             .then(res => res.json())
             .then(estudiantes => {
                 const tbody = document.querySelector('#tabla-estudiantes-seccion tbody');

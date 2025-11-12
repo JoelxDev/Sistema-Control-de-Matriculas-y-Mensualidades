@@ -1,7 +1,10 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', () => {
   if (!location.pathname.endsWith('/admin/mensualidades')) return;
 
-  fetch('/api/secciones')
+  fetchAuth('/api/secciones')
     .then(r => r.json())
     .then(secciones => {
       const niveles = {};
@@ -87,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   thead.innerHTML = ['<th>Estudiante</th>', ...MONTHS.map(m => `<th>${m}</th>`)].join('');
 
-  const res = await fetch(`/api/mensualidades/seccion/${encodeURIComponent(seccionId)}?hastaMes=${mesTope}`);
+  const res = await fetchAuth(`/api/mensualidades/seccion/${encodeURIComponent(seccionId)}?hastaMes=${mesTope}`);
   if (!res.ok) { console.error('No se pudo cargar la sección'); return; }
   const { rows } = await res.json();
 

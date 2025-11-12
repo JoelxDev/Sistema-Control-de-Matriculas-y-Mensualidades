@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/aulasSecciones/aulas')) {
     cargarAulas();
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.target.classList.contains('btn-eliminar-aula')) {
         const id = e.target.getAttribute('data-id');
         if (confirm('¿Seguro que deseas eliminar esta aula?')) {
-          fetch(`/api/aulas/${id}`, { method: 'DELETE' })
+          fetchAuth(`/api/aulas/${id}`, { method: 'DELETE' })
             .then(res => res.json())
             .then(result => {
               if (result.message) cargarAulas();
@@ -26,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         capacidad_maxima: form.capacidad_maxima.value,
         estado: form.estado.value
       };
-      fetch('/api/aulas', {
+      fetchAuth('/api/aulas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const id = params.get('id');
     const form = document.getElementById('form-editar-aula');
     // Cargar datos actuales
-    fetch(`/api/aulas/${id}`)
+    fetchAuth(`/api/aulas/${id}`)
       .then(res => res.json())
       .then(aula => {
         form.capacidad_maxima.value = aula.capacidad_maxima;
@@ -61,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         capacidad_maxima: form.capacidad_maxima.value,
         estado: form.estado.value
       };
-      fetch(`/api/aulas/${id}`, {
+      fetchAuth(`/api/aulas/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -81,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function cargarAulas() {
-  fetch('/api/aulas')
+  fetchAuth('/api/aulas')
     .then(res => res.json())
     .then(aulas => {
       const lowerBody = document.querySelector('.lower-body');

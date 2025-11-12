@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     // LISTA: /secretario/mensualidades
     if (window.location.pathname.endsWith('/mensualidades/meses')) {
@@ -11,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const id = e.target.getAttribute('data-id');
                 if (!id) return;
                 if (confirm('¿Seguro que deseas eliminar esta mensualidad?')) {
-                    fetch(`/api/mensualidades/${id}`, { method: 'DELETE' })
+                    fetchAuth(`/api/mensualidades/${id}`, { method: 'DELETE' })
                         .then(res => res.json())
                         .then(result => {
                             if (result && result.success) {
@@ -43,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return alert('Fecha límite debe estar entre 1 y 30');
                 }
 
-                fetch('/api/mensualidades', {
+                fetchAuth('/api/mensualidades', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ mes, fecha_limite, descripcion_mes })
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!id || !form) return;
 
         // Cargar datos actuales
-        fetch(`/api/mensualidades/${id}`)
+        fetchAuth(`/api/mensualidades/${id}`)
             .then(res => res.json())
             .then(resp => {
                 const datos = resp?.data || resp;
@@ -95,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return alert('Fecha límite debe estar entre 1 y 30');
             }
 
-            fetch(`/api/mensualidades/${id}`, {
+            fetchAuth(`/api/mensualidades/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ mes, fecha_limite, descripcion_mes })
@@ -116,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Función para cargar lista y renderizar tabla
 function cargarMeses() {
-    fetch('/api/mensualidades')
+    fetchAuth('/api/mensualidades')
         .then(res => res.json())
         .then(resp => {
             const meses = resp?.data || resp || [];

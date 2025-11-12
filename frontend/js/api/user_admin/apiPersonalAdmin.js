@@ -1,8 +1,7 @@
 // import { requireSession, fetchAuth  } from '../../../public/js/auth.js';
-import { requireSession, fetchAuth  } from '/js/auth.js';
 // import { fetchAuth } from '/js/auth.js';
-
-requireSession();   // al inicio
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
 
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname === '/admin/personal_administrativo') {

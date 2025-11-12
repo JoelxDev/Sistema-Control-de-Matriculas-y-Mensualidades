@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     cargarMontosDefinidos();
     cargarGrados();
@@ -6,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Cargar montos definidos en la tabla
 function cargarMontosDefinidos() {
-    fetch('/api/definir_monto')
+    fetchAuth('/api/definir_monto')
         .then(res => res.json())
         .then(montos => {
             const tbody = document.getElementById('tabla-montos-list');
@@ -38,7 +41,7 @@ function cargarMontosDefinidos() {
 // Eliminar monto
 function eliminarMonto(id) {
     if (confirm('¿Seguro que desea eliminar este monto?')) {
-        fetch(`/api/definir_monto/${id}`, { method: 'DELETE' })
+        fetchAuth(`/api/definir_monto/${id}`, { method: 'DELETE' })
             .then(res => res.json())
             .then(result => {
                 alert(result.message || 'Monto eliminado');
@@ -52,7 +55,7 @@ function eliminarMonto(id) {
 
 // Cargar grados y niveles en el select
 function cargarGrados() {
-    fetch('/api/grados')
+    fetchAuth('/api/grados')
         .then(res => res.json())
         .then(grados => {
             const select = document.getElementById('nivel_grado');
@@ -76,7 +79,7 @@ function inicializarFormulario() {
 
     if (id && form.id === 'form-editar-monto') {
         // Modo edición
-        fetch(`/api/definir_monto/${id}`)
+        fetchAuth(`/api/definir_monto/${id}`)
             .then(res => res.json())
             .then(monto => {
                 document.getElementById('tipo').value = monto.tipo_est_mon;
@@ -89,7 +92,7 @@ function inicializarFormulario() {
             e.preventDefault();
             const datos = obtenerDatosFormulario();
             if (!validarDatos(datos)) return;
-            fetch(`/api/definir_monto/${id}`, {
+            fetchAuth(`/api/definir_monto/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datos)
@@ -109,7 +112,7 @@ function inicializarFormulario() {
             e.preventDefault();
             const datos = obtenerDatosFormulario();
             if (!validarDatos(datos)) return;
-            fetch('/api/definir_monto', {
+            fetchAuth('/api/definir_monto', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datos)
