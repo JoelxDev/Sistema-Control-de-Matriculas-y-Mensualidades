@@ -1,6 +1,12 @@
+// import { requireSession, fetchAuth  } from '../../../public/js/auth.js';
+import { requireSession, fetchAuth  } from '/js/auth.js';
+// import { fetchAuth } from '/js/auth.js';
+
+requireSession();   // al inicio
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname === '/admin/personal_administrativo') {
-        fetch('/api/admin/usuarios/personal')
+        fetchAuth('/api/admin/usuarios/personal')
             .then(r => r.json())
             .then(result => {
                 const tbody = document.querySelector('.tabla-detalles tbody');
@@ -41,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     btn.addEventListener('click', function () {
                         const id = this.getAttribute('data-id');
                         if (confirm('¿Seguro que deseas eliminar este personal?')) {
-                            fetch(`/api/admin/usuarios/usuarios-personal/${id}`, { method: 'DELETE' })
+                            fetchAuth(`/api/admin/usuarios/usuarios-personal/${id}`, { method: 'DELETE' })
                               .then(async res => { if (!res.ok) throw new Error(await res.text()); return res.json().catch(()=>({})); })
                               .then(() => location.reload())
                               .catch(err => { console.error(err); alert('Error al eliminar'); });
@@ -82,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
                      : cargoLow.includes('secretaria') ? 'secretaria'
                      : 'otro';
 
-        fetch('/api/admin/usuarios/usuarios', {
+        fetchAuth('/api/admin/usuarios/usuarios', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify(payload)
@@ -132,10 +138,10 @@ document.addEventListener('DOMContentLoaded', async function () {
       dni: getVal('dni'),
       telefono_per: getVal('telefono_per'),
       correo_elec_per: getVal('correo_elec_per'),
-      estado_per: getVal('estado_per')
+      estado_per: getVal('estado_us')
     };
 
-    fetch(`/api/admin/usuarios/usuarios-personal/${encodeURIComponent(id)}`, {
+    fetchAuth(`/api/admin/usuarios/usuarios-personal/${encodeURIComponent(id)}`, {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(body)

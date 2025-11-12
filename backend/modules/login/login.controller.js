@@ -11,7 +11,8 @@ function signToken(payload) {
 async function login(req, res, next) {
   try {
     const { username, password } = req.body || {};
-    if (!username || !password) return res.status(400).json({ error: 'Credenciales requeridas' });
+    if (!username || !password)
+      return res.status(400).json({ error: 'Credenciales requeridas' });
 
     const user = await LoginModel.findByUsername(username);
     if (!user) return res.status(401).json({ error: 'Usuario o contraseña inválidos' });
@@ -19,9 +20,8 @@ async function login(req, res, next) {
     const ok = await bcrypt.compare(password, user.contrasenia);
     if (!ok) return res.status(401).json({ error: 'Usuario o contraseña inválidos' });
 
-    if (user.estado_us && String(user.estado_us).toLowerCase() !== 'activo') {
+    if (user.estado_us && String(user.estado_us).toLowerCase() !== 'activo')
       return res.status(403).json({ error: 'Usuario inactivo' });
-    }
 
     const token = signToken({
       sub: user.id_usuarios,
@@ -30,8 +30,16 @@ async function login(req, res, next) {
       username: user.nombre_usuario
     });
 
+    // Cookie JWT
+    res.cookie('auth_token', token, {
+      httpOnly: true,          // protege contra XSS
+      secure: false,           // poner true en producción HTTPS
+      sameSite: 'lax',         // suficiente (puerto distinto sigue siendo same-site)
+      maxAge: 8 * 60 * 60 * 1000,
+      path: '/'
+    });
+
     return res.json({
-      token,
       user: {
         id: user.id_usuarios,
         username: user.nombre_usuario,
@@ -46,7 +54,21 @@ async function login(req, res, next) {
         }
       }
     });
-  } catch (err) { next(err); }
+  } catch (err) {
+    console.error('Error login:', err);
+    next(err);
+  }
 }
 
-module.exports = { login };
+function logout(req, res) {
+  res.cookie('auth_token', '', { maxAge: 0, path: '/' });
+  return res.json({ message: 'Logout ok' });
+}
+
+function verify(req, res) {
+  // Si middleware ya verificó user:
+  if (!req.user) return res.status(401).json({ error: 'No autenticado' });
+  return res.json({ user: req.user });
+}
+
+module.exports = { login, logout, verify };

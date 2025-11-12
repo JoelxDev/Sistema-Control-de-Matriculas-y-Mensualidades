@@ -150,48 +150,35 @@
         </form>
     </div>
     <script type="module">
-        import { API_BASE } from '/js/auth.js';
+    const API_BASE = 'http://localhost:3000';
+    const form = document.getElementById('form-login');
 
-        // Redirigir si ya hay sesión
-        // (function () {
-        //     const token = localStorage.getItem('auth_token');
-        //     const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
-        //     if (token && user?.role) {
-        //         const r = String(user.role).toLowerCase();
-        //         if (r.includes('admin')) return (location.href = 'http://localhost:3000/admin/personal_administrativo');
-        //         if (r.includes('secret')) return (location.href = 'http://localhost:3000/secretario/perfil');
-        //     }
-        // })();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('text-email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      if (!username || !password) return alert('Completar campos');
 
-        const form = document.getElementById('form-login');
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('text-email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            if (!username || !password) return alert('Ingrese credenciales');
-
-            try {
-                const res = await fetch(`${API_BASE}/api/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) return alert(data.error || 'Credenciales inválidas');
-
-                localStorage.setItem('auth_token', data.token);
-                localStorage.setItem('auth_user', JSON.stringify(data.user));
-
-                const role = String(data.user?.role || '').toLowerCase();
-                if (role.includes('admin')) location.href = 'http://localhost:3000/admin/personal_administrativo';
-                else if (role.includes('secret')) location.href = 'http://localhost:3000/secretario/perfil';
-                else location.href = 'http://localhost:8088/';
-            } catch (err) {
-                console.error(err);
-                alert('Error de red');
-            }
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({ username, password }),
+          credentials: 'include'
         });
-    </script>
+        const data = await res.json().catch(()=> ({}));
+        if (!res.ok) return alert(data.error || 'Credenciales inválidas');
+
+        const role = String(data.user?.role || '').toLowerCase();
+        if (role.includes('admin')) location.href = 'http://localhost:3000/admin/personal_administrativo';
+        else if (role.includes('secret')) location.href = 'http://localhost:3000/secretario/perfil';
+        else location.href = 'http://localhost:3000/';
+      } catch(err) {
+        console.error(err);
+        alert('Error de red');
+      }
+    });
+  </script>
 </body>
 
 </html>
