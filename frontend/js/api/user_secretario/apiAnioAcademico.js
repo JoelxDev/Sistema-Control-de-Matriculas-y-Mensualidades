@@ -1,6 +1,10 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.endsWith('/anio_academico')) {
-        fetch('/api/anio_academico')
+        fetchAuth('/api/anio_academico')
             .then(res => res.json())
             .then(anios => {
                 const contenedor = document.getElementById('anio-academico-list');
@@ -35,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 descripcion_anio: form.descripcion_anio.value,
                 estado: form.estado.value
             };
-            fetch('/api/anio_academico', {
+            fetchAuth('/api/anio_academico', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -58,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
         const form = document.getElementById('form-editar-anio');
-        fetch(`/api/anio_academico/${id}`)
+        fetchAuth(`/api/anio_academico/${id}`)
             .then(res => res.json())
             .then(anio => {
                 form.anio_acad.value = anio.anio_acad;
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 descripcion_anio: form.descripcion_anio.value,
                 estado: form.estado.value
             };
-            fetch(`/api/anio_academico/${id}`, {
+            fetchAuth(`/api/anio_academico/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

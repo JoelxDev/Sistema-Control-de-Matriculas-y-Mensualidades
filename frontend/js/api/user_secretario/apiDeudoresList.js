@@ -1,4 +1,6 @@
-// ...existing code...
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', async () => {
   const API_DEUDORES = '/api/deudores'; // <- prefijo real de tus endpoints de deudores
   // Ajusta estos endpoints si tus rutas son distintas
@@ -36,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const mesActual = () => new Date().getMonth() + 1;
 
   async function getJSON(url) {
-    const res = await fetch(url);
+    const res = await fetchAuth(url);
     if (!res.ok) throw new Error(`${res.status} ${res.statusText} - ${url}`);
     return res.json();
   }

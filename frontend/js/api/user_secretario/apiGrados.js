@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.endsWith('/aulas/grados')) {
         cargarGrados();
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.target.classList.contains('btn-eliminar-grado')) {
                 const id = e.target.getAttribute('data-id');
                 if (confirm('¿Seguro que deseas eliminar este grado?')) {
-                    fetch(`/api/grados/${id}`, { method: 'DELETE' })
+                    fetchAuth(`/api/grados/${id}`, { method: 'DELETE' })
                         .then(res => res.json())
                         .then(result => {
                             if (result.message) cargarGrados();
@@ -20,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function cargarGrados() {
-    fetch('/api/grados')
+    fetchAuth('/api/grados')
         .then(res => res.json())
         .then(grados => {
             const lowerBody = document.querySelector('.lower-body');
@@ -57,7 +60,7 @@ function cargarGrados() {
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/aulas/grados/crear')) {
     // Cargar niveles para el select
-    fetch('/api/niveles')
+    fetchAuth('/api/niveles')
       .then(res => res.json())
       .then(niveles => {
         const select = document.getElementById('select-nivel');
@@ -74,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         nombre_grad: form.nombre_grad.value,
         niveles_id_nivel: form.niveles_id_nivel.value
       };
-      fetch('/api/grados', {
+      fetchAuth('/api/grados', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -98,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const id = params.get('id');
     const form = document.getElementById('form-editar-grado');
     // Cargar niveles
-    fetch('/api/niveles')
+    fetchAuth('/api/niveles')
       .then(res => res.json())
       .then(niveles => {
         const select = document.getElementById('select-nivel');
@@ -106,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
           select.innerHTML += `<option value="${niv.id_nivel}">${niv.nombre_niv}</option>`;
         });
         // Cargar datos actuales del grado
-        fetch(`/api/grados/${id}`)
+        fetchAuth(`/api/grados/${id}`)
           .then(res => res.json())
           .then(grado => {
             form.nombre_grad.value = grado.nombre_grad;
@@ -121,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
         nombre_grad: form.nombre_grad.value,
         niveles_id_nivel: form.niveles_id_nivel.value
       };
-      fetch(`/api/grados/${id}`, {
+      fetchAuth(`/api/grados/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

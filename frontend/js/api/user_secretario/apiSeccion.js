@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/aulas/secciones')) {
     cargarSecciones();
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.target.classList.contains('btn-eliminar-seccion')) {
         const id = e.target.getAttribute('data-id');
         if (confirm('¿Seguro que deseas eliminar esta sección?')) {
-          fetch(`/api/secciones/${id}`, { method: 'DELETE' })
+          fetchAuth(`/api/secciones/${id}`, { method: 'DELETE' })
             .then(res => res.json())
             .then(result => {
               if (result.message) cargarSecciones();
@@ -20,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function cargarSecciones() {
-  fetch('/api/secciones')
+  fetchAuth('/api/secciones')
     .then(res => res.json())
     .then(secciones => {
       const lowerBody = document.querySelector('.lower-body');
@@ -63,7 +66,7 @@ function cargarSecciones() {
 document.addEventListener('DOMContentLoaded', function () {
   if (window.location.pathname.endsWith('/aulas/secciones/crear')) {
     // Cargar grados
-    fetch('/api/grados')
+    fetchAuth('/api/grados')
       .then(res => res.json())
       .then(grados => {
         const select = document.getElementById('select-grado');
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
     // Cargar aulas
-    fetch('/api/aulas')
+    fetchAuth('/api/aulas')
       .then(res => res.json())
       .then(aulas => {
         const select = document.getElementById('select-aula');
@@ -90,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
         grados_id_grado: form.grados_id_grado.value,
         aulas_id_aula: form.aulas_id_aula.value
       };
-      fetch('/api/secciones', {
+      fetchAuth('/api/secciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -115,9 +118,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('form-editar-seccion');
     // Cargar grados y aulas
     Promise.all([
-      fetch('/api/grados').then(res => res.json()),
-      fetch('/api/aulas').then(res => res.json()),
-      fetch(`/api/secciones/${id}`).then(res => res.json())
+      fetchAuth('/api/grados').then(res => res.json()),
+      fetchAuth('/api/aulas').then(res => res.json()),
+      fetchAuth(`/api/secciones/${id}`).then(res => res.json())
     ]).then(([grados, aulas, seccion]) => {
       const selectGrado = document.getElementById('select-grado');
       grados.forEach(g => {
@@ -142,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
         grados_id_grado: form.grados_id_grado.value,
         aulas_id_aula: form.aulas_id_aula.value
       };
-      fetch(`/api/secciones/${id}`, {
+      fetchAuth(`/api/secciones/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

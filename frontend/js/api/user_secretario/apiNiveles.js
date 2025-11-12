@@ -1,3 +1,6 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.endsWith('/aulas/niveles')) {
         cargarNiveles();
@@ -7,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.target.classList.contains('btn-eliminar-nivel')) {
                 const id = e.target.getAttribute('data-id');
                 if (confirm('¿Seguro que deseas eliminar este nivel?')) {
-                    fetch(`/api/niveles/${id}`, { method: 'DELETE' })
+                    fetchAuth(`/api/niveles/${id}`, { method: 'DELETE' })
                         .then(res => res.json())
                         .then(result => {
                             if (result.message) cargarNiveles();
@@ -20,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function cargarNiveles() {
-    fetch('/api/niveles')
+    fetchAuth('/api/niveles')
         .then(res => res.json())
         .then(niveles => {
             const lowerBody = document.querySelector('.lower-body');
@@ -58,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             const data = { nombre_niv: form.nombre_niv.value };
-            fetch('/api/niveles', {
+            fetchAuth('/api/niveles', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -82,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const id = params.get('id');
         const form = document.getElementById('form-editar-nivel');
         // Cargar datos actuales
-        fetch(`/api/niveles/${id}`)
+        fetchAuth(`/api/niveles/${id}`)
             .then(res => res.json())
             .then(niv => {
                 form.nombre_niv.value = niv.nombre_niv;
@@ -91,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             const data = { nombre_niv: form.nombre_niv.value };
-            fetch(`/api/niveles/${id}`, {
+            fetchAuth(`/api/niveles/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

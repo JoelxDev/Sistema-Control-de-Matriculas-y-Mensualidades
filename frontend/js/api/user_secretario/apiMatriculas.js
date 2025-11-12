@@ -1,12 +1,12 @@
-// Cargar niveles al iniciar
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
 
-// Enviar formulario
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.datos-tutor').style.display = 'none';
     document.getElementById('tutor').addEventListener('change', function () {
         document.querySelector('.datos-tutor').style.display = this.value === 'si' ? 'block' : 'none';
     });
-    fetch('/api/niveles')
+    fetchAuth('/api/niveles')
         .then(res => res.json())
         .then(niveles => {
             const nivelSelect = document.getElementById('para_nivel');
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         gradoSelect.innerHTML = '<option value="">Seleccione grado</option>';
         document.getElementById('para_seccion').innerHTML = '<option value="">Seleccione sección</option>';
         if (!nivelId) return;
-        fetch(`/api/grados?nivel=${nivelId}`)
+        fetchAuth(`/api/grados?nivel=${nivelId}`)
             .then(res => res.json())
             .then(grados => {
                 grados.forEach(g => {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const seccionSelect = document.getElementById('para_seccion');
         seccionSelect.innerHTML = '<option value="">Seleccione sección</option>';
         if (!gradoId) return;
-        fetch(`/api/secciones?grado=${gradoId}`)
+        fetchAuth(`/api/secciones?grado=${gradoId}`)
             .then(res => res.json())
             .then(secciones => {
                 secciones.forEach(s => {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
     // Para años académicos
-    fetch('/api/anio_academico')
+    fetchAuth('/api/anio_academico')
         .then(res => res.json())
         .then(anios => {
             const anioSelect = document.getElementById('anio_academico');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             periodoSelect.innerHTML = '<option value="">Seleccione periodo</option>';
             return;
         }
-        fetch(`/api/periodos?anio=${anioId}`)
+        fetchAuth(`/api/periodos?anio=${anioId}`)
             .then(res => res.json())
             .then(periodos => {
                 periodoSelect.innerHTML = '<option value="">Seleccione periodo</option>';
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Cargar descuentos al iniciar
-    fetch('/api/descuentos')
+    fetchAuth('/api/descuentos')
         .then(res => res.json())
         .then(descuentos => {
             const descuentoSelect = document.getElementById('descuento');
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             
             // Enviar
-            fetch(url, {
+            fetchAuth(url, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estudiante, responsables, matricula })
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const form = document.querySelector('.registrar-matricula form');
 
         // Cargar datos completos de la matrícula
-        fetch(`/api/matriculas/${id}`)
+        fetchAuth(`/api/matriculas/${id}`)
             .then(res => res.json())
             .then(data => {
                 const { matricula, responsables } = data;
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 function cargarMatriculas() {
-    fetch('/api/matriculas')
+    fetchAuth('/api/matriculas')
         .then(res => res.json())
         .then(matriculas => {
             const tbody = document.getElementById('matriculas-list');

@@ -1,6 +1,9 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.endsWith('/secretario/aulas')) {
-        fetch('/api/secciones')
+        fetchAuth('/api/secciones')
             .then(res => res.json())
             .then(secciones => {
                 // Organizar secciones por niveles y grados

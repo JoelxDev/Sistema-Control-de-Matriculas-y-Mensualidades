@@ -1,8 +1,11 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 (function () {
   const API_BASE = '/api/pagos';
 
   async function requestJson(url, opts = {}) {
-    const res = await fetch(url, opts);
+    const res = await fetchAuth(url, opts);
     const text = await res.text();
     try { return res.ok ? JSON.parse(text || '[]') : Promise.reject(new Error(text || res.statusText)); }
     catch (e) { return res.ok ? [] : Promise.reject(new Error(text || res.statusText)); }
@@ -53,7 +56,7 @@
         qs.set('tipo', 'mensualidad');
         if (nivelId) qs.set('nivelId', nivelId);
         if (gradoId) qs.set('gradoId', gradoId);
-        const res = await fetch(`/api/definir_monto?${qs.toString()}`);
+        const res = await fetchAuth(`/api/definir_monto?${qs.toString()}`);
         if (!res.ok) throw new Error('Error cargando montos de mensualidad');
         montos = await res.json();
       } else {
@@ -179,12 +182,12 @@
         });
         fd.append('comprobante', file);
 
-        const res = await fetch(`${API_BASE}/crear`, { method: 'POST', body: fd });
+        const res = await fetchAuth(`${API_BASE}/crear`, { method: 'POST', body: fd });
         const text = await res.text();
         if (!res.ok) throw new Error(text || res.statusText);
         return JSON.parse(text || '{}');
       } else {
-        const res = await fetch(`${API_BASE}/crear`, {
+        const res = await fetchAuth(`${API_BASE}/crear`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -204,7 +207,7 @@
     if (!sel) return;
     sel.innerHTML = '';
     try {
-      const res = await fetch(`${API_BASE}/mensualidades-registradas`);
+      const res = await fetchAuth(`${API_BASE}/mensualidades-registradas`);
       if (!res.ok) throw new Error('Error cargando mensualidades registradas');
       const meses = await res.json();
       if (!Array.isArray(meses) || meses.length === 0) {
@@ -245,7 +248,7 @@
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="9">Cargando...</td></tr>';
     try {
-      const res = await fetch('/api/matriculas');
+      const res = await fetchAuth('/api/matriculas');
       const matriculas = await res.json();
       tbody.innerHTML = '';
       (matriculas || []).forEach(m => {
@@ -298,7 +301,7 @@
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="11">Cargando...</td></tr>';
     try {
-      const res = await fetch(`${API_BASE}/mensualidades-pendientes`);
+      const res = await fetchAuth(`${API_BASE}/mensualidades-pendientes`);
       if (!res.ok) throw new Error('Error cargando mensualidades pendientes');
       const lista = await res.json();
       if (!Array.isArray(lista) || lista.length === 0) {

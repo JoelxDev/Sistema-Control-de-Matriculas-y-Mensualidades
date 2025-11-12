@@ -1,5 +1,8 @@
+import { requireSession, fetchAuth  } from '/js/auth.js';
+requireSession();
+
 function cargarDescuentos() {
-    fetch('/api/descuentos')
+    fetchAuth('/api/descuentos')
         .then(response => response.json())
         .then(descuentos =>{
             const tbody = document.getElementById('tabla-descuentos-list');
@@ -34,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 porcentaje_desc: form.porcentaje_desc.value,
                 descripcion_desc: form.descripcion_desc.value
             }
-            fetch('/api/descuentos', {
+            fetchAuth('/api/descuentos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get('id');
         const form = document.getElementById('form-editar-descuento');
-        fetch(`/api/descuentos/${id}`)
+        fetchAuth(`/api/descuentos/${id}`)
             .then(response => response.json())
             .then(descuento => {
                 form.nombre_desc.value = descuento.nombre_desc;
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 porcentaje_desc: form.porcentaje_desc.value,
                 descripcion_desc: form.descripcion_desc.value
             };
-            fetch(`/api/descuentos/${id}`, {
+            fetchAuth(`/api/descuentos/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -96,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target.classList.contains('btn-eliminar-descuento')) {
             const id = event.target.getAttribute('data-id');
             if (confirm('¿Estás seguro de que deseas eliminar este descuento?')) {
-                fetch(`/api/descuentos/${id}`, {
+                fetchAuth(`/api/descuentos/${id}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
