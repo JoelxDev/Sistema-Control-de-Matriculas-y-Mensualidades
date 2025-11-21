@@ -1,3 +1,4 @@
+// ...existing code...
 import { requireSession, fetchAuth  } from '/js/auth.js';
 requireSession();
 
@@ -6,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tutor').addEventListener('change', function () {
         document.querySelector('.datos-tutor').style.display = this.value === 'si' ? 'block' : 'none';
     });
+
+    // Carga inicial de selects (niveles, años, descuentos, etc.)
     fetchAuth('/api/niveles')
         .then(res => res.json())
         .then(niveles => {
@@ -16,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-    // Cuando selecciona un nivel, carga los grados de ese nivel
     document.getElementById('para_nivel').addEventListener('change', function () {
         const nivelId = this.value;
         const gradoSelect = document.getElementById('para_grado');
@@ -32,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // Cuando selecciona un grado, carga las secciones de ese grado
     document.getElementById('para_grado').addEventListener('change', function () {
         const gradoId = this.value;
         const seccionSelect = document.getElementById('para_seccion');
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
     });
-    // Para años académicos
+
     fetchAuth('/api/anio_academico')
         .then(res => res.json())
         .then(anios => {
@@ -57,14 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-    // Cuando el usuario selecciona un año académico, carga los periodos de ese año
     document.getElementById('anio_academico').addEventListener('change', function () {
         const anioId = this.value;
         const periodoSelect = document.getElementById('periodo');
-        if (!anioId) {
-            periodoSelect.innerHTML = '<option value="">Seleccione periodo</option>';
-            return;
-        }
+        periodoSelect.innerHTML = '<option value="">Seleccione periodo</option>';
+        if (!anioId) return;
         fetchAuth(`/api/periodos?anio=${anioId}`)
             .then(res => res.json())
             .then(periodos => {
@@ -75,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    // Cargar descuentos al iniciar
     fetchAuth('/api/descuentos')
         .then(res => res.json())
         .then(descuentos => {
@@ -85,42 +82,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 descuentoSelect.innerHTML += `<option value="${d.id_descuento}">${d.nombre_desc} (${d.porcentaje_desc}%)</option>`;
             });
         });
-    // Calcula la edad al cambiar la fecha de nacimiento
+
     document.getElementById('fecha_nacimiento_est').addEventListener('change', function () {
         const fechaNacimiento = this.value;
         const hoy = new Date();
         const nacimiento = new Date(fechaNacimiento);
         let edad = hoy.getFullYear() - nacimiento.getFullYear();
         const m = hoy.getMonth() - nacimiento.getMonth();
-        if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
-            edad--;
-        }
+        if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
         document.getElementById('edad_est').value = edad;
-
-
-
     });
+
     const form = document.querySelector('.registrar-matricula form');
     if (form) {
-
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const formData = new FormData(form);
-            // ✅ Detecta automáticamente si es creación o edición
-            // Detectar si es edición o creación
+
             const isEditing = window.location.pathname.endsWith('/matriculas/editar');
             const params = new URLSearchParams(window.location.search);
             const id = params.get('id');
+            const formData = new FormData(form);
 
-            // Si es edición, agregar ID del estudiante
-            // Estudiante
+            // Estado: si edición usar el valor fijo cargado, si creación tomar del form (input hidden name="estado")
+            const estadoEstudiante = isEditing ? window.matriculaEstado : formData.get('estado');
+
             const estudiante = {
                 nombre_est: formData.get('nombre_est'),
                 apellido_est: formData.get('apellido_est'),
                 dni_est: formData.get('dni_est'),
                 fecha_nacimiento_est: formData.get('fecha_nacimiento_est'),
-                estado_est: formData.get('estado'),
+                estado_est: estadoEstudiante,
                 titular_est: formData.get('titular_est'),
                 convive_padres: formData.get('convive_padres'),
                 genero: formData.get('genero'),
@@ -128,20 +119,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 detalles_disc_est: formData.get('detalles_disc_est'),
                 descuentos_id_descuento: formData.get('descuento') || null
             };
+            if (isEditing && window.estudianteId) estudiante.id = window.estudianteId;
 
-            if (isEditing && window.estudianteId) {
-                estudiante.id = window.estudianteId;
-            }
-
-            // Determinar URL y método
-            const url = isEditing ? `/api/matriculas/${id}` : '/api/matriculas';
-            const method = isEditing ? 'PUT' : 'POST';
-
-
-            // Responsables
             const responsables = [];
-
-            // Padre
             responsables.push({
                 nombre_resp: formData.get('nombre_padre'),
                 apellido_resp: formData.get('apellido_padre'),
@@ -149,14 +129,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 direc_domic_resp: formData.get('direccion_domicilio_padre'),
                 parentesco_resp: "padre",
                 telefono_resp: formData.get('telefono_padre'),
-                // fecha_nacimiento_resp: formData.get('fecha_nac_padre'),
                 ocupacion_resp: formData.get('ocupacion_padre'),
                 email_resp: formData.get('correo_padre'),
                 observaciones_resp: formData.get('observaciones_padre'),
                 tipo_vinculo: "padre"
             });
-
-            // Madre
             responsables.push({
                 nombre_resp: formData.get('nombre_madre'),
                 apellido_resp: formData.get('apellido_madre'),
@@ -164,14 +141,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 direc_domic_resp: formData.get('direc_domic_madre'),
                 parentesco_resp: "madre",
                 telefono_resp: formData.get('telefono_madre'),
-                // fecha_nacimiento_resp: formData.get('fecha_nac_madre'),
                 ocupacion_resp: formData.get('ocupacion_madre'),
                 email_resp: formData.get('email_madre'),
                 observaciones_resp: formData.get('observaciones_madre'),
                 tipo_vinculo: "madre"
             });
-            
-            // Tutor solo si aplica
             if (document.querySelector('.datos-tutor').style.display === 'block') {
                 responsables.push({
                     nombre_resp: formData.get('nombre_tutor'),
@@ -180,26 +154,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     direc_domic_resp: formData.get('direccion_domicilio_tutor'),
                     parentesco_resp: "tutor",
                     telefono_resp: formData.get('telefono_tutor'),
-                    // fecha_nacimiento_resp: formData.get('fecha_nac_tutor'),
                     ocupacion_resp: formData.get('ocupacion_tutor'),
                     email_resp: formData.get('correo_tutor'),
                     observaciones_resp: formData.get('observaciones_tutor'),
                     tipo_vinculo: "tutor"
                 });
             }
-            // Matrícula
+
             const matricula = {
                 fecha_matricula: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                estado_matr: "Pendiente",
+                estado_matr: isEditing ? window.matriculaEstadoMatricula || 'Pendiente' : 'Pendiente',
                 tipo_mat: formData.get('tip_mat'),
                 periodos_id_periodo: formData.get('periodo'),
                 usuarios_id_usuarios: 1,
                 secciones_id_seccion: formData.get('para_seccion')
             };
-            
-            // Enviar
+
+            const url = isEditing ? `/api/matriculas/${id}` : '/api/matriculas';
+            const method = isEditing ? 'PUT' : 'POST';
+
             fetchAuth(url, {
-                method: method,
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estudiante, responsables, matricula })
             })
@@ -207,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(result => {
                     if (result.matriculaId || result.message) {
                         alert(isEditing ? 'Matrícula actualizada correctamente' : 'Matrícula registrada correctamente');
-                        window.location.href = '/secretario/matriculas'; // ← AGREGAR ESTA LÍNEA
+                        window.location.href = '/secretario/matriculas';
                     } else {
                         alert(result.error || 'Error al procesar matrícula');
                     }
@@ -215,39 +190,51 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Si estamos en la página de edición-------------------------------------------
+    // Edición
     if (window.location.pathname.endsWith('/matriculas/editar')) {
         const params = new URLSearchParams(window.location.search);
         const id = params.get('id');
         const form = document.querySelector('.registrar-matricula form');
 
-        // Cargar datos completos de la matrícula
         fetchAuth(`/api/matriculas/${id}`)
             .then(res => res.json())
             .then(data => {
                 const { matricula, responsables } = data;
-                // Agregar después:
                 window.estudianteId = matricula.id_estudiante;
-                // Llenar datos de la matrícula
-                document.getElementById('anio_academico').value = matricula.id_anio_escolar;
-                document.getElementById('periodo').value = matricula.id_periodo;
-                document.getElementById('tip_mat').value = matricula.tipo_mat;
-                document.getElementById('descuento').value = matricula.descuentos_id_descuento || '';
 
-                // Llenar datos del estudiante
+                // Estado del estudiante (no editable)
+                window.matriculaEstado = matricula.estado_est || 'activo';
+                const estadoVisual = document.getElementById('estado_matr_visual');
+                const estadoHidden = document.getElementById('estado_matr_hidden');
+                if (estadoVisual) {
+                    estadoVisual.innerHTML = `<option value="${window.matriculaEstado}">${window.matriculaEstado}</option>`;
+                }
+                if (estadoHidden) {
+                    estadoHidden.value = window.matriculaEstado;
+                }
+
+                // (Opcional) estado de la matrícula si también debes bloquearlo
+                // window.matriculaEstadoMatricula = matricula.estado_matr || 'Pendiente';
+
+                // Llenar estudiante
                 form.querySelector('input[name="nombre_est"]').value = matricula.nombre_est;
                 form.querySelector('input[name="apellido_est"]').value = matricula.apellido_est;
                 form.querySelector('input[name="dni_est"]').value = matricula.dni_est;
-                form.querySelector('input[name="fecha_nacimiento_est"]').value = matricula.fecha_nacimiento_est ? matricula.fecha_nacimiento_est.split('T')[0] : '';
+                form.querySelector('input[name="fecha_nacimiento_est"]').value =
+                    matricula.fecha_nacimiento_est ? matricula.fecha_nacimiento_est.split('T')[0] : '';
                 form.querySelector('select[name="titular_est"]').value = matricula.titular_est;
                 form.querySelector('select[name="genero"]').value = matricula.genero;
                 form.querySelector('select[name="discapacidad_est"]').value = matricula.discapacidad_est;
                 form.querySelector('select[name="convive_padres"]').value = matricula.convive_padres;
                 form.querySelector('input[name="detalles_disc_est"]').value = matricula.detalles_disc_est || '';
-                form.querySelector('select[name="estado"]').value = matricula.estado_est || 'activo';
-                // document.getElementById('edad_est').value = calcularEdadDesdeString(matricula.fecha_nacimiento_est);
+                // Select original de estado si existe (dejar valor pero podría estar oculto)
+                const originalEstadoSelect = form.querySelector('select[name="estado"]');
+                if (originalEstadoSelect) {
+                    originalEstadoSelect.value = window.matriculaEstado;
+                    originalEstadoSelect.disabled = true;
+                }
 
-                // Llenar datos de responsables
+                // Responsables
                 responsables.forEach(resp => {
                     if (resp.tipo_vinculo === 'padre') {
                         form.querySelector('input[name="nombre_padre"]').value = resp.nombre_resp || '';
@@ -255,24 +242,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         form.querySelector('input[name="dni_padre"]').value = resp.dni_resp || '';
                         form.querySelector('input[name="direccion_domicilio_padre"]').value = resp.direc_domic_resp || '';
                         form.querySelector('input[name="telefono_padre"]').value = resp.telefono_resp || '';
-                        // form.querySelector('input[name="fecha_nac_padre"]').value = resp.fecha_nacimiento_resp ? resp.fecha_nacimiento_resp.split('T')[0] : '';
                         form.querySelector('input[name="ocupacion_padre"]').value = resp.ocupacion_resp || '';
                         form.querySelector('input[name="correo_padre"]').value = resp.email_resp || '';
                         form.querySelector('input[name="observaciones_padre"]').value = resp.observaciones_resp || '';
                     }
-
                     if (resp.tipo_vinculo === 'madre') {
                         form.querySelector('input[name="nombre_madre"]').value = resp.nombre_resp || '';
                         form.querySelector('input[name="apellido_madre"]').value = resp.apellido_resp || '';
                         form.querySelector('input[name="dni_madre"]').value = resp.dni_resp || '';
                         form.querySelector('input[name="direc_domic_madre"]').value = resp.direc_domic_resp || '';
                         form.querySelector('input[name="telefono_madre"]').value = resp.telefono_resp || '';
-                        // form.querySelector('input[name="fecha_nac_madre"]').value = resp.fecha_nacimiento_resp ? resp.fecha_nacimiento_resp.split('T')[0] : '';
                         form.querySelector('input[name="ocupacion_madre"]').value = resp.ocupacion_resp || '';
                         form.querySelector('input[name="email_madre"]').value = resp.email_resp || '';
                         form.querySelector('input[name="observaciones_madre"]').value = resp.observaciones_resp || '';
                     }
-
                     if (resp.tipo_vinculo === 'tutor') {
                         document.getElementById('tutor').value = 'si';
                         document.querySelector('.datos-tutor').style.display = 'block';
@@ -287,11 +270,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-                // Cargar selects en cascada después de llenar los valores
-                // Trigger eventos para cargar periodos, grados, secciones
+                // Cascada de selects
                 if (matricula.id_anio_escolar) {
+                    document.getElementById('anio_academico').value = matricula.id_anio_escolar;
                     document.getElementById('anio_academico').dispatchEvent(new Event('change'));
-                    // ✅ AGREGAR ESTO:
                     setTimeout(() => {
                         document.getElementById('periodo').value = matricula.id_periodo;
                     }, 300);
@@ -300,13 +282,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     setTimeout(() => {
                         document.getElementById('para_nivel').value = matricula.id_nivel;
                         document.getElementById('para_nivel').dispatchEvent(new Event('change'));
-
-                        // Después de cargar grados, seleccionar el grado
                         setTimeout(() => {
                             document.getElementById('para_grado').value = matricula.id_grado;
                             document.getElementById('para_grado').dispatchEvent(new Event('change'));
-
-                            // Después de cargar secciones, seleccionar la sección
                             setTimeout(() => {
                                 document.getElementById('para_seccion').value = matricula.id_seccion;
                             }, 300);
@@ -319,8 +297,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (window.location.pathname.endsWith('/matriculas')) {
         cargarMatriculas();
     }
-
 });
+// ...existing code...
 function cargarMatriculas() {
     fetchAuth('/api/matriculas')
         .then(res => res.json())
@@ -352,4 +330,4 @@ function cargarMatriculas() {
         })
         .catch(err => console.error('Error:', err));
 }
-
+// ...existing code...

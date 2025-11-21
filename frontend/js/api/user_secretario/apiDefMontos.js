@@ -1,10 +1,18 @@
-import { requireSession, fetchAuth  } from '/js/auth.js';
+import { requireSession, fetchAuth } from '/js/auth.js';
 requireSession();
 
 document.addEventListener('DOMContentLoaded', function () {
     cargarMontosDefinidos();
     cargarGrados();
     inicializarFormulario();
+
+    // Delegación para botones Eliminar
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('.btn-eliminar-monto')) {
+            const id = e.target.getAttribute('data-id');
+            eliminarMonto(id);
+        }
+    });
 });
 
 // Cargar montos definidos en la tabla
@@ -27,7 +35,7 @@ function cargarMontosDefinidos() {
                             <a href="/secretario/definir_monto/editar?id=${monto.id_estimar_monto}">
                                 <button>Editar</button>
                             </a>
-                            <button onclick="eliminarMonto(${monto.id_estimar_monto})">Eliminar</button>
+                            <button class="btn-eliminar-monto" data-id="${monto.id_estimar_monto}">Eliminar</button>
                         </td>
                     </tr>
                 `);
@@ -40,6 +48,7 @@ function cargarMontosDefinidos() {
 
 // Eliminar monto
 function eliminarMonto(id) {
+    if (!id) return;
     if (confirm('¿Seguro que desea eliminar este monto?')) {
         fetchAuth(`/api/definir_monto/${id}`, { method: 'DELETE' })
             .then(res => res.json())
@@ -70,7 +79,6 @@ function cargarGrados() {
 
 // Inicializar formulario para crear o editar
 function inicializarFormulario() {
-    // Detecta el formulario presente (crear o editar)
     const form = document.getElementById('form-crear-monto') || document.getElementById('form-editar-monto');
     if (!form) return;
 
@@ -78,7 +86,6 @@ function inicializarFormulario() {
     const id = params.get('id');
 
     if (id && form.id === 'form-editar-monto') {
-        // Modo edición
         fetchAuth(`/api/definir_monto/${id}`)
             .then(res => res.json())
             .then(monto => {
@@ -107,7 +114,6 @@ function inicializarFormulario() {
             });
         });
     } else {
-        // Modo creación
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             const datos = obtenerDatosFormulario();
@@ -152,7 +158,7 @@ function validarDatos(datos) {
     return true;
 }
 
-// Mostrar errores en el frontend
+// Mostrar errores
 function mostrarError(msg) {
-    alert(msg); // Puedes mejorar esto mostrando el error en el DOM
+    alert(msg);
 }

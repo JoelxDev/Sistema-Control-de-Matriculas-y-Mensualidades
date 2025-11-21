@@ -154,3 +154,87 @@ input{
     overflow: hidden; 
   /* display:flex; */
 }
+
+/* ==== Mejora sencilla de tablas ==== */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#082d33;
+  font-size:14px;
+  color:#fff;
+}
+th,td{
+  border:1px solid rgba(255,255,255,.18);
+  padding:10px 12px;
+  text-align:center;
+}
+thead th{
+  background:#274d60;
+  font-weight:600;
+  letter-spacing:.4px;
+}
+tbody tr:nth-child(odd){background:rgba(255,255,255,.04);}
+tbody tr:nth-child(even){background:rgba(255,255,255,.10);}
+tbody tr:hover{background:#6ba3be;color:#122d38;}
+
+/* Contenedor scroll opcional */
+.tabla-detalles{
+  overflow-x:auto;
+  width:100%;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:6px;
+  background:#082d33;
+}
+
+/* ==== Botones CRUD (verde, rojo, amarillo) ==== */
+.btn-crud{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:600;
+  border:1px solid transparent;
+  cursor:pointer;
+  transition:background .15s, transform .15s;
+  line-height:1;
+  text-align:center;
+  min-width:70px;
+}
+.btn-crud:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+.btn-crud:hover{transform:translateY(-2px);}
+
+/* Crear (verde) */
+.btn-crear{
+  background:#28a745;
+  border-color:#1f8637;
+  color:#fff;
+}
+.btn-crear:hover{background:#21913b;}
+.btn-crear:active{background:#1a732f;}
+
+/* Eliminar (rojo) */
+.btn-eliminar{
+  background:#dc3545;
+  border-color:#b82836;
+  color:#fff;
+}
+.btn-eliminar:hover{background:#c62e3d;}
+.btn-eliminar:active{background:#a82230;}
+
+/* Editar (amarillo) */
+.btn-editar{
+  background:#ffc107;
+  border-color:#d4a106;
+  color:#222;
+}
+.btn-editar:hover{background:#e6ad06;}
+.btn-editar:active{background:#c99405;}
+
+/* Tamaño pequeño opcional */
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:5px;}
+
+/* Uso dentro de celdas */
+td .btn-crud{margin:2px;}
+
+
+

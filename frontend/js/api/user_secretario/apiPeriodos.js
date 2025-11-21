@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${p.fecha_fin_per.split('T')[0]}</td>
             <td>${p.anio_acad}</td>
             <td>
-              <a href="/admin/periodos/editar?id=${p.id_periodo}"><button>Editar</button></a>
+              <a href="/secretario/periodos/editar?id=${p.id_periodo}"><button>Editar</button></a>
               <button class="btn-eliminar" data-id="${p.id_periodo}">Eliminar</button>
             </td>
             

@@ -40,282 +40,286 @@
                 </div>
                 <div class="registrar-matricula">
                     <form action="">
-                    <div class="seleciones-matricula">
-                        <div>
-                            <label for="anio_academico">Año Academico</label>
-                            <select name="anio_" id="anio_academico">
-                            </select>
+                        <div class="seleciones-matricula">
+                            <div>
+                                <label for="anio_academico">Año Academico</label>
+                                <select name="anio_" id="anio_academico">
+                                </select>
+                            </div>
+                            <div>
+                                <label for="periodo">Periodo</label>
+                                <select name="periodo" id="periodo">
+                                </select>
+                            </div>
+                            <div>
+                                <label for="para_nivel">Para nivel</label>
+                                <select name="para_nivel" id="para_nivel">
+                                </select>
+                            </div>
+                            <div>
+                                <label for="para_grado">Para grado</label>
+                                <select name="para_grado" id="para_grado">
+                                </select>
+                            </div>
+                            <div>
+                                <label for="para_seccion">Para seccion</label>
+                                <select name="para_seccion" id="para_seccion">
+                                </select>
+                            </div>
+                            <div>
+                                <label for="tip_mat">Tipo Matricula</label>
+                                <select name="tip_mat" id="tip_mat">
+                                    <option value="Nuevo">Nuevo</option>
+                                    <option value="Traslado">Traslado</option>
+                                    <option value="Repitente">Repitente</option>
+                                    <option value="Regular">Regular</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="tutor">Tutor</label>
+                                <select name="tutor" id="tutor">
+                                    <option value="no">No</option>
+                                    <option value="si">Si</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="descuento">Descuento</label>
+                                <select name="descuento" id="descuento">
+                                </select>
+                            </div>
                         </div>
-                        <div>
-                            <label for="periodo">Periodo</label>
-                            <select name="periodo" id="periodo">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="para_nivel">Para nivel</label>
-                            <select name="para_nivel" id="para_nivel">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="para_grado">Para grado</label>
-                            <select name="para_grado" id="para_grado">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="para_seccion">Para seccion</label>
-                            <select name="para_seccion" id="para_seccion">
-                            </select>
-                        </div>
-                        <div>
-                            <label for="tip_mat">Tipo Matricula</label>
-                            <select name="tip_mat" id="tip_mat">
-                                <option value="Nuevo">Nuevo</option>
-                                <option value="Traslado">Traslado</option>
-                                <option value="Repitente">Repitente</option>
-                                <option value="Regular">Regular</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="tutor">Tutor</label>
-                            <select name="tutor" id="tutor">
-                                <option value="no">No</option>
-                                <option value="si">Si</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="descuento">Descuento</label>
-                            <select name="descuento" id="descuento">
-                            </select>
-                        </div>
-                    </div>
-                            <div class="datos-matricula">
-                                <div class="datos-padre">
-                                    <div class="titulo-padre">
-                                        <h2>Datos Padre</h2>
+                        <div class="datos-matricula">
+                            <div class="datos-padre">
+                                <div class="titulo-padre">
+                                    <h2>Datos Padre</h2>
+                                </div>
+                                <div class="datos-principales">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" name="nombre_padre" placeholder="Nombre...">
                                     </div>
-                                    <div class="datos-principales">
-                                        <div>
-                                            <label for="name">Nombre</label>
-                                            <input type="text" name="nombre_padre" placeholder="Nombre...">
-                                        </div>
-                                        <div>
-                                            <label for="">Apellido</label>
-                                            <input type="text" name="apellido_padre" placeholder="Apellido...">
-                                        </div>
-                                        <div>
-                                            <label for="">DNI</label>
-                                            <input type="number" name="dni_padre" placeholder="DNI...">
-                                        </div>
-                                        <!-- <div>
+                                    <div>
+                                        <label for="">Apellido</label>
+                                        <input type="text" name="apellido_padre" placeholder="Apellido...">
+                                    </div>
+                                    <div>
+                                        <label for="">DNI</label>
+                                        <input type="number" name="dni_padre" placeholder="DNI...">
+                                    </div>
+                                    <!-- <div>
                                             <label for="">Fecha Nacimiento</label>
                                             <input type="date" name="fecha_nac_padre" placeholder="Fecha Nacimiento...">
                                         </div> -->
-                                        <div>
-                                            <label for="">Direccion domicilio</label>
-                                            <input type="text" name="direccion_domicilio_padre" placeholder="Direccion domicilio...">
-                                        </div>
-                                        <div>
-                                            <label for="parentesco_resp">Parentesco</label>
-                                            <select name="parentesco_resp" id="parentesco_resp">
-                                                <option value="Padre">Padre</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="">Telefono</label>
-                                            <input type="number" name="telefono_padre" placeholder="Telefono...">
-                                        </div>
-                                        <div>
-                                            <label for="">Ocupacion</label>
-                                            <input type="text" name="ocupacion_padre" placeholder="Ocupacion...">
-                                        </div>
-                                        <div>
-                                            <label for="">Correo</label>
-                                            <input type="text" name="correo_padre" placeholder="Correo electronico...">
-                                        </div>
-                                        <div>
-                                            <label for="">Observaciones</label>
-                                            <input type="text" name="observaciones_padre" placeholder="Obervaciones...">
-                                        </div>
+                                    <div>
+                                        <label for="">Direccion domicilio</label>
+                                        <input type="text" name="direccion_domicilio_padre"
+                                            placeholder="Direccion domicilio...">
                                     </div>
-                                </div>
-                                <div class="datos-estudiante">
-                                    <div class="titulo-estudiante">
-                                        <h2>Datos Estudiante</h2>
+                                    <div>
+                                        <label for="parentesco_resp">Parentesco</label>
+                                        <select name="parentesco_resp" id="parentesco_resp">
+                                            <option value="Padre">Padre</option>
+                                        </select>
                                     </div>
-                                    <div class="datos-principales">
-                                        <div>
-                                            <label for="">Nombre</label>
-                                            <input type="text" name="nombre_est" placeholder="Nombre...">
-                                        </div>
-                                        <div>
-                                            <label for="">Apellido</label>
-                                            <input type="text" name="apellido_est" placeholder="Apellido...">
-                                        </div>
-                                        <div>
-                                            <label for="">DNI</label>
-                                            <input type="number" name="dni_est" placeholder="DNI...">
-                                        </div>
-                                        <div>
-                                            <label for="">Fecha Nacimiento</label>
-                                            <input type="date" id="fecha_nacimiento_est" name="fecha_nacimiento_est" placeholder="Fecha Nacimiento...">
-                                        </div>
-                                        <div>
-                                            <label for="estado">Estado</label>
-                                            <select name="estado" id="estado">
-                                                <option value="activo">Activo</option>
-                                                <!-- <option value="retirado">Retirado</option> -->
-                                                <!-- <option value="egresado">Egresado</option> -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="titular_est">Titular Estudiante</label>
-                                            <select name="titular_est" id="titular_est">
-                                                <option value="Normal">Normal</option>
-                                                <option value="Padre">Padre</option>
-                                                <option value="Madre">Madre</option>
-                                                <option value="Tutor">Tutor</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="convive_padres">Vive con los padres</label>
-                                            <select name="convive_padres" id="convive_padres">
-                                                <option value="Normal">Normal</option>
-                                                <option value="Padre">Padre</option>
-                                                <option value="Madre">Madre</option>
-                                                <option value="Tutor">Tutor</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="">Edad</label>
-                                            <input type="text" id="edad_est" name="edad_est" placeholder="Edad...">
-                                        </div>
-                                        <div>
-                                            <label for="genero">Genero</label>
-                                            <select name="genero" id="genero">
-                                                <option value="hombre">Masculino</option>
-                                                <option value="mujer">Femenino</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="discapacidad_est">Discapacidad</label>
-                                            <select name="discapacidad_est" id="discapacidad_est">
-                                                <option value="no">No</option>
-                                                <option value="si">Sí</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="detalles_disc_est">Detalles de Discapacidad</label>
-                                            <input type="text" id="detalles_disc_est" name="detalles_disc_est" placeholder="Detalles de Discapacidad...">
-                                        </div>
+                                    <div>
+                                        <label for="">Telefono</label>
+                                        <input type="number" name="telefono_padre" placeholder="Telefono...">
                                     </div>
-                                </div>
-                                <div class="datos-madre">
-                                    <div class="titulo-madre">
-                                        <h2>Datos Madre</h2>
+                                    <div>
+                                        <label for="">Ocupacion</label>
+                                        <input type="text" name="ocupacion_padre" placeholder="Ocupacion...">
                                     </div>
-                                    <div class="datos-principales">
-                                        <div>
-                                            <label for="name">Nombre</label>
-                                            <input type="text" name="nombre_madre" placeholder="Nombre...">
-                                        </div>
-                                        <div>
-                                            <label for="">Apellido</label>
-                                            <input type="text" name="apellido_madre" placeholder="Apellido...">
-                                        </div>
-                                        <div>
-                                            <label for="">DNI</label>
-                                            <input type="number" name="dni_madre" placeholder="DNI...">
-                                        </div>
-                                        <!-- <div>
-                                            <label for="">Fecha Nacimiento</label>
-                                            <input type="date" name="fecha_nac_madre" placeholder="Fecha Nacimiento...">
-                                        </div> -->
-                                        <div>
-                                            <label for="">Direccion domicilio</label>
-                                            <input type="text" name="direc_domic_madre" placeholder="Direccion domicilio...">
-                                        </div>
-                                        <div>
-                                            <label for="parentesco_resp">Parentesco</label>
-                                            <select name="parentesco_resp" id="parentesco_resp">
-                                                <option value="Madre">Madre</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="">Telefono</label>
-                                            <input type="number" name="telefono_madre" placeholder="Telefono...">
-                                        </div>
-                                        <div>
-                                            <label for="">Ocupacion</label>
-                                            <input type="text" name="ocupacion_madre" placeholder="Ocupacion...">
-                                        </div>
-                                        <div>
-                                            <label for="">Correo</label>
-                                            <input type="text" name="email_madre" placeholder="Correo electronico...">
-                                        </div>
-                                        <div>
-                                            <label for="">Observaciones</label>
-                                            <input type="text" name="observaciones_madre" placeholder="Obervaciones...">
-                                        </div>
+                                    <div>
+                                        <label for="">Correo</label>
+                                        <input type="text" name="correo_padre" placeholder="Correo electronico...">
                                     </div>
-                                </div>
-                                <div class="datos-tutor">
-                                    <div class="titulo-tutor">
-                                        <h2>Datos Tutor</h2>
-                                    </div>
-                                    <div class="datos-principales">
-                                        <div>
-                                            <label for="name">Nombre</label>
-                                            <input type="text" id="nombre" name="nombre_tutor" placeholder="Nombre...">
-                                        </div>
-                                        <div>
-                                            <label for="">Apellido</label>
-                                            <input type="text" name="apellido_tutor" placeholder="Apellido...">
-                                        </div>
-                                        <div>
-                                            <label for="">DNI</label>
-                                            <input type="number" name="dni_tutor" placeholder="DNI...">
-                                        </div>
-                                        <!-- <div>
-                                            <label for="">Fecha Nacimiento</label>
-                                            <input type="date" name="fecha_nac_tutor" placeholder="Fecha Nacimiento...">
-                                        </div> -->
-                                        <div>
-                                            <label for="">Direccion domicilio</label>
-                                            <input type="text" name="direccion_domicilio_tutor" placeholder="Direccion domicilio...">
-                                        </div>
-                                        <div>
-                                            <label for="parentesco_resp">Parentesco</label>
-                                            <select name="parentesco_resp" id="parentesco_resp">
-                                                <option value="Tutor">Tutor</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="">Telefono</label>
-                                            <input type="number" name="telefono_tutor" placeholder="Telefono...">
-                                        </div>
-                                        <div>
-                                            <label for="">Ocupacion</label>
-                                            <input type="text" name="ocupacion_tutor" placeholder="Ocupacion...">
-                                        </div>
-                                        <div>
-                                            <label for="">Correo</label>
-                                            <input type="text" name="correo_tutor" placeholder="Correo electronico...">
-                                        </div>
-                                        <div>
-                                            <label for="">Observaciones</label>
-                                            <input type="text" name="observaciones_tutor" placeholder="Obervaciones...">
-                                        </div>
+                                    <div>
+                                        <label for="">Observaciones</label>
+                                        <input type="text" name="observaciones_padre" placeholder="Obervaciones...">
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit">Actualizar</button>
-                        </form>
-                    </div>
+                            <div class="datos-estudiante">
+                                <div class="titulo-estudiante">
+                                    <h2>Datos Estudiante</h2>
+                                </div>
+                                <div class="datos-principales">
+                                    <div>
+                                        <label for="">Nombre</label>
+                                        <input type="text" name="nombre_est" placeholder="Nombre...">
+                                    </div>
+                                    <div>
+                                        <label for="">Apellido</label>
+                                        <input type="text" name="apellido_est" placeholder="Apellido...">
+                                    </div>
+                                    <div>
+                                        <label for="">DNI</label>
+                                        <input type="number" name="dni_est" placeholder="DNI...">
+                                    </div>
+                                    <div>
+                                        <label for="">Fecha Nacimiento</label>
+                                        <input type="date" id="fecha_nacimiento_est" name="fecha_nacimiento_est"
+                                            placeholder="Fecha Nacimiento...">
+                                    </div>
+                                    <!-- <div>
+                                        <label for="estado_matr_visual">Estado</label>
+                                        <select id="estado_matr_visual" disabled>
+                                            <option value="">Cargando...</option>
+                                        </select>
+                                        <input type="hidden" name="estado" id="estado_matr_hidden">
+                                    </div> -->
+                                    <div>
+                                        <label for="titular_est">Titular Estudiante</label>
+                                        <select name="titular_est" id="titular_est">
+                                            <option value="Normal">Normal</option>
+                                            <option value="Padre">Padre</option>
+                                            <option value="Madre">Madre</option>
+                                            <option value="Tutor">Tutor</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="convive_padres">Vive con los padres</label>
+                                        <select name="convive_padres" id="convive_padres">
+                                            <option value="Normal">Normal</option>
+                                            <option value="Padre">Padre</option>
+                                            <option value="Madre">Madre</option>
+                                            <option value="Tutor">Tutor</option>
+                                            <option value="Otro">Otro</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="">Edad</label>
+                                        <input type="text" id="edad_est" name="edad_est" placeholder="Edad...">
+                                    </div>
+                                    <div>
+                                        <label for="genero">Genero</label>
+                                        <select name="genero" id="genero">
+                                            <option value="Hombre">Masculino</option>
+                                            <option value="Mujer">Femenino</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="discapacidad_est">Discapacidad</label>
+                                        <select name="discapacidad_est" id="discapacidad_est">
+                                            <option value="No">No</option>
+                                            <option value="Si">Sí</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="detalles_disc_est">Detalles de Discapacidad</label>
+                                        <input type="text" id="detalles_disc_est" name="detalles_disc_est"
+                                            placeholder="Detalles de Discapacidad...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="datos-madre">
+                                <div class="titulo-madre">
+                                    <h2>Datos Madre</h2>
+                                </div>
+                                <div class="datos-principales">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" name="nombre_madre" placeholder="Nombre...">
+                                    </div>
+                                    <div>
+                                        <label for="">Apellido</label>
+                                        <input type="text" name="apellido_madre" placeholder="Apellido...">
+                                    </div>
+                                    <div>
+                                        <label for="">DNI</label>
+                                        <input type="number" name="dni_madre" placeholder="DNI...">
+                                    </div>
+                                    <!-- <div>
+                                            <label for="">Fecha Nacimiento</label>
+                                            <input type="date" name="fecha_nac_madre" placeholder="Fecha Nacimiento...">
+                                        </div> -->
+                                    <div>
+                                        <label for="">Direccion domicilio</label>
+                                        <input type="text" name="direc_domic_madre"
+                                            placeholder="Direccion domicilio...">
+                                    </div>
+                                    <div>
+                                        <label for="parentesco_resp">Parentesco</label>
+                                        <select name="parentesco_resp" id="parentesco_resp">
+                                            <option value="Madre">Madre</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="">Telefono</label>
+                                        <input type="number" name="telefono_madre" placeholder="Telefono...">
+                                    </div>
+                                    <div>
+                                        <label for="">Ocupacion</label>
+                                        <input type="text" name="ocupacion_madre" placeholder="Ocupacion...">
+                                    </div>
+                                    <div>
+                                        <label for="">Correo</label>
+                                        <input type="text" name="email_madre" placeholder="Correo electronico...">
+                                    </div>
+                                    <div>
+                                        <label for="">Observaciones</label>
+                                        <input type="text" name="observaciones_madre" placeholder="Obervaciones...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="datos-tutor">
+                                <div class="titulo-tutor">
+                                    <h2>Datos Tutor</h2>
+                                </div>
+                                <div class="datos-principales">
+                                    <div>
+                                        <label for="name">Nombre</label>
+                                        <input type="text" id="nombre" name="nombre_tutor" placeholder="Nombre...">
+                                    </div>
+                                    <div>
+                                        <label for="">Apellido</label>
+                                        <input type="text" name="apellido_tutor" placeholder="Apellido...">
+                                    </div>
+                                    <div>
+                                        <label for="">DNI</label>
+                                        <input type="number" name="dni_tutor" placeholder="DNI...">
+                                    </div>
+                                    <!-- <div>
+                                            <label for="">Fecha Nacimiento</label>
+                                            <input type="date" name="fecha_nac_tutor" placeholder="Fecha Nacimiento...">
+                                        </div> -->
+                                    <div>
+                                        <label for="">Direccion domicilio</label>
+                                        <input type="text" name="direccion_domicilio_tutor"
+                                            placeholder="Direccion domicilio...">
+                                    </div>
+                                    <div>
+                                        <label for="parentesco_resp">Parentesco</label>
+                                        <select name="parentesco_resp" id="parentesco_resp">
+                                            <option value="Tutor">Tutor</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="">Telefono</label>
+                                        <input type="number" name="telefono_tutor" placeholder="Telefono...">
+                                    </div>
+                                    <div>
+                                        <label for="">Ocupacion</label>
+                                        <input type="text" name="ocupacion_tutor" placeholder="Ocupacion...">
+                                    </div>
+                                    <div>
+                                        <label for="">Correo</label>
+                                        <input type="text" name="correo_tutor" placeholder="Correo electronico...">
+                                    </div>
+                                    <div>
+                                        <label for="">Observaciones</label>
+                                        <input type="text" name="observaciones_tutor" placeholder="Obervaciones...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit">Actualizar</button>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </div>
     <script type="module" src="/js/api/user_secretario/apiMatriculas.js"></script>

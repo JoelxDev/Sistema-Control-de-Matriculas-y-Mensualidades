@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${escapeHtml(p.descripcion || '')}</td>
           <td>${escapeHtml(p.fecha_pago ? new Date(p.fecha_pago).toLocaleString() : '')}</td>
           <td>${escapeHtml(p.usuarios_id_usuarios || '')}</td>
-          <td>${comprobante}</td>
         `;
         tbody.appendChild(tr);
       });

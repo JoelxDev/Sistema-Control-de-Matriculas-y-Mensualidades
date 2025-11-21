@@ -1,43 +1,88 @@
+/* Interfaz sencilla con paleta #6ba3be / #274d60 */
 .detalles-estudiante{
-    display:flex;
-    width: 100%;
-    justify-content:center;
-    align-items:center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 }
 
 .datos-estudiante{
-    display:flex;
-    width: 100%;
-    justify-content:space-evenly;
-    flex-wrap:wrap;
-    align-items:center;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  margin: 5px;
 }
-.padre-estudiante, .estudiante, .madre-estudiante{
-    border:3px solid black;
-    max-width: 300px;
-    width:100%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+
+/* Tarjetas */
+.padre-estudiante,
+.estudiante,
+.madre-estudiante{
+  background: #6ba3be;
+  color: #274d60;
+  border: 1px solid #274d60;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  overflow: hidden;
 }
+
+/* Cabecera de la tarjeta */
 .titulo{
-    border-bottom: 3px solid black;
-    width: 100%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
+  background: #274d60;
+  color: #ffffff;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,.2);
+}
+.titulo h2{
+  margin: 0;
+  font-size: 1rem;
 }
 
+/* Contenido */
 .datos{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
-    text-align: center;
-    font-size: 17px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 12px 14px;
+  gap: 6px;
+  text-align: left;
+  font-size: 15px;
+}
+.datos ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.datos ul li{
+  background: rgba(255,255,255,.18);
+  color: #0f2d3a;
+  border: 1px solid rgba(39,77,96,.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  line-height: 1.25rem;
+  word-break: break-word;
+  /* max-width: 370px; */
 }
 
-.datos ul li{
-    list-style-type: none;
+/* Utilidades */
+.text-center{ text-align: center; }
+.bold{ font-weight: 700; }
+
+/* Responsivo */
+@media (max-width: 480px){
+  .datos-estudiante{ grid-template-columns: 1fr; gap: 12px; }
+  .datos{ padding: 10px 12px; font-size: 14px; }
+  .datos ul li{ padding: 7px 10px; }
 }
+
