@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const LoginModel = require('../modules/login/login.model'); // agregado
+
 
 function extractToken(req) {
   // 1. Cookie
@@ -15,11 +17,37 @@ function verifyToken(token) {
   return jwt.verify(token, secret);
 }
 
-function requireAuth(req, res, next) {
+// function requireAuth(req, res, next) {
+//   const token = extractToken(req);
+//   if (!token) return res.status(401).json({ error: 'No autenticado' });
+//   try {
+//     req.user = verifyToken(token);
+//     next();
+//   } catch {
+//     return res.status(401).json({ error: 'Token inválido' });
+//   }
+// }
+
+async function requireAuth(req, res, next) {
   const token = extractToken(req);
   if (!token) return res.status(401).json({ error: 'No autenticado' });
   try {
-    req.user = verifyToken(token);
+    const payload = verifyToken(token);
+    // Cargar detalles extra
+    const full = await LoginModel.findByUsername(payload.username);
+    if (!full) return res.status(401).json({ error: 'Sesion inválida' });
+    req.user = {
+      sub: full.id_usuarios,
+      pid: full.personal_id,
+      role: full.roll,
+      username: full.nombre_usuario,
+      estado_us: full.estado_us,
+      nombre_per: full.nombre_per,
+      apellido: full.apellido,
+      cargo_per: full.cargo_per,
+      estado_per: full.estado_per,
+      telefono_per: full.telefono_per
+    };
     next();
   } catch {
     return res.status(401).json({ error: 'Token inválido' });

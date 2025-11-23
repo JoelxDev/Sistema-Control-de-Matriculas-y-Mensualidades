@@ -41,17 +41,16 @@ async function login(req, res, next) {
 
     return res.json({
       user: {
-        id: user.id_usuarios,
-        username: user.nombre_usuario,
+        sub: user.id_usuarios,
+        pid: user.personal_id,
         role: user.roll,
+        username: user.nombre_usuario,
         estado_us: user.estado_us,
-        personal: {
-          id: user.personal_id,
-          nombre_per: user.nombre_per,
-          apellido: user.apellido,
-          cargo_per: user.cargo_per,
-          estado_per: user.estado_per
-        }
+        nombre_per: user.nombre_per,
+        apellido: user.apellido,
+        cargo_per: user.cargo_per,
+        estado_per: user.estado_per,
+        telefono_per: user.telefono_per
       }
     });
   } catch (err) {

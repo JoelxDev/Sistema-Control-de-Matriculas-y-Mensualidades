@@ -22,7 +22,7 @@
             flex-direction: column;
             align-items: center;
         }
-        .perfil-info .perfil-item {
+        .perfil-info #perfil-id,#perfil-nombre,#perfil-telefono,#perfil-username {
             width: 90%;
             text-align: center;
             color: #fff;
