@@ -2,6 +2,7 @@
 import { requireSession, fetchAuth  } from '/js/auth.js';
 requireSession();
 
+
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.datos-tutor').style.display = 'none';
     document.getElementById('tutor').addEventListener('change', function () {
@@ -72,16 +73,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
     });
-
+    let descuentoPendiente = null;
+    function aplicarDescuentoPendiente() {
+    if (!descuentoPendiente) return;
+    const sel = document.getElementById('descuento');
+    if (!sel) return;
+    const exists = [...sel.options].some(o => String(o.value) === String(descuentoPendiente));
+    if (exists) {
+        sel.value = String(descuentoPendiente);
+    }
+}
     fetchAuth('/api/descuentos')
-        .then(res => res.json())
-        .then(descuentos => {
-            const descuentoSelect = document.getElementById('descuento');
-            descuentoSelect.innerHTML = '<option value="">Sin descuento</option>';
-            descuentos.forEach(d => {
-                descuentoSelect.innerHTML += `<option value="${d.id_descuento}">${d.nombre_desc} (${d.porcentaje_desc}%)</option>`;
-            });
+    .then(res => res.json())
+    .then(descuentos => {
+        const descuentoSelect = document.getElementById('descuento');
+        if (!descuentoSelect) return;
+        descuentoSelect.innerHTML = '<option value="">Sin descuento</option>';
+        descuentos.forEach(d => {
+            descuentoSelect.innerHTML += `<option value="${d.id_descuento}">${d.nombre_desc} (${d.porcentaje_desc}%)</option>`;
         });
+        aplicarDescuentoPendiente();
+    });
 
     document.getElementById('fecha_nacimiento_est').addEventListener('change', function () {
         const fechaNacimiento = this.value;
@@ -201,7 +213,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 const { matricula, responsables } = data;
                 window.estudianteId = matricula.id_estudiante;
-
+                descuentoPendiente = matricula.descuentos_id_descuento
+                || matricula.id_descuento
+                || matricula.descuento_id
+                || '';
+            aplicarDescuentoPendiente();
                 // Estado del estudiante (no editable)
                 window.matriculaEstado = matricula.estado_est || 'activo';
                 const estadoVisual = document.getElementById('estado_matr_visual');
@@ -291,7 +307,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         }, 300);
                     }, 500);
                 }
+                const descuentoSelect = document.getElementById('descuento');
+                if (descuentoSelect && descuentoPendiente) {
+                    descuentoSelect.value = descuentoPendiente;
+                }
             });
+            
     }
 
     if (window.location.pathname.endsWith('/matriculas')) {
