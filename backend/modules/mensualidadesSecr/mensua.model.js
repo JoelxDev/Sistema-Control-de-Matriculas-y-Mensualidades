@@ -118,6 +118,9 @@ class MensualidadModel {
         m.id_matricula,
         men.id_mes AS mensualidad_id,
         men.mes,
+        s.nombre AS nombre_seccion,
+        g.nombre_grad,
+        n.nombre_niv,
         IF(p.id_pagos IS NULL, 0, 1) AS pagado,
         p.id_pagos,
         p.monto_pago,
@@ -127,13 +130,13 @@ class MensualidadModel {
       FROM matriculas m
         JOIN estudiantes e ON e.id_estudiante = m.estudiantes_id_estudiante
         JOIN secciones  s  ON s.id_seccion   = m.secciones_id_seccion
+        LEFT JOIN grados g ON s.grados_id_grado = g.id_grado
+        LEFT JOIN niveles n ON g.niveles_id_nivel = n.id_nivel
 
-        -- mensualidades son plantilla por mes; filtramos por meses hasta mesTope
         LEFT JOIN mensualidades men
           ON FIELD(UPPER(men.mes),
             'ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO',
             'JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE') BETWEEN 1 AND ?
-        -- pagos relacionan mensualidad con la matrícula concreta
         LEFT JOIN pagos p
           ON p.mensualidades_id_pago = men.id_mes
          AND p.matriculas_id_matricula = m.id_matricula

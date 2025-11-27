@@ -1,154 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background: radial-gradient(circle at 30% 30%, #b3dbe6 0%, #5e8fa3 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login</title>
+<style>
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle at 30% 30%, #b3dbe6 0%, #5e8fa3 100%);
+    font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  }
+  .login-card{
+    width:100%;
+    max-width:960px;
+    background:rgba(30,60,80,.28);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:26px;
+    box-shadow:0 8px 32px rgba(31,38,135,.35);
+    overflow:hidden;
+    display:flex;
+    flex-direction:row;
+    align-items:stretch;
+    position:relative;
+  }
+  .login-card .hero{
+    flex:0 0 50%;
+    position:relative;
+    overflow:hidden;
+  }
+  .login-card .hero img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .login-card .hero:after{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(to right, rgba(30,60,80,.55), rgba(30,60,80,0) 55%);
+    pointer-events:none;
+  }
 
-        .login-container {
-            background: rgba(30, 60, 80, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border-radius: 16px;
-            padding: 40px 32px 32px 32px;
-            width: 340px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
+  /* Panel derecha centralizado */
+  .login-panel{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center; /* centra vertical */
+    padding:56px 46px;
+    position:relative;
+    gap:28px;
+  }
 
-        .avatar {
-            background: #18304a;
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: -45px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+  /* Avatar centrado arriba del formulario */
+  .avatar{
+    position:relative;
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:#18304a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.35);
+    border:4px solid #f0f6fa;
+  }
+  .avatar svg{width:62px;height:62px;stroke:#fff;}
 
-        .avatar svg {
-            width: 50px;
-            height: 50px;
-            stroke: #fff;
-        }
+  .login-form{
+    width:100%;
+    max-width:360px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    margin:0;
+  }
 
-        .login-form {
-            width: 100%;
-            margin-top: 60px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
+  .input-group{position:relative;}
+  .input-group input{
+    width:100%;
+    max-width: 300px;
+    padding:14px 16px 14px 54px;
+    border:1px solid #d0e3ec;
+    background:rgba(255,255,255,.9);
+    color:#18304a;
+    font-size:.95rem;
+    border-radius:14px;
+    outline:none;
+    transition:border-color .18s, box-shadow .18s;
+  }
+  .input-group input:focus{
+    border-color:#274d60;
+    box-shadow:0 0 0 3px rgba(107,163,190,.45);
+  }
+  .input-group .icon{
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    color:#274d60;
+    pointer-events:none;
+  }
+  .input-group svg{width:22px;height:22px;stroke:#274d60;}
 
-        .input-group {
-            position: relative;
-        }
+  .login-btn{
+    width:100%;
+    padding:15px 0;
+    background:#274d60;
+    color:#fff;
+    border:none;
+    border-radius:40px;
+    font-size:.95rem;
+    font-weight:600;
+    letter-spacing:.5px;
+    cursor:pointer;
+    transition:background .18s, transform .18s, box-shadow .18s;
+  }
+  .login-btn:hover{
+    background:#6ba3be;
+    color:#274d60;
+    transform:translateY(-3px);
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  .login-btn:focus-visible{
+    outline:2px solid #6ba3be;
+    outline-offset:3px;
+  }
+  ::placeholder{color:#4d6b7b;}
 
-        .input-group input {
-            width: 86%;
-            padding: 10px 10px 10px 38px;
-            border: none;
-            border-bottom: 2px solid #fff;
-            background: transparent;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .input-group label {
-            position: absolute;
-            left: 38px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fff;
-            pointer-events: none;
-            font-size: 1rem;
-        }
-
-        .input-group .icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #fff;
-            font-size: 1.1rem;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px 0;
-            background: #18304a;
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        .login-btn:hover {
-            background: #25476a;
-        }
-
-        ::placeholder {
-            color: #e0e0e0;
-            opacity: 1;
-        }
-    </style>
+  @media (max-width:880px){
+    .login-card{flex-direction:column;max-width:560px;}
+    .login-card .hero{flex:0 0 230px;height:230px;}
+    .login-panel{padding:70px 38px 60px;}
+  }
+  @media (max-width:480px){
+    .login-panel{padding:70px 26px 56px;gap:22px;}
+    .login-card .hero{height:200px;}
+    .avatar{width:92px;height:92px;}
+    .avatar svg{width:50px;height:50px;}
+  }
+</style>
 </head>
-
 <body>
-    <div class="login-container">
-        <div class="avatar">
-            <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 8-4 8-4s8 0 8 4" />
-            </svg>
-        </div>
-        <form class="login-form" id="form-login">
-            <div class="input-group">
-                <span class="icon">
-                    <!-- Email icon SVG -->
-                    <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="3" y="5" width="18" height="14" rx="2" />
-                        <path d="M3 7l9 6 9-6" />
-                    </svg>
-                </span>
-                <input type="text" id="text-email" placeholder="Nombre de usuario" required>
-            </div>
-            <div class="input-group">
-                <span class="icon">
-                    <!-- Lock icon SVG -->
-                    <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
-                        <rect x="5" y="11" width="14" height="8" rx="2" />
-                        <path d="M12 15v2" />
-                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-                    </svg>
-                </span>
-                <input type="password" id="password" placeholder="Password" required>
-            </div>
-            <button type="submit" class="login-btn">LOGIN</button>
-        </form>
+  <div class="login-card">
+    <div class="hero">
+      <img src="img/bencarson.png" alt="Imagen">
     </div>
+    <div class="login-panel">
+      <div class="avatar">
+        <svg fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 20c0-4 8-4 8-4s8 0 8 4"/>
+        </svg>
+      </div>
+      <form class="login-form" id="form-login">
+        <div class="input-group">
+          <span class="icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="M3 7l9 6 9-6"/>
+            </svg>
+          </span>
+          <input type="text" id="text-email" placeholder="Nombre de usuario" required>
+        </div>
+        <div class="input-group">
+          <span class="icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="5" y="11" width="14" height="8" rx="2"/>
+              <path d="M12 15v2"/>
+              <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+          </span>
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="login-btn">LOGIN</button>
+      </form>
+    </div>
+  </div>
     <script type="module">
     const API_BASE = 'http://localhost:3000';
     const form = document.getElementById('form-login');

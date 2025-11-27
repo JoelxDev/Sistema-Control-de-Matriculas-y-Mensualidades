@@ -38,7 +38,6 @@ requireSession();
     let select = document.querySelector(selectSelector);
     if (!select) return;
 
-    // reemplazar el nodo select por un clon para eliminar event listeners previos
     const parent = select.parentNode;
     const cloned = select.cloneNode(false);
     parent.replaceChild(cloned, select);
@@ -47,7 +46,6 @@ requireSession();
     select.innerHTML = '';
 
     try {
-      // determinar tipo de pago si no se pasó explícitamente
       const tipo = tipoPago || (document.getElementById('tipo_pago') ? document.getElementById('tipo_pago').value : 'Matricula');
 
       let montos = [];
@@ -68,7 +66,7 @@ requireSession();
         opt.value = '';
         opt.textContent = 'No hay montos definidos';
         select.appendChild(opt);
-        const montoInpEmpty = document.querySelector('input[name="monto"]') || document.getElementById('monto');
+        const montoInpEmpty = document.getElementById('monto') || document.querySelector('input[name="monto"]');
         if (montoInpEmpty) montoInpEmpty.value = '';
         return;
       }
@@ -78,7 +76,6 @@ requireSession();
       empty.textContent = 'Seleccione monto estimado';
       select.appendChild(empty);
 
-      // evitar duplicados por id usando Set
       const seen = new Set();
       montos.forEach(m => {
         const id = String(m.id_estimar_monto || m.id || '');
@@ -96,33 +93,21 @@ requireSession();
         select.appendChild(opt);
       });
 
-      // handler reutilizable para actualizar monto y cálculos
-      const changeHandler = function () {
-        const opt = this.options[this.selectedIndex] || null;
-        const montoBase = opt && opt.dataset && opt.dataset.monto ? Number(opt.dataset.monto) : '';
-        const montoInp = document.querySelector('input[name="monto"]') || document.getElementById('monto');
-        if (montoInp) {
-          montoInp.value = (montoBase === '' || isNaN(Number(montoBase))) ? '' : Number(montoBase).toFixed(2);
-        }
-        const descuentoEl = document.getElementById('descuento_aplicado');
-        let descuentoPct = 0;
-        let descuentoAplicable = true;
-        if (descuentoEl) {
-          const txt = (descuentoEl.value || '').toString();
-          if (txt.toLowerCase().includes('no aplicable')) {
-            descuentoAplicable = false;
-          } else {
-            const m = txt.match(/[\d,.]+/);
-            if (m) descuentoPct = Number(m[0].replace(',', '.'));
-          }
-        }
-        aplicarDescuentoYMostrar(descuentoPct, montoBase === '' ? 0 : montoBase, descuentoAplicable);
-      };
+      // definir referencia al input de monto esperado
+      const montoInp = document.getElementById('monto') || document.querySelector('input[name="monto"]');
 
-      // asegurar un único listener
+      const changeHandler = function () {
+  const opt = this.options[this.selectedIndex] || null;
+  const montoBase = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
+  if (montoInp) {
+    montoInp.value = (montoBase === '' || Number.isNaN(montoBase)) ? '' : Number(montoBase).toFixed(2);
+  }
+  actualizarEstadoPago();
+};
+
       select.addEventListener('change', changeHandler);
 
-      // seleccionar automáticamente la primera opción válida y llamar handler
+      // seleccionar automáticamente la primera opción válida
       const firstValid = Array.from(select.options).find(o => o.value);
       if (firstValid) {
         select.value = firstValid.value;
@@ -137,42 +122,95 @@ requireSession();
     }
   }
   
-  function aplicarDescuentoYMostrar(descuentoPct = 0, montoBase = 0, descuentoAplicable = true) {
+function aplicarDescuentoYMostrar(descuentoPct = 0, montoBase = 0, descuentoAplicable = true) {
+  const tipoActual = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
   const descuentoEl = document.getElementById('descuento_aplicado');
   const montoFinalEl = document.getElementById('monto_final');
-  const montoInp = document.querySelector('input[name="monto"]') || document.getElementById('monto');
+  const montoInp = document.getElementById('monto') || document.querySelector('input[name="monto"]');
 
-  // mostrar monto base (solo número, con 2 decimales)
-  if (montoInp) {
-    if (montoBase !== null && montoBase !== undefined && !isNaN(Number(montoBase))) {
-      montoInp.value = Number(montoBase).toFixed(2);
-    } else {
-      montoInp.value = '';
-    }
+  // Forzar no descuento para matrícula
+  if (tipoActual === 'matricula') {
+    descuentoPct = 0;
+    descuentoAplicable = false;
   }
 
-  // mostrar texto de descuento según aplicabilidad
+  if (montoInp) {
+    if (!isNaN(Number(montoBase))) montoInp.value = Number(montoBase).toFixed(2);
+    else montoInp.value = '';
+  }
+
   if (descuentoEl) {
-    if (!descuentoAplicable) {
+    if (tipoActual === 'matricula') {
+      descuentoEl.value = '';            // Limpio
+      descuentoEl.dataset.pct = '0';
+      descuentoEl.dataset.aplicable = '0';
+    } else if (!descuentoAplicable) {
       descuentoEl.value = 'No aplicable (pasó la fecha límite)';
+      descuentoEl.dataset.pct = String(descuentoPct || 0);
+      descuentoEl.dataset.aplicable = '0';
     } else if (descuentoPct) {
-      descuentoEl.value = `${Number(descuentoPct).toFixed(2)} %`;
+      descuentoEl.value = Number(descuentoPct).toFixed(2) + ' %';
+      descuentoEl.dataset.pct = String(descuentoPct);
+      descuentoEl.dataset.aplicable = '1';
     } else {
       descuentoEl.value = '';
+      descuentoEl.dataset.pct = '0';
+      descuentoEl.dataset.aplicable = '0';
     }
   }
 
-  // calcular monto final (aplica descuento solo si aplicable)
   let montoFinal = Number(montoBase || 0);
   if (descuentoAplicable && descuentoPct) {
     montoFinal = montoFinal * (1 - (Number(descuentoPct) / 100));
   }
-  if (montoFinalEl) {
-    montoFinalEl.value = isNaN(montoFinal) ? '' : Number(montoFinal).toFixed(2);
+  if (tipoActual === 'matricula') {
+    montoFinal = Number(montoBase || 0); // sin descuento
   }
+
+  if (montoFinalEl) {
+    montoFinalEl.value = isNaN(montoFinal) ? '' : montoFinal.toFixed(2);
+  }
+  actualizarEstadoPago();
 }
 
-    async function crearPago(payload = {}, file = null) {
+function actualizarEstadoPago() {
+  const estimado = Number(document.querySelector('input[name="monto"]')?.value || 0);
+  const recibido = Number(document.querySelector('input[name="monto_recibido"]')?.value || 0);
+  const estadoEl = document.getElementById('estado_pago_display');
+  if (!estadoEl) return;
+  if (!estimado) { estadoEl.value = ''; return; }
+  estadoEl.value = recibido >= estimado ? 'Completo' : 'Incompleto';
+}
+document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', actualizarEstadoPago);
+
+
+function sincronizarMontoFinal() {
+  const rec = document.querySelector('input[name="monto_recibido"]');
+  const finalEl = document.getElementById('monto_final');
+  if (rec && finalEl) {
+    finalEl.value = rec.value ? Number(rec.value).toFixed(2) : '';
+  }
+  actualizarEstadoPago();
+}
+
+function onCambioMontoEstimado() {
+  const sel = document.getElementById('monto_estimado');
+  const montoInp = document.querySelector('input[name="monto"]');
+  if (!sel || !montoInp) return;
+  const opt = sel.options[sel.selectedIndex];
+  const base = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
+  montoInp.value = (base === '' || isNaN(base)) ? '' : base.toFixed(2);
+  actualizarEstadoPago();
+}
+
+document.getElementById('monto_estimado')?.addEventListener('change', onCambioMontoEstimado);
+
+// Listener para monto recibido
+document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', sincronizarMontoFinal);
+
+
+
+async function crearPago(payload = {}, file = null) {
     try {
       if (file) {
         const fd = new FormData();
@@ -201,6 +239,51 @@ requireSession();
       throw err;
     }
   }
+
+  document.addEventListener('input', (e) => {
+  if (e.target.id === 'monto_final' || e.target.id === 'monto') actualizarEstadoPago();
+});
+
+function recalcularMontoFinal() {
+  const tipo = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
+  const base = Number(document.getElementById('monto')?.value || 0);
+  // No descuento para matrícula
+  let descuentoPct = 0;
+  let aplicable = false;
+  if (tipo === 'mensualidad') {
+    const descEl = document.getElementById('descuento_aplicado');
+    if (descEl && descEl.dataset.pct && descEl.dataset.aplicable === '1') {
+      descuentoPct = Number(descEl.dataset.pct);
+      aplicable = true;
+    }
+  }
+  let final = base;
+  if (aplicable && descuentoPct > 0) {
+    final = base * (1 - descuentoPct / 100);
+  }
+  const finalEl = document.getElementById('monto_final');
+  if (finalEl) finalEl.value = base ? final.toFixed(2) : '';
+  actualizarEstadoPago();
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'monto_recibido') actualizarEstadoPago();
+});
+
+document.getElementById('tipo_pago')?.addEventListener('change', () => {
+  // limpiar descuento al cambiar a matrícula
+  if ((document.getElementById('tipo_pago').value || '').toLowerCase() === 'matricula') {
+    const descEl = document.getElementById('descuento_aplicado');
+    if (descEl) {
+      descEl.value = '';
+      descEl.dataset.pct = '0';
+      descEl.dataset.aplicable = '0';
+    }
+    recalcularMontoFinal();
+  }
+});
+
+
   // CARGA TODOS LOS REGISTROS DE MENSUALIDADES REGISTRADAS
  async function cargarMensualidadesRegistradas(selectSelector = '#mes_a_pagar') {
     const sel = document.querySelector(selectSelector);
@@ -521,19 +604,13 @@ requireSession();
     const sel = document.querySelector('#monto_estimado');
     if (sel) {
       if (estimarId) sel.value = String(estimarId);
-      // obtener monto base desde la opción seleccionada
-      const opt = sel.options[sel.selectedIndex];
-      const montoBase = opt && opt.dataset && opt.dataset.monto ? Number(opt.dataset.monto) : (m.monto_base || 0);
-      // mostrar monto base y aplicar descuento segun aplicabilidad
-      aplicarDescuentoYMostrar(descuentoFila, montoBase, descuentoAplicableFila);
-      // escuchar cambios en select para actualizar monto y cálculo
-      sel.addEventListener('change', () => {
-        const opt2 = sel.options[sel.selectedIndex];
-        const mb = opt2 && opt2.dataset && opt2.dataset.monto ? Number(opt2.dataset.monto) : 0;
-        // set monto input to monto base when user selects estimated monto
-        aplicarDescuentoYMostrar(descuentoFila, mb, descuentoAplicableFila);
-      });
-    }
+  const opt = sel.options[sel.selectedIndex];
+  const montoBase = opt && opt.dataset && opt.dataset.monto ? Number(opt.dataset.monto) : 0;
+  const montoInp = document.querySelector('input[name="monto"]');
+  if (montoInp) montoInp.value = montoBase ? montoBase.toFixed(2) : '';
+  actualizarEstadoPago();
+  sel.addEventListener('change', onCambioMontoEstimado);
+}
 
     // tambien escuchar cambios manuales en monto para recalcular monto final
     const montoInpManual = document.querySelector('input[name="monto"]') || document.getElementById('monto');
@@ -545,15 +622,28 @@ requireSession();
     }
   }
 
+  document.getElementById('tipo_pago')?.addEventListener('change', () => {
+  const tipo = (document.getElementById('tipo_pago').value || '').toLowerCase();
+  document.querySelector('.pago-mensual')?.setAttribute('style', tipo === 'mensualidad' ? 'display:block' : 'display:none');
+  // Repoblar montos
+  populateMontosSelect(null, null, '#monto_estimado', tipo === 'mensualidad' ? 'Mensualidad' : 'Matricula')
+    .then(() => onCambioMontoEstimado())
+    .catch(() => {});
+});
+
   // Auto-init cuando la página contiene la tabla de pendientes o el select monto_estimado
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.pago-mensual').style.display = 'none';
     document.querySelector('.tabla-mensualidades-pendientes').style.display = 'none';
+    document.querySelector('.tabla-montos-incompletos').style.display = 'none';
+    document.getElementById('descuento').style.display = 'none';
     document.querySelector('.tabla-matriculas-pendientes').style.display = 'block';
     document.getElementById('tipo_pago').addEventListener('change', function () {
         document.querySelector('.pago-mensual').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
         document.querySelector('.tabla-mensualidades-pendientes').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
         document.querySelector('.tabla-matriculas-pendientes').style.display = this.value === 'Matricula' ? 'block' : 'none';
+        document.getElementById('descuento').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
+        document.querySelector('.tabla-montos-incompletos').style.display = this.value === 'Montos incompletos' ? 'block' : 'none';
         populateMontosSelect(null, null, '#monto_estimado', this.value).catch(() => {});
     });
     if (document.querySelector('.matriculas-pendientes-list')) {
@@ -574,57 +664,45 @@ requireSession();
       populateMontosSelect(n, g, '#monto_estimado');
     }
     const pagoForm = document.querySelector('.formulario-pagos form') || document.querySelector('form');
-    if (pagoForm) {
-      pagoForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        try {
-          // recoger valores del form
-          const f = e.target;
-          const tipo_pago = f.tipo_pago ? f.tipo_pago.value : null;
-          const monto = f.monto ? Number(f.monto.value || 0) : 0;
-          const metodo_pago = f.metodo_pago ? f.metodo_pago.value : null;
-          const descripcion = f.descripcion ? f.descripcion.value : null;
-          // campo select id="monto_estimado" contiene id_estimar_monto
-          const estimar_id = f.monto_estimado ? (f.monto_estimado.value || null) : null;
-          // hidden matricula_id puede existir (agregado al seleccionar matrícula)
-          const matricula_id = f.matricula_id ? (f.matricula_id.value || null) : null;
-          // seleccionar mes a pagar (id_mes)
-          const mensualidad_id = f.mes_a_pagar ? (f.mes_a_pagar.value || null) : null;
-          // file comprobante
-          const fileInput = f.querySelector('input[name="comprobante"]');
-          const file = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
 
-          const payload = {
-            tipo_pago,
-            monto,
-            metodo_pago,
-            descripcion,
-            estimar_monto_id_estimar_monto: estimar_id ? Number(estimar_id) : null,
-            matricula_id: matricula_id ? Number(matricula_id) : null,
-            usuarios_id_usuarios: 1, // ajustar según sesión/usuario real
-            mensualidades_id_pago: mensualidad_id ? Number(mensualidad_id) : null
-          };
+      if (pagoForm) {
+    pagoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const tipo_pago = f.tipo_pago.value;
+      const montoEstimado = Number(f.monto.value || 0);          // referencia
+      const montoRecibido = Number(f.monto_recibido.value || 0); // ingreso usuario
+      if (!montoEstimado) return alert('Seleccione monto estimado');
+      if (!montoRecibido) return alert('Ingrese monto recibido');
 
-          // llamar crearPago (si file presente, se enviará multipart)
-          const resp = await crearPago(payload, file);
-          console.log('crearPago resp', resp);
-          alert('Pago registrado correctamente.');
+      const payload = {
+        tipo_pago,
+        monto: montoEstimado,                // referencia (por compatibilidad)
+        monto_recibido: montoRecibido,       // REAL
+        metodo_pago: f.metodo_pago.value,
+        descripcion: f.descripcion.value || null,
+        estimar_monto_id_estimar_monto: f.monto_estimado.value ? Number(f.monto_estimado.value) : null,
+        matricula_id: f.matricula_id ? Number(f.matricula_id.value) : null,
+        mensualidades_id_pago: f.mes_a_pagar ? Number(f.mes_a_pagar.value) : null,
+        usuarios_id_usuarios: 1,
+        descuento_pct: (tipo_pago.toLowerCase() === 'mensualidad' &&
+                        document.getElementById('descuento_aplicado')?.dataset.aplicable === '1')
+          ? Number(document.getElementById('descuento_aplicado')?.dataset.pct || 0)
+          : null
+      };
 
-          // limpiar y refrescar
-          pagoForm.reset();
-          const hid = document.getElementById('matricula_id');
-          if (hid) hid.remove();
-          if (typeof cargarMatriculasPendientes === 'function') cargarMatriculasPendientes();
-          if (typeof cargarMensualidadesPendientes === 'function') cargarMensualidadesPendientes();
-          // recargar select de montos y meses
-          populateMontosSelect(null, null, '#monto_estimado');
-          cargarMensualidadesRegistradas('#mes_a_pagar');
-        } catch (err) {
-          console.error('Error en submit crearPago:', err);
-          alert('Error al registrar pago: ' + (err.message || err));
-        }
-      });
-    }
+      try {
+        const resp = await crearPago(payload);
+        alert(`Pago registrado. Estado: ${resp.estado_pago}`);
+        f.reset();
+        document.getElementById('estado_pago_display').value = '';
+        document.getElementById('monto_final').value = '';
+        populateMontosSelect(null, null, '#monto_estimado');
+      } catch (err) {
+        alert('Error: ' + (err.message || err));
+      }
+    });
+  }
   });
 
   window.apiPagos = {

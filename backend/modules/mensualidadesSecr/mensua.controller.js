@@ -358,8 +358,11 @@ class MensuaController {
           const cell = est.meses[(m || '').toLowerCase()];
           const x = startX + colEstudianteW + colMatW + idx * colMesW + 6;
           let text = '-';
-          if (!cell) text = '-';
-          else if (cell.pagado) {
+          let fontSize = 9; // tamaño por defecto
+          
+          if (!cell) {
+            text = '-';
+          } else if (cell.pagado) {
             const fecha = cell.fecha_pago || '';
             if (fecha) {
               const parts = fecha.split('-');
@@ -370,8 +373,11 @@ class MensuaController {
             }
           } else {
             text = 'Pendiente';
+            fontSize = 7; // reducir tamaño para "Pendiente"
           }
-          doc.text(text, x, y + 3, { width: colMesW - 8, align: 'center' });
+          
+          doc.fontSize(fontSize).text(text, x, y + 3, { width: colMesW - 8, align: 'center' });
+          doc.fontSize(9); // restaurar tamaño por defecto
         });
 
         y += rowHeight;

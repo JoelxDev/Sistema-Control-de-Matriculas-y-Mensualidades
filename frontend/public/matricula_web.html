@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Matrícula - Ben Carson</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 30px 40px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: space-around;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 0;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #dee2e6;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: #007bff;
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .step.active .step-title {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .step.completed .step-title {
+            color: #28a745;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #1e3c72;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #007bff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-control:invalid:not(:placeholder-shown) {
+            border-color: #dc3545;
+        }
+
+        .form-control:valid:not(:placeholder-shown) {
+            border-color: #28a745;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23007bff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .gender-option {
+            flex: 1;
+        }
+
+        .gender-option input[type="radio"] {
+            display: none;
+        }
+
+        .gender-label {
+            display: block;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .gender-option input[type="radio"]:checked + .gender-label {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 25px 30px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .form-row {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .logo {
+                width: 100px;
+                height: 100px;
+                order: -1;
+            }
+
+            .steps {
+                padding: 20px 10px;
+                flex-wrap: wrap;
+            }
+
+            .step {
+                min-width: 100px;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .step-title {
+                font-size: 0.85rem;
+            }
+
+            .form-content {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .gender-options {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .step-title {
+                font-size: 0.75rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Formulario de Matrícula</h1>
+                <p>Institución Educativa Privada Ben Carson</p>
+            </div>
+            <div class="logo">
+                <img src="/img/bencarson.png" alt="Logo Ben Carson">
+            </div>
+        </div>
+
+        <div class="steps">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-title">Datos del Estudiante</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-title">Datos del Apoderado</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-title">Información Académica</div>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <div id="alertContainer"></div>
+
+            <form id="matriculaForm">
+                <!-- PASO 1: DATOS DEL ESTUDIANTE -->
+                <div class="form-section active" data-section="1">
+                    <h2 class="section-title">Datos del Estudiante</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="apellidoPaterno">Apellido Paterno <span class="required">*</span></label>
+                            <input type="text" id="apellidoPaterno" name="apellidoPaterno" class="form-control" 
+                                   placeholder="Ingrese apellido paterno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="apellidoMaterno">Apellido Materno <span class="required">*</span></label>
+                            <input type="text" id="apellidoMaterno" name="apellidoMaterno" class="form-control" 
+                                   placeholder="Ingrese apellido materno" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombres">Nombres <span class="required">*</span></label>
+                            <input type="text" id="nombres" name="nombres" class="form-control" 
+                                   placeholder="Ingrese nombres completos" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dni">DNI <span class="required">*</span></label>
+                            <input type="text" id="dni" name="dni" class="form-control" 
+                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaNacimiento">Fecha de Nacimiento <span class="required">*</span></label>
+                            <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Género <span class="required">*</span></label>
+                        <div class="gender-options">
+                            <div class="gender-option">
+                                <input type="radio" id="masculino" name="genero" value="masculino" required>
+                                <label for="masculino" class="gender-label">Masculino</label>
+                            </div>
+                            <div class="gender-option">
+                                <input type="radio" id="femenino" name="genero" value="femenino" required>
+                                <label for="femenino" class="gender-label">Femenino</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: DATOS DEL APODERADO -->
+                <div class="form-section" data-section="2">
+                    <h2 class="section-title">Datos del Apoderado</h2>
+                    
+                    <h3 style="color: #495057; margin-bottom: 20px;">Información del Padre</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombrePadre">Nombre Completo del Padre</label>
+                            <input type="text" id="nombrePadre" name="nombrePadre" class="form-control" 
+                                   placeholder="Ingrese nombre completo del padre">
+                        </div>
+                        <div class="form-group">
+                            <label for="dniPadre">DNI del Padre</label>
+                            <input type="text" id="dniPadre" name="dniPadre" class="form-control" 
+                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}">
+                        </div>
+                    </div>
+
+                    <h3 style="color: #495057; margin: 30px 0 20px;">Información de la Madre</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombreMadre">Nombre Completo de la Madre</label>
+                            <input type="text" id="nombreMadre" name="nombreMadre" class="form-control" 
+                                   placeholder="Ingrese nombre completo de la madre">
+                        </div>
+                        <div class="form-group">
+                            <label for="dniMadre">DNI de la Madre</label>
+                            <input type="text" id="dniMadre" name="dniMadre" class="form-control" 
+                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ubicacion">Dirección de Domicilio</label>
+                        <input type="text" id="ubicacion" name="ubicacion" class="form-control" 
+                               placeholder="Ingrese dirección completa">
+                    </div>
+                </div>
+
+                <!-- PASO 3: INFORMACIÓN ACADÉMICA -->
+                <div class="form-section" data-section="3">
+                    <h2 class="section-title">Información Académica</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nivel">Nivel Educativo <span class="required">*</span></label>
+                            <select id="nivel" name="nivel" class="form-control" required>
+                                <option value="">Seleccione un nivel</option>
+                                <option value="inicial">Inicial</option>
+                                <option value="primaria">Primaria</option>
+                                <option value="secundaria">Secundaria</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="grado">Grado <span class="required">*</span></label>
+                            <select id="grado" name="grado" class="form-control" required disabled>
+                                <option value="">Primero seleccione un nivel</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; margin-top: 30px;">
+                        <h4 style="color: #004085; margin-bottom: 10px;">📋 Información Importante</h4>
+                        <p style="color: #004085; margin: 0; line-height: 1.6;">
+                            Una vez enviado el formulario, nuestro equipo revisará la información y se pondrá en contacto con usted 
+                            para continuar con el proceso de matrícula. Por favor, asegúrese de que todos los datos sean correctos.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- BOTONES DE NAVEGACIÓN -->
+                <div class="form-actions">
+                    <button type="button" id="btnAnterior" class="btn btn-secondary" style="display: none;">
+                        ← Anterior
+                    </button>
+                    <div style="flex: 1;"></div>
+                    <button type="button" id="btnSiguiente" class="btn btn-primary">
+                        Siguiente →
+                    </button>
+                    <button type="submit" id="btnFinalizar" class="btn btn-success" style="display: none;">
+                        ✓ Finalizar Matrícula
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/matriculaWeb.js"></script>
+</body>
+</html>

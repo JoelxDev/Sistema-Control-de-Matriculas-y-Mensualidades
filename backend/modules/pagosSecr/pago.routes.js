@@ -15,4 +15,10 @@ router.get('/todos', pagoCtrl.obtenerTodosPagos);
 // crear pago
 router.post('/crear', pagoCtrl.crearPago);
 
+router.get('/incompletos', pagoCtrl.obtenerPagosIncompletos);
+
+router.get('/incompletos/matrix', pagoCtrl.obtenerMontosIncompletosMatrix);
+
+router.get('/incompletos/secuencia', pagoCtrl.obtenerSecuenciasIncompletas);
+
 module.exports = router;

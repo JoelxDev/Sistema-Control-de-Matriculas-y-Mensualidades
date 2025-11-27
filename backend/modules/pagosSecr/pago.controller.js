@@ -62,148 +62,69 @@ exports.obtenerPagosPorMatricula = async (req, res) => {
 exports.crearPago = async (req, res) => {
   try {
     const datos = req.body || {};
+    const tipoRaw = String(datos.tipo_pago || '').trim();
+    const tipoNorm = tipoRaw.toLowerCase();
 
-    // inicializar montoFinal con el monto enviado (por defecto 0)
-    let montoFinal = Number(datos.monto || 0);
-    let descuentoAplicado = null;
+    const estimarId = datos.estimar_monto_id_estimar_monto || null;
+    const estimado = estimarId ? await Pago.obtenerEstimadoById(estimarId) : null;
+    const montoEstimado = estimado ? Number(estimado.monto_base) : Number(datos.monto || 0);
+    const montoRecibido = Number(datos.monto_recibido || 0);
+    const estadoPago = montoRecibido >= montoEstimado ? 'Completo' : 'Incompleto';
 
-    // obtener matricula_id desde campos posibles
-    const matriculaId = parseInt(datos.matricula_id || datos.matriculas_id_matricula || 0, 10) || null;
+    const matriculaId = datos.matricula_id || datos.matriculas_id_matricula || null;
+    const mensualidadId = datos.mensualidades_id_pago || null;
 
-    // Si es matricula validar existencia, estudiante asociado y estado 'pendiente'
-    if (datos.tipo_pago === 'Matricula') {
-      if (!matriculaId) return res.status(400).json({ error: 'matricula_id requerido para pagos tipo Matricula' });
-
-      const matricula = await Pago.obtenerMatriculaById(matriculaId);
-      if (!matricula) return res.status(400).json({ error: 'Matrícula no encontrada' });
-      if (!matricula.estudiantes_id_estudiante) return res.status(400).json({ error: 'La matrícula no tiene un estudiante asociado' });
-
-      const estadoActual = String(matricula.estado_matr || matricula.estado_mat || '').trim().toLowerCase();
-      if (estadoActual !== 'pendiente') {
-        return res.status(400).json({ error: 'La matrícula debe estar en estado "pendiente" para registrar el pago' });
-      }
-
-      // aplicar descuento si el estudiante tiene uno
-      const estudianteId = matricula.estudiantes_id_estudiante;
-      const descuento = await Pago.obtenerDescuentoPorEstudiante(estudianteId);
-      if (descuento && descuento.porcentaje_desc) {
-        const pct = Number(descuento.porcentaje_desc) || 0;
-        descuentoAplicado = pct;
-        montoFinal = Number((montoFinal * (1 - pct / 100)).toFixed(2));
-      }
-
-      // asociar la matricula al pago
-      datos.matriculas_id_matricula = matriculaId;
-    } else {
-      // Para otros tipos, si se proporcionó matricula_id intentar aplicar descuento también
-      if (matriculaId) {
-        const matricula = await Pago.obtenerMatriculaById(matriculaId);
-        if (matricula && matricula.estudiantes_id_estudiante) {
-          const descuento = await Pago.obtenerDescuentoPorEstudiante(matricula.estudiantes_id_estudiante);
-          if (descuento && descuento.porcentaje_desc) {
-            const pct = Number(descuento.porcentaje_desc) || 0;
-            // decidir si aplicar según tipo de pago y fechas
-            let aplicarDescuento = false;
-            const hoy = new Date();
-
-            if (String(datos.tipo_pago || '').toLowerCase() === 'mensualidad') {
-              // intentar obtener la mensualidad asociada para verificar su fecha_limite
-              const mensId = datos.mensualidades_id_pago || datos.mensualidad_id || null;
-              console.debug('crearPago: mensId=', mensId, 'descuento=', descuento);
-              if (mensId) {
-                const mens = await MensualidadModel.obtenerPorId(Number(mensId));
-                console.debug('crearPago: mensualidad=', mens);
-                if (mens && mens.fecha_limite != null) {
-                  // normalizar valor
-                  let raw = mens.fecha_limite;
-                  if (typeof raw === 'string') raw = raw.trim();
-                  const limiteNum = Number(raw);
-                  if (!Number.isNaN(limiteNum) && limiteNum >= 1 && limiteNum <= 31) {
-                    // fecha_limite es día del mes
-                    if (hoy.getDate() <= limiteNum) aplicarDescuento = true;
-                  } else {
-                    // intentar parsear como fecha completa
-                    const fLim = new Date(raw);
-                    if (!isNaN(fLim.getTime())) {
-                      fLim.setHours(23,59,59,999);
-                      if (hoy <= fLim) aplicarDescuento = true;
-                    } else {
-                      // no se pudo interpretar fecha_limite de la mensualidad -> no aplicar por seguridad
-                      console.debug('crearPago: fecha_limite mensualidad no interpretable:', raw);
-                    }
-                  }
-                } else {
-                  // no hay fecha en la mensualidad -> usar fallback del descuento si existe
-                  if (descuento && descuento.fecha_limite) {
-                    const fLimDesc = new Date(descuento.fecha_limite);
-                    if (!isNaN(fLimDesc.getTime())) {
-                      fLimDesc.setHours(23,59,59,999);
-                      if (hoy <= fLimDesc) aplicarDescuento = true;
-                    }
-                  }
-                }
-              } else {
-                // no se indicó mensualidad -> usar fecha_limite del descuento como fallback
-                if (descuento && descuento.fecha_limite) {
-                  const fLimDesc = new Date(descuento.fecha_limite);
-                  if (!isNaN(fLimDesc.getTime())) {
-                    fLimDesc.setHours(23,59,59,999);
-                    if (hoy <= fLimDesc) aplicarDescuento = true;
-                  }
-                }
-              }
-            } else {
-              // otros tipos (ej. recibos generales): aplicar si fecha_limite del descuento no ha pasado
-              if (descuento.fecha_limite) {
-                const fLimDesc = new Date(descuento.fecha_limite);
-                fLimDesc.setHours(23,59,59,999);
-                if (hoy <= fLimDesc) aplicarDescuento = true;
-              } else {
-                // sin fecha límite definida, aplicar por defecto
-                aplicarDescuento = true;
-              }
-            }
-
-            if (aplicarDescuento) {
-              descuentoAplicado = pct;
-              montoFinal = Number((montoFinal * (1 - pct / 100)).toFixed(2));
-            }
-          }
-        }
-      }
+    if (tipoNorm === 'matricula') {
+      if (!matriculaId) return res.status(400).json({ error: 'matricula_id requerido' });
+      const mat = await Pago.obtenerMatriculaById(matriculaId);
+      if (!mat) return res.status(404).json({ error: 'Matrícula no encontrada' });
+      if (String(mat.estado_matr || '').toLowerCase() !== 'pendiente')
+        return res.status(400).json({ error: 'La matrícula debe estar pendiente' });
     }
 
-    // crear pago usando montoFinal
     const insertId = await Pago.crearPago({
-      tipo_pago: datos.tipo_pago,
-      monto: montoFinal,
+      tipo_pago: tipoRaw,
+      monto_recibido: montoRecibido,
+      estado_pago: estadoPago,
       metodo_pago: datos.metodo_pago,
       descripcion: datos.descripcion,
       comprobante: datos.comprobante || null,
-      mensualidades_id_pago: datos.mensualidades_id_pago || datos.mensualidad_id || null,
-      matriculas_id_matricula: datos.matriculas_id_matricula || datos.matricula_id || null,
+      mensualidades_id_pago: mensualidadId,
+      matriculas_id_matricula: matriculaId || null,
       usuarios_id_usuarios: datos.usuarios_id_usuarios || null,
-      estimar_monto_id_estimar_monto: datos.estimar_monto_id_estimar_monto || datos.estimar_monto_id_estimar_monto || null
+      estimar_monto_id_estimar_monto: estimarId
     });
 
-    // Si fue un pago de matrícula, activar la matrícula (de 'pendiente' -> 'activo')
-    if (datos.tipo_pago === 'Matricula') {
-      const affected = await Pago.actualizarMatriculaEstado(datos.matriculas_id_matricula || datos.matricula_id, 'activo');
-      if (!affected) {
-        // rollback simple: eliminar pago creado si no se pudo actualizar matrícula
-        await Pago.eliminarPagoById(insertId);
-        return res.status(500).json({ error: 'No se pudo activar la matrícula después de crear el pago. Operación revertida.' });
-      }
+    // Recalcular acumulado y actualizar estados
+    const acumuladoInfo = await Pago.actualizarEstadosAcumulados(tipoRaw, matriculaId || null, mensualidadId || null);
+
+    // Activar matrícula incluso si incompleto (según tu requerimiento)
+    if (tipoNorm === 'matricula') {
+      await Pago.actualizarMatriculaEstado(matriculaId, 'activo');
     }
 
     return res.status(201).json({
-      insertedId: insertId,
-      monto_final: montoFinal,
-      descuento_aplicado: descuentoAplicado
+      id_pago: insertId,
+      tipo_pago: tipoRaw,
+      monto_estimado: montoEstimado,
+      monto_recibido: montoRecibido,
+      estado_pago: estadoPago,
+      acumulado: acumuladoInfo
     });
-  } catch (err) {
-    console.error('Error crearPago:', err);
-    res.status(500).json({ error: err.message });
+  } catch (e) {
+    console.error('crearPago error:', e);
+    return res.status(500).json({ error: e.message });
+  }
+};
+
+exports.obtenerPagosIncompletos = async (req, res) => {
+  try {
+    const { anioAcadId } = req.query; // opcional
+    const lista = await Pago.obtenerPagosIncompletos(anioAcadId || null);
+    res.json(lista);
+  } catch (e) {
+    console.error('obtenerPagosIncompletos error:', e);
+    res.status(500).json({ error: e.message });
   }
 };
 
@@ -414,14 +335,10 @@ exports.obtenerTodosPagos = async (req, res) => {
       const montoFinal = (p.monto_pago != null) ? Number(p.monto_pago) : null;
 
       if (String(tipo).toLowerCase() === 'matricula') {
-        // Si es matrícula: mostrar porcentaje si existe descuento asociado, si no -> 'sin descuento'
-        if (descuentoRecord && descuentoRecord.porcentaje_desc != null) {
-          descuento_porcentaje = Number(descuentoRecord.porcentaje_desc) || 0;
-          descuento_display = `${descuento_porcentaje}%`;
-        } else {
-          descuento_display = 'sin descuento';
-        }
-      } else if (descuentoRecord && descuentoRecord.porcentaje_desc != null) {
+  // SIEMPRE mostrar 'sin descuento' y null porcentaje, aunque el estudiante tenga descuento
+  descuento_display = 'sin descuento';
+  descuento_porcentaje = null;
+} else if (descuentoRecord && descuentoRecord.porcentaje_desc != null) {
         descuento_porcentaje = Number(descuentoRecord.porcentaje_desc) || 0;
         if (montoEstimado != null && montoFinal != null && montoFinal < montoEstimado - 0.0001) {
           // asumimos que se aplicó descuento
@@ -450,5 +367,26 @@ exports.obtenerTodosPagos = async (req, res) => {
   } catch (err) {
     console.error('Error obtenerTodosPagos:', err);
     res.status(500).json({ error: err.message });
+  }
+};
+exports.obtenerMontosIncompletosMatrix = async (req, res) => {
+  try {
+    const { anioAcadId } = req.query;
+    const filas = await Pago.obtenerIncompletosMatrix(anioAcadId || null);
+    res.json(filas);
+  } catch (e) {
+    console.error('Error obtenerMontosIncompletosMatrix:', e);
+    res.status(500).json({ error: e.message });
+  }
+};
+
+exports.obtenerSecuenciasIncompletas = async (req, res) => {
+  try {
+    const { anioAcadId } = req.query;
+    const data = await Pago.obtenerSecuenciasIncompletas(anioAcadId || null);
+    res.json(data);
+  } catch (e) {
+    console.error('Error obtenerSecuenciasIncompletas:', e);
+    res.status(500).json({ error: e.message });
   }
 };

@@ -94,6 +94,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!res.ok) { console.error('No se pudo cargar la sección'); return; }
   const { rows } = await res.json();
 
+  // Actualizar título con nombre de sección y grado
+  const titleElement = document.querySelector('.title-lower-body h1');
+  if (rows && rows.length > 0) {
+    const firstRow = rows[0];
+    const grado = firstRow.nombre_grad || firstRow.grado || 'N/A';
+    const nivel = firstRow.nombre_niv || firstRow.nivel || '';
+    const seccionNombre = firstRow.nombre_seccion || firstRow.nombre || firstRow.seccion || 'N/A';
+    titleElement.textContent = `Mensualidades - ${nivel} ${grado} - ${seccionNombre}`;
+  } else {
+    titleElement.textContent = `Mensualidades - Sección ${seccionId}`;
+  }
+
   const porEst = new Map();
   (rows || []).forEach(r => {
     const key = r.id_estudiante;

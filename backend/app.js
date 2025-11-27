@@ -9,6 +9,10 @@
 // });
 
 //////////////////////////////////////////////////////////////
+// VISTA PÚBLICA DEL FORMULARIO DE MATRÍCULA
+
+
+
 const { requireAuth, requireAuthView, requireAdmin, requireSecretario } = require('./middleware/auth.middleware');
 
 const express = require('express');
@@ -17,6 +21,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
+
 
 // app.use(cors());
 
@@ -36,6 +41,12 @@ app.use('/img', express.static('/usr/src/frontend/public/img'));
 // servir scripts de API (admin y secretario)
 app.use('/js/api', express.static('/usr/src/frontend/js/api'));
 
+app.get('/matricula', (req, res) => {
+    res.sendFile('/usr/src/frontend/public/matricula_web.html');
+});
+
+const matriculasWebRoutes = require('./modules/matriculasWeb/matriculasWeb.routes');
+app.use('/api/matriculas-web', matriculasWebRoutes);
 
 //////////////////////////////////////////////////////////////
 // API RUTAS AUTH
