@@ -1,8 +1,12 @@
 const db = require("../../config/db");
 
 const Pago = {
+
 async crearPago(datos) {
   const montoRec = Number(datos.monto_recibido || 0);
+  // monto_pago debe ser el monto final (con descuento aplicado si corresponde)
+  const montoPago = Number(datos.monto_pago || montoRec);
+  
   const [result] = await db.execute(
     `INSERT INTO pagos (
        tipo_pago,
@@ -20,8 +24,8 @@ async crearPago(datos) {
      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       datos.tipo_pago || null,
-      montoRec,              // igual al recibido
-      montoRec,
+      montoPago,             // monto final (con descuento si aplica)
+      montoRec,              // monto recibido del usuario
       datos.estado_pago || 'Incompleto',
       datos.metodo_pago || null,
       datos.descripcion || null,
@@ -166,8 +170,7 @@ async crearPago(datos) {
       );
       return rows.length > 0;
     },
-    async obtenerMensualidadesPendientes(monthNum, year) {
-    // devuelve todas las matrículas activas con info de pagos; incluye pagado_mes = 1 si ya pagó mensualidad en monthNum/year
+async obtenerMensualidadesPendientes(monthNum, year) {
     const [rows] = await db.execute(
       `
       SELECT 
@@ -180,20 +183,15 @@ async crearPago(datos) {
         n.nombre_niv,
         g.nombre_grad,
         s.nombre AS seccion_nombre,
+        g.niveles_id_nivel,
+        s.grados_id_grado,
+        m.secciones_id_seccion,
 
-        -- último pago (fecha) de cualquier tipo
         (SELECT MAX(p2.fecha_pago) FROM pagos p2 WHERE p2.matriculas_id_matricula = m.id_matricula) AS ultimo_pago_any,
-
-        -- tipo del último pago (Matricula, Mensualidad, etc.)
         (SELECT p3.tipo_pago FROM pagos p3 WHERE p3.matriculas_id_matricula = m.id_matricula ORDER BY p3.fecha_pago DESC LIMIT 1) AS ultimo_pago_tipo,
-
-        -- si el último pago fue mensualidad, id de la mensualidad pagada (NULL si no hay)
         (SELECT p4.mensualidades_id_pago FROM pagos p4 WHERE p4.matriculas_id_matricula = m.id_matricula AND p4.tipo_pago = 'Mensualidad' ORDER BY p4.fecha_pago DESC LIMIT 1) AS ultimo_pago_mensual_id,
-
-        -- último pago específicamente de tipo 'Mensualidad' (fecha) (puede ser NULL)
         (SELECT MAX(p5.fecha_pago) FROM pagos p5 WHERE p5.matriculas_id_matricula = m.id_matricula AND p5.tipo_pago = 'Mensualidad') AS ultimo_pago_mensual,
 
-        -- pagado en el mes/año solicitado?
         EXISTS (
           SELECT 1 FROM pagos p
           WHERE p.tipo_pago = 'Mensualidad'
@@ -230,6 +228,7 @@ async crearPago(datos) {
               n.nombre_niv,
               em.id_estimar_monto AS estimar_id,
               em.monto_base AS monto_estimado,
+              p.monto_recibido AS monto_recibido,
               em.descripcion AS estimar_descripcion
        FROM pagos p
        LEFT JOIN matriculas m ON p.matriculas_id_matricula = m.id_matricula
@@ -307,149 +306,6 @@ async actualizarEstadosAcumulados(tipoPago, matriculaId, mensualidadId) {
   }
   return { actualizado: completo, monto_estimado, monto_acumulado };
 },
-async obtenerIncompletosMatrix(anioAcadId = null) {
-    // 1. Matrículas activas con datos base
-    const paramsMat = [];
-    let whereAnio = '';
-    if (anioAcadId) {
-      whereAnio = 'AND aa.id_anio_escolar = ?';
-      paramsMat.push(anioAcadId);
-    }
-    const [matriculas] = await db.execute(
-      `
-      SELECT 
-        m.id_matricula,
-        m.fecha_matricula,
-        e.id_estudiante,
-        e.nombre_est,
-        e.apellido_est,
-        e.dni_est,
-        n.nombre_niv AS nivel,
-        g.nombre_grad AS grado,
-        s.nombre AS seccion,
-        g.id_grado
-      FROM matriculas m
-      JOIN estudiantes e ON m.estudiantes_id_estudiante = e.id_estudiante
-      LEFT JOIN secciones s ON m.secciones_id_seccion = s.id_seccion
-      LEFT JOIN grados g ON s.grados_id_grado = g.id_grado
-      LEFT JOIN niveles n ON g.niveles_id_nivel = n.id_nivel
-      LEFT JOIN periodos per ON per.id_periodo = m.periodos_id_periodo
-      LEFT JOIN anio_academico aa ON aa.id_anio_escolar = per.anio_academico_id_anio_escolar
-      WHERE m.estado_matr = 'activo' ${whereAnio}
-      ORDER BY e.apellido_est, e.nombre_est
-      `,
-      paramsMat
-    );
-
-    if (!matriculas.length) return [];
-
-    // 2. Sumas de pagos por matrícula (matricula) y por mensualidad
-    // Pagos de matrícula
-    const [sumMatricula] = await db.execute(`
-      SELECT p.matriculas_id_matricula AS id_matricula,
-             SUM(p.monto_recibido) AS suma_matricula
-      FROM pagos p
-      WHERE p.tipo_pago = 'Matricula'
-      GROUP BY p.matriculas_id_matricula
-    `);
-
-    // Pagos mensuales por mes
-    const [sumMensual] = await db.execute(`
-      SELECT p.matriculas_id_matricula AS id_matricula,
-             p.mensualidades_id_pago AS id_mes,
-             SUM(p.monto_recibido) AS suma_mes
-      FROM pagos p
-      WHERE p.tipo_pago = 'Mensualidad'
-        AND p.mensualidades_id_pago IS NOT NULL
-      GROUP BY p.matriculas_id_matricula, p.mensualidades_id_pago
-    `);
-
-    // 3. Definiciones de montos (matrícula y mensualidad) por grado (fallback: generales)
-    const [defMatricula] = await db.execute(`
-      SELECT em.id_estimar_monto,
-             em.monto_base,
-             em.grados_id_grado
-      FROM estimar_monto em
-      WHERE em.tipo_est_mon = 'matricula'
-    `);
-
-    const [defMensual] = await db.execute(`
-      SELECT em.id_estimar_monto,
-             em.monto_base,
-             em.grados_id_grado
-      FROM estimar_monto em
-      WHERE em.tipo_est_mon = 'mensualidad'
-    `);
-
-    // 4. Meses registrados
-    const [meses] = await db.execute(`
-      SELECT id_mes, mes
-      FROM mensualidades
-      ORDER BY id_mes
-    `);
-
-    // Map helpers
-    const mapSumMatricula = new Map(sumMatricula.map(r => [r.id_matricula, Number(r.suma_matricula || 0)]));
-    const mapSumMensual = new Map(); // key: matricula|mes
-    sumMensual.forEach(r => {
-      mapSumMensual.set(`${r.id_matricula}|${r.id_mes}`, Number(r.suma_mes || 0));
-    });
-
-    // Definiciones por grado (preferir exacto, si no, cualquiera con NULL)
-    function obtenerMontoDef(tipoArray, id_grado) {
-      const exacto = tipoArray.find(d => d.grados_id_grado === id_grado);
-      if (exacto) return Number(exacto.monto_base);
-      const general = tipoArray.find(d => d.grados_id_grado == null);
-      return general ? Number(general.monto_base) : 0;
-    }
-
-    const mesesOrden = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    // asegurar orden correcto
-    const mesesOrdenados = meses
-      .map(m => ({ ...m, mes_norm: String(m.mes).toLowerCase() }))
-      .sort((a,b) => mesesOrden.indexOf(a.mes_norm) - mesesOrden.indexOf(b.mes_norm));
-
-    // 5. Construir filas
-    const filas = [];
-    for (const m of matriculas) {
-      const montoMatriculaDef = obtenerMontoDef(defMatricula, m.id_grado);
-      const sumaMatricula = mapSumMatricula.get(m.id_matricula) || 0;
-      const pendienteMatricula = Math.max(montoMatriculaDef - sumaMatricula, 0);
-
-      // Meses
-      const mesesData = {};
-      let tieneIncompleto = pendienteMatricula > 0;
-      for (const mes of mesesOrdenados) {
-        const montoMensDef = obtenerMontoDef(defMensual, m.id_grado);
-        const sumaMes = mapSumMensual.get(`${m.id_matricula}|${mes.id_mes}`) || 0;
-        const pendienteMes = Math.max(montoMensDef - sumaMes, 0);
-        mesesData[mes.mes] = {
-          esperado: montoMensDef,
-          acumulado: sumaMes,
-          pendiente: pendienteMes
-        };
-        if (pendienteMes > 0) tieneIncompleto = true;
-      }
-
-      // Mostrar sólo si hay al menos un incompleto
-      if (tieneIncompleto) {
-        filas.push({
-          id_matricula: m.id_matricula,
-          estudiante: `${m.apellido_est}, ${m.nombre_est}`,
-          dni_est: m.dni_est,
-          fecha_matricula: m.fecha_matricula,
-          nivel: m.nivel,
-            grado: m.grado,
-          seccion: m.seccion,
-          matricula_pendiente: pendienteMatricula,
-          matricula_esperado: montoMatriculaDef,
-          meses: mesesData
-        });
-      }
-    }
-
-    return filas;
-  },
   async obtenerSecuenciasIncompletas(anioAcadId = null) {
   // Matrículas activas (filtra por año académico si se pasa)
   const paramsMat = [];
@@ -546,6 +402,214 @@ async obtenerIncompletosMatrix(anioAcadId = null) {
   // (Opcional) añadir grupos Pendiente sin pagos si puedes derivar estimado externo (no implementado aquí).
   return resultado;
 },
+// REEMPLAZAR la función obtenerIncompletosMatrix (eliminar la versión de líneas 310-453)
+// Y asegurarse de que solo exista esta versión:
+
+async obtenerIncompletosMatrix(anioAcadId = null) {
+    // 1. Obtener todas las matrículas activas con información del estudiante
+    const paramsMat = [];
+    let whereAnio = '';
+    if (anioAcadId) {
+      whereAnio = 'AND aa.id_anio_escolar = ?';
+      paramsMat.push(anioAcadId);
+    }
+    
+    const [matriculas] = await db.execute(
+      `
+      SELECT 
+        m.id_matricula,
+        m.fecha_matricula,
+        e.id_estudiante,
+        e.nombre_est,
+        e.apellido_est,
+        e.dni_est,
+        n.nombre_niv AS nivel,
+        g.nombre_grad AS grado,
+        s.nombre AS seccion,
+        g.id_grado
+      FROM matriculas m
+      JOIN estudiantes e ON m.estudiantes_id_estudiante = e.id_estudiante
+      LEFT JOIN secciones s ON m.secciones_id_seccion = s.id_seccion
+      LEFT JOIN grados g ON s.grados_id_grado = g.id_grado
+      LEFT JOIN niveles n ON g.niveles_id_nivel = n.id_nivel
+      LEFT JOIN periodos per ON per.id_periodo = m.periodos_id_periodo
+      LEFT JOIN anio_academico aa ON aa.id_anio_escolar = per.anio_academico_id_anio_escolar
+      WHERE m.estado_matr = 'activo' ${whereAnio}
+      ORDER BY e.apellido_est, e.nombre_est
+      `,
+      paramsMat
+    );
+
+    if (!matriculas.length) return [];
+
+    // 2. Obtener todos los pagos agrupados por matrícula y tipo (Matricula/Mensualidad)
+    // Pagos de matrícula - SUM de todos los pagos asociados a la matrícula
+    const [pagosMatricula] = await db.execute(`
+      SELECT 
+        p.matriculas_id_matricula AS id_matricula,
+        SUM(p.monto_recibido) AS monto_acumulado,
+        MAX(em.monto_base) AS monto_estimado,
+        COUNT(p.id_pagos) AS cantidad_pagos
+      FROM pagos p
+      LEFT JOIN estimar_monto em ON em.id_estimar_monto = p.estimar_monto_id_estimar_monto
+      WHERE p.tipo_pago = 'Matricula'
+      GROUP BY p.matriculas_id_matricula
+    `);
+
+    // Pagos mensuales - SUM por matrícula y mes (agrupa múltiples cuotas del mismo mes)
+    const [pagosMensuales] = await db.execute(`
+      SELECT 
+        p.matriculas_id_matricula AS id_matricula,
+        p.mensualidades_id_pago AS id_mes,
+        SUM(p.monto_recibido) AS monto_acumulado,
+        MAX(em.monto_base) AS monto_estimado,
+        COUNT(p.id_pagos) AS cantidad_pagos
+      FROM pagos p
+      LEFT JOIN estimar_monto em ON em.id_estimar_monto = p.estimar_monto_id_estimar_monto
+      WHERE p.tipo_pago = 'Mensualidad'
+        AND p.mensualidades_id_pago IS NOT NULL
+      GROUP BY p.matriculas_id_matricula, p.mensualidades_id_pago
+    `);
+
+    // 3. Obtener montos estimados por grado (con fallback a generales)
+    const [montosMatricula] = await db.execute(`
+      SELECT 
+        em.id_estimar_monto,
+        em.monto_base,
+        em.grados_id_grado
+      FROM estimar_monto em
+      WHERE em.tipo_est_mon = 'matricula'
+    `);
+
+    const [montosMensual] = await db.execute(`
+      SELECT 
+        em.id_estimar_monto,
+        em.monto_base,
+        em.grados_id_grado
+      FROM estimar_monto em
+      WHERE em.tipo_est_mon = 'mensualidad'
+    `);
+
+    // 4. Obtener los meses registrados
+    const [meses] = await db.execute(`
+      SELECT id_mes, mes
+      FROM mensualidades
+      ORDER BY 
+        FIELD(LOWER(mes), 'enero','febrero','marzo','abril','mayo','junio',
+              'julio','agosto','septiembre','octubre','noviembre','diciembre')
+    `);
+
+    // 5. Crear mapas para acceso rápido
+    const mapPagosMatricula = new Map(
+      pagosMatricula.map(r => [
+        r.id_matricula, 
+        {
+          acumulado: Number(r.monto_acumulado || 0),
+          estimado: Number(r.monto_estimado || 0),
+          cantidad: Number(r.cantidad_pagos || 0)
+        }
+      ])
+    );
+
+    const mapPagosMensuales = new Map();
+    pagosMensuales.forEach(r => {
+      const key = `${r.id_matricula}|${r.id_mes}`;
+      mapPagosMensuales.set(key, {
+        acumulado: Number(r.monto_acumulado || 0),
+        estimado: Number(r.monto_estimado || 0),
+        cantidad: Number(r.cantidad_pagos || 0)
+      });
+    });
+
+    // Helper para obtener monto estimado por grado (prioriza específico, luego general)
+    function obtenerMontoEstimado(arrayMontos, idGrado) {
+      const especifico = arrayMontos.find(m => m.grados_id_grado === idGrado);
+      if (especifico) return Number(especifico.monto_base || 0);
+      
+      const general = arrayMontos.find(m => m.grados_id_grado == null);
+      return general ? Number(general.monto_base || 0) : 0;
+    }
+
+    // 6. Construir resultado - solo incluir filas con pagos incompletos
+    const filas = [];
+    
+    for (const matricula of matriculas) {
+      const montoEstimadoMatricula = obtenerMontoEstimado(montosMatricula, matricula.id_grado);
+      const pagoMatricula = mapPagosMatricula.get(matricula.id_matricula);
+      
+      const acumuladoMatricula = pagoMatricula ? pagoMatricula.acumulado : 0;
+      const estimadoMatricula = pagoMatricula && pagoMatricula.estimado > 0 
+        ? pagoMatricula.estimado 
+        : montoEstimadoMatricula;
+      
+      const pendienteMatricula = Math.max(estimadoMatricula - acumuladoMatricula, 0);
+      const estadoMatricula = acumuladoMatricula === 0 
+        ? 'Pendiente' 
+        : pendienteMatricula > 0 
+          ? 'Incompleto' 
+          : 'Completo';
+
+      // Procesar mensualidades
+      const mesesData = {};
+      let tieneAlgunIncompleto = pendienteMatricula > 0;
+      
+      const montoEstimadoMensual = obtenerMontoEstimado(montosMensual, matricula.id_grado);
+      
+      for (const mes of meses) {
+        const key = `${matricula.id_matricula}|${mes.id_mes}`;
+        const pagoMes = mapPagosMensuales.get(key);
+        
+        const acumuladoMes = pagoMes ? pagoMes.acumulado : 0;
+        const estimadoMes = pagoMes && pagoMes.estimado > 0 
+          ? pagoMes.estimado 
+          : montoEstimadoMensual;
+        
+        const pendienteMes = Math.max(estimadoMes - acumuladoMes, 0);
+        const estadoMes = acumuladoMes === 0 
+          ? 'Pendiente' 
+          : pendienteMes > 0 
+            ? 'Incompleto' 
+            : 'Completo';
+        
+        const mesNormalized = String(mes.mes).toLowerCase();
+        mesesData[mesNormalized] = {
+          id_mes: mes.id_mes,
+          esperado: estimadoMes,
+          acumulado: acumuladoMes,
+          pendiente: pendienteMes,
+          estado: estadoMes,
+          cantidad_pagos: pagoMes ? pagoMes.cantidad : 0
+        };
+        
+        if (pendienteMes > 0) {
+          tieneAlgunIncompleto = true;
+        }
+      }
+
+      // Solo incluir la fila si tiene al menos un pago incompleto
+      if (tieneAlgunIncompleto) {
+        filas.push({
+          id_matricula: matricula.id_matricula,
+          estudiante: `${matricula.apellido_est}, ${matricula.nombre_est}`,
+          dni_est: matricula.dni_est,
+          fecha_matricula: matricula.fecha_matricula,
+          nivel: matricula.nivel,
+          grado: matricula.grado,
+          seccion: matricula.seccion,
+          matricula: {
+            esperado: estimadoMatricula,
+            acumulado: acumuladoMatricula,
+            pendiente: pendienteMatricula,
+            estado: estadoMatricula,
+            cantidad_pagos: pagoMatricula ? pagoMatricula.cantidad : 0
+          },
+          meses: mesesData
+        });
+      }
+    }
+
+    return filas;
+  },
 }
 
 module.exports = Pago;

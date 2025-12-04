@@ -492,17 +492,72 @@
                 font-size: 1.3rem;
             }
         }
+
+        .form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-prev, .btn-next, .btn-submit {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-prev {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-prev:hover {
+    background: #5a6268;
+    transform: translateX(-3px);
+}
+
+.btn-next {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+}
+
+.btn-next:hover {
+    background: #0056b3;
+    transform: translateX(3px);
+}
+
+.btn-submit {
+    background: #28a745;
+    color: white;
+    margin-left: auto;
+}
+
+.btn-submit:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-submit:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-content">
-                <h1>Formulario de Matrícula</h1>
-                <p>Institución Educativa Privada Ben Carson</p>
-            </div>
             <div class="logo">
                 <img src="/img/bencarson.png" alt="Logo Ben Carson">
+            </div>
+            <div class="header-content">
+                <h1>Formulario de Matrícula 2026</h1>
+                <p>Institución Educativa Privada Ben Carson</p>
             </div>
         </div>
 
@@ -513,7 +568,7 @@
             </div>
             <div class="step" data-step="2">
                 <div class="step-number">2</div>
-                <div class="step-title">Datos del Apoderado</div>
+                <div class="step-title">Datos de los Padres</div>
             </div>
             <div class="step" data-step="3">
                 <div class="step-number">3</div>
@@ -521,146 +576,289 @@
             </div>
         </div>
 
-        <div class="form-content">
-            <div id="alertContainer"></div>
-
-            <form id="matriculaForm">
-                <!-- PASO 1: DATOS DEL ESTUDIANTE -->
-                <div class="form-section active" data-section="1">
-                    <h2 class="section-title">Datos del Estudiante</h2>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="apellidoPaterno">Apellido Paterno <span class="required">*</span></label>
-                            <input type="text" id="apellidoPaterno" name="apellidoPaterno" class="form-control" 
-                                   placeholder="Ingrese apellido paterno" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="apellidoMaterno">Apellido Materno <span class="required">*</span></label>
-                            <input type="text" id="apellidoMaterno" name="apellidoMaterno" class="form-control" 
-                                   placeholder="Ingrese apellido materno" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombres">Nombres <span class="required">*</span></label>
-                            <input type="text" id="nombres" name="nombres" class="form-control" 
-                                   placeholder="Ingrese nombres completos" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="dni">DNI <span class="required">*</span></label>
-                            <input type="text" id="dni" name="dni" class="form-control" 
-                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fechaNacimiento">Fecha de Nacimiento <span class="required">*</span></label>
-                            <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control" required>
-                        </div>
-                    </div>
-
+        <form id="form-matricula" class="form-content">
+            <!-- PASO 1: Datos del Estudiante -->
+            <div class="form-section active" data-section="1">
+                <h2 class="section-title">Datos del Estudiante</h2>
+                
+                <div class="form-row">
                     <div class="form-group">
-                        <label>Género <span class="required">*</span></label>
-                        <div class="gender-options">
-                            <div class="gender-option">
-                                <input type="radio" id="masculino" name="genero" value="masculino" required>
-                                <label for="masculino" class="gender-label">Masculino</label>
-                            </div>
-                            <div class="gender-option">
-                                <input type="radio" id="femenino" name="genero" value="femenino" required>
-                                <label for="femenino" class="gender-label">Femenino</label>
-                            </div>
-                        </div>
+                        <label for="nombre_estudiante">
+                            Nombre(s) <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nombre_estudiante" 
+                            name="nombre_estudiante" 
+                            required 
+                            placeholder="Ingrese el nombre completo"
+                            pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+"
+                            title="Solo se permiten letras y espacios"
+                        >
                     </div>
-                </div>
-
-                <!-- PASO 2: DATOS DEL APODERADO -->
-                <div class="form-section" data-section="2">
-                    <h2 class="section-title">Datos del Apoderado</h2>
                     
-                    <h3 style="color: #495057; margin-bottom: 20px;">Información del Padre</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nombrePadre">Nombre Completo del Padre</label>
-                            <input type="text" id="nombrePadre" name="nombrePadre" class="form-control" 
-                                   placeholder="Ingrese nombre completo del padre">
-                        </div>
-                        <div class="form-group">
-                            <label for="dniPadre">DNI del Padre</label>
-                            <input type="text" id="dniPadre" name="dniPadre" class="form-control" 
-                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}">
-                        </div>
-                    </div>
-
-                    <h3 style="color: #495057; margin: 30px 0 20px;">Información de la Madre</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nombreMadre">Nombre Completo de la Madre</label>
-                            <input type="text" id="nombreMadre" name="nombreMadre" class="form-control" 
-                                   placeholder="Ingrese nombre completo de la madre">
-                        </div>
-                        <div class="form-group">
-                            <label for="dniMadre">DNI de la Madre</label>
-                            <input type="text" id="dniMadre" name="dniMadre" class="form-control" 
-                                   placeholder="Ingrese DNI (8 dígitos)" maxlength="8" pattern="[0-9]{8}">
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label for="ubicacion">Dirección de Domicilio</label>
-                        <input type="text" id="ubicacion" name="ubicacion" class="form-control" 
-                               placeholder="Ingrese dirección completa">
+                        <label for="apellido_estudiante">
+                            Apellidos <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="apellido_estudiante" 
+                            name="apellido_estudiante" 
+                            required 
+                            placeholder="Ingrese los apellidos"
+                            pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+"
+                            title="Solo se permiten letras y espacios"
+                        >
                     </div>
                 </div>
 
-                <!-- PASO 3: INFORMACIÓN ACADÉMICA -->
-                <div class="form-section" data-section="3">
-                    <h2 class="section-title">Información Académica</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dni_estudiante">
+                            DNI <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="dni_estudiante" 
+                            name="dni_estudiante" 
+                            required 
+                            placeholder="8 dígitos"
+                            pattern="[0-9]{8}"
+                            maxlength="8"
+                            title="El DNI debe tener exactamente 8 dígitos"
+                        >
+                    </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nivel">Nivel Educativo <span class="required">*</span></label>
-                            <select id="nivel" name="nivel" class="form-control" required>
-                                <option value="">Seleccione un nivel</option>
-                                <option value="inicial">Inicial</option>
-                                <option value="primaria">Primaria</option>
-                                <option value="secundaria">Secundaria</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="grado">Grado <span class="required">*</span></label>
-                            <select id="grado" name="grado" class="form-control" required disabled>
-                                <option value="">Primero seleccione un nivel</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; margin-top: 30px;">
-                        <h4 style="color: #004085; margin-bottom: 10px;">📋 Información Importante</h4>
-                        <p style="color: #004085; margin: 0; line-height: 1.6;">
-                            Una vez enviado el formulario, nuestro equipo revisará la información y se pondrá en contacto con usted 
-                            para continuar con el proceso de matrícula. Por favor, asegúrese de que todos los datos sean correctos.
-                        </p>
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">
+                            Fecha de Nacimiento <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="date" 
+                            class="form-control" 
+                            id="fecha_nacimiento" 
+                            name="fecha_nacimiento" 
+                            required
+                            max="2022-12-31"
+                        >
                     </div>
                 </div>
 
-                <!-- BOTONES DE NAVEGACIÓN -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="genero">
+                            Género <span class="required">*</span>
+                        </label>
+                        <select class="form-control" id="genero" name="genero" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ubicacion">
+                            Ubicación
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="ubicacion" 
+                            name="ubicacion" 
+                            placeholder="Distrito, Provincia"
+                        >
+                    </div>
+                </div>
+
                 <div class="form-actions">
-                    <button type="button" id="btnAnterior" class="btn btn-secondary" style="display: none;">
-                        ← Anterior
-                    </button>
-                    <div style="flex: 1;"></div>
-                    <button type="button" id="btnSiguiente" class="btn btn-primary">
+                    <button type="button" class="btn-next" onclick="nextStep(1)">
                         Siguiente →
                     </button>
-                    <button type="submit" id="btnFinalizar" class="btn btn-success" style="display: none;">
-                        ✓ Finalizar Matrícula
+                </div>
+            </div>
+
+            <!-- PASO 2: Datos de los Padres -->
+            <div class="form-section" data-section="2">
+                <h2 class="section-title">Datos de los Padres o Apoderados</h2>
+                
+                <h3 style="color: #1e3c72; margin-bottom: 15px;">Datos del Padre</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_padre">Nombre Completo del Padre</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nombre_padre" 
+                            name="nombre_padre" 
+                            placeholder="Nombre completo"
+                           
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dni_padre">DNI del Padre</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="dni_padre" 
+                            name="dni_padre" 
+                            placeholder="8 dígitos"
+                           
+                            maxlength="8"
+                        >
+                    </div>
+                </div>
+
+                <h3 style="color: #1e3c72; margin: 25px 0 15px;">Datos de la Madre</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_madre">Nombre Completo de la Madre</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="nombre_madre" 
+                            name="nombre_madre" 
+                            placeholder="Nombre completo"
+                           
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dni_madre">DNI de la Madre</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="dni_madre" 
+                            name="dni_madre" 
+                            placeholder="8 dígitos"
+                            
+                            maxlength="8"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-prev" onclick="prevStep(2)">
+                        ← Anterior
+                    </button>
+                    <button type="button" class="btn-next" onclick="nextStep(2)">
+                        Siguiente →
                     </button>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- PASO 3: Información Académica -->
+            <div class="form-section" data-section="3">
+                <h2 class="section-title">Información Académica</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nivel">
+                            Nivel <span class="required">*</span>
+                        </label>
+                        <select class="form-control" id="nivel" name="nivel" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Inicial">Inicial</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grado">
+                            Grado <span class="required">*</span>
+                        </label>
+                        <select class="form-control" id="grado" name="grado" required>
+                            <option value="">Seleccione primero un nivel...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-prev" onclick="prevStep(3)">
+                        ← Anterior
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        📝 Enviar Matrícula
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script src="/js/matriculaWeb.js"></script>
+    
+    <script>
+        // Navegación entre pasos
+        function nextStep(currentStep) {
+            const currentSection = document.querySelector(`.form-section[data-section="${currentStep}"]`);
+            const inputs = currentSection.querySelectorAll('input[required], select[required]');
+            
+            // Validar campos requeridos
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    valid = false;
+                    return;
+                }
+            });
+            
+            if (!valid) return;
+            
+            // Ocultar paso actual
+            currentSection.classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('completed');
+            
+            // Mostrar siguiente paso
+            const nextStep = currentStep + 1;
+            document.querySelector(`.form-section[data-section="${nextStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${nextStep}"]`).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function prevStep(currentStep) {
+            // Ocultar paso actual
+            document.querySelector(`.form-section[data-section="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+            
+            // Mostrar paso anterior
+            const prevStep = currentStep - 1;
+            document.querySelector(`.form-section[data-section="${prevStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${prevStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${prevStep}"]`).classList.remove('completed');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Cambiar grados según nivel seleccionado
+        document.getElementById('nivel').addEventListener('change', function() {
+            const gradoSelect = document.getElementById('grado');
+            gradoSelect.innerHTML = '<option value="">Seleccione...</option>';
+            
+            const grados = {
+                'Inicial': ['3 años', '4 años', '5 años'],
+                'Primaria': ['1° Primaria', '2° Primaria', '3° Primaria', '4° Primaria', '5° Primaria', '6° Primaria'],
+                'Secundaria': ['1° Secundaria', '2° Secundaria', '3° Secundaria', '4° Secundaria', '5° Secundaria']
+            };
+            
+            if (grados[this.value]) {
+                grados[this.value].forEach(grado => {
+                    const option = document.createElement('option');
+                    option.value = grado;
+                    option.textContent = grado;
+                    gradoSelect.appendChild(option);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

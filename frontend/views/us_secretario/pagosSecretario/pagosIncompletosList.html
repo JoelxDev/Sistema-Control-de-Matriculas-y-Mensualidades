@@ -34,34 +34,39 @@
         <div class="main-content">
             <div class="upper-body">
                 <!-- <a href="/secretario/mensualidades/registrar_pago"><button>Registrar pago mensualidad</button></a> -->
-                <a href="/secretario/pagos/registrar_pago"><button>Registrar Pago</button></a>
+                <!-- <a href="/secretario/pagos/registrar_pago"><button>Lista de pagos incompletos</button></a> -->
             </div>
             <div class="lower-body">
                 <div class="title-lower-body">
-                    <h1>LISTA DE PAGOS REGISTRADOS</h1>
+                    <h1>LISTA DE PAGOS IMCOMPLETOS</h1>
                 </div>
-                <div class="contenido-periodos contenido">
+                <div class="contenido-pagosIncompletos contenido">
                     <div class="tabla-detalles">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Estudiante</th>
+                                    <th>DNI Estudiante</th>
                                     <th>Nivel</th>
                                     <th>Grado</th>
-                                    <th>Tipo</th>
-                                    <th>Mes</th>
-                                    <th>Fecha limite</th>
-                                    <th>Monto estimado</th>
-                                    <th>Descuento</th>
-                                    <th>Monto Recibido</th>
-                                    <th>Metodo Pago</th>
-                                    <th>Descripcion</th>
-                                    <th>Fecha</th>
-                                    <th>Usuario</th>
-                                    <!-- <th>Acciones</th> -->
+                                    <th>Sección</th>
+                                    <th>Matricula</th>
+                                    <th>Enero</th>
+                                    <th>Febrero</th>
+                                    <th>Marzo</th>
+                                    <th>Abril</th>
+                                    <th>Mayo</th>
+                                    <th>Junio</th>
+                                    <th>Julio</th>
+                                    <th>Agosto</th>
+                                    <th>Septiembre</th>
+                                    <th>Octubre</th>
+                                    <th>Noviembre</th>
+                                    <th>Diciembre</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="periodos-list">
+                            <tbody id="pagosIncompletos-list">
                                 <!-- Los periodos se agregarán aquí dinámicamente -->
                             </tbody>
                         </table>
@@ -70,7 +75,7 @@
             </div>
         </div>
     </div>
-    <script type="module" src="/js/api/user_secretario/apiPagosList.js"></script>
+    <script type="module" src="/js/api/user_secretario/apiPagosIncompletosList.js"></script>
 </body>
 
 </html>

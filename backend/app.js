@@ -32,19 +32,31 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+// ========================================
+// SERVIR ARCHIVOS ESTÁTICOS DEL FRONTEND
+// ========================================
 
-// SERVIR ARCHIVOS ESTÁTICOS DEL FRONTEND (antes de las rutas HTML)
+// Servir TODA la carpeta public (esto incluye js, css, img)
+app.use(express.static('/usr/src/frontend/public'));
+
+// Servir scripts de API (admin y secretario) desde js/api
+app.use('/js/api', express.static('/usr/src/frontend/js/api'));
+
+// También servir explícitamente cada carpeta por si acaso
 app.use('/js', express.static('/usr/src/frontend/public/js'));
 app.use('/css', express.static('/usr/src/frontend/public/css'));
 app.use('/img', express.static('/usr/src/frontend/public/img'));
 
-// servir scripts de API (admin y secretario)
-app.use('/js/api', express.static('/usr/src/frontend/js/api'));
+// ========================================
+// RUTAS PÚBLICAS
+// ========================================
 
+// Formulario de matrícula público (HTML)
 app.get('/matricula', (req, res) => {
     res.sendFile('/usr/src/frontend/public/matricula_web.html');
 });
 
+// API de matrícula web (POST público)
 const matriculasWebRoutes = require('./modules/matriculasWeb/matriculasWeb.routes');
 app.use('/api/matriculas-web', matriculasWebRoutes);
 
@@ -458,6 +470,9 @@ app.get('/secretario/definir_monto/editar', requireAuthView, requireSecretario, 
 })
 app.get('/secretario/pagos', requireAuthView, requireSecretario, (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/pagosSecretario/pagosSecretario.html');
+})
+app.get('/secretario/pagos/pagosIncompletos', requireAuthView, requireSecretario, (req, res) => {
+    res.sendFile('/usr/src/frontend/views/us_secretario/pagosSecretario/pagosIncompletosList.html');
 })
 app.get('/secretario/pagos/registrar_pago', requireAuthView, requireSecretario, (req, res) => {
     res.sendFile('/usr/src/frontend/views/us_secretario/pagosSecretario/btn_registrar_pago.html');

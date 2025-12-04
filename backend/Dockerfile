@@ -24,27 +24,23 @@
 
 # Imagen base de Node.js
 # Imagen base
-FROM node:18
+FROM node:18-alpine
 
-# Instalar herramientas necesarias para compilar bcrypt
-RUN apt-get update && apt-get install -y python3 make g++
-
-# Crear carpeta de trabajo
+# Establecer directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copiar package.json y package-lock.json
+# Copiar package.json y package-lock.json primero (para aprovechar caché)
 COPY package*.json ./
 
-# Instalar dependencias con npm
+# Instalar dependencias
 RUN npm install
-
-# Recompilar bcrypt desde el código fuente (opcional, recomendado en Linux)
-RUN npm rebuild bcrypt --build-from-source
 
 # Copiar el resto del código
 COPY . .
 
-# Exponer puerto y comando por defecto
+# Exponer puerto
 EXPOSE 3000
+
+# Comando por defecto (se sobrescribe en docker-compose)
 CMD ["npm", "run", "dev"]
 

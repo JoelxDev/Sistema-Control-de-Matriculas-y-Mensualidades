@@ -1,4 +1,3 @@
-// ...existing code...
 const Pago = require('./pago.model');
 const MensualidadModel = require('../mensualidadesSecr/mensua.model'); // <-- new dependency
 
@@ -69,21 +68,84 @@ exports.crearPago = async (req, res) => {
     const estimado = estimarId ? await Pago.obtenerEstimadoById(estimarId) : null;
     const montoEstimado = estimado ? Number(estimado.monto_base) : Number(datos.monto || 0);
     const montoRecibido = Number(datos.monto_recibido || 0);
-    const estadoPago = montoRecibido >= montoEstimado ? 'Completo' : 'Incompleto';
+
+    // Calcular monto final (monto_pago)
+    let montoFinal = montoEstimado;
+    let descuentoAplicado = 0;
+
+    // Aplicar descuento solo para mensualidad si está vigente
+    if (tipoNorm === 'mensualidad' && datos.descuento_pct != null) {
+      const descuentoPct = Number(datos.descuento_pct || 0);
+      const mensualidadId = datos.mensualidades_id_pago || null;
+
+      // Verificar que el descuento esté vigente comparando con fecha límite de la mensualidad
+      let descuentoVigente = false;
+
+      if (descuentoPct > 0 && mensualidadId) {
+        try {
+          const mensualidad = await MensualidadModel.obtenerPorId(mensualidadId);
+          if (mensualidad && mensualidad.fecha_limite != null) {
+            const limiteVal = Number(mensualidad.fecha_limite);
+
+            if (!isNaN(limiteVal) && limiteVal >= 1 && limiteVal <= 31) {
+              const hoy = new Date();
+              hoy.setHours(0, 0, 0, 0);
+              const monthNum = hoy.getMonth() + 1;
+              const year = hoy.getFullYear();
+
+              const normalizeMonth = s => String(s || '')
+                .toLowerCase().trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/^setiembre$/, 'septiembre');
+
+              const mesesOrden = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+              const mesNorm = normalizeMonth(mensualidad.mes);
+              const mesPendienteIndex = mesesOrden.indexOf(mesNorm);
+
+              if (mesPendienteIndex !== -1) {
+                const mesPendienteNum = mesPendienteIndex + 1;
+
+                if (mesPendienteNum >= monthNum) {
+                  const fechaLimite = new Date(year, mesPendienteNum - 1, limiteVal, 23, 59, 59, 999);
+                  descuentoVigente = (hoy <= fechaLimite);
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Error verificando vigencia de descuento:', err);
+        }
+      }
+
+      // Solo aplicar descuento si está vigente
+      if (descuentoVigente && descuentoPct > 0) {
+        montoFinal = montoEstimado * (1 - (descuentoPct / 100));
+        descuentoAplicado = descuentoPct;
+      }
+    }
+
+    // Determinar estado del pago comparando monto recibido con monto final
+    const estadoPago = montoRecibido >= montoFinal ? 'Completo' : 'Incompleto';
 
     const matriculaId = datos.matricula_id || datos.matriculas_id_matricula || null;
     const mensualidadId = datos.mensualidades_id_pago || null;
 
     if (tipoNorm === 'matricula') {
-      if (!matriculaId) return res.status(400).json({ error: 'matricula_id requerido' });
-      const mat = await Pago.obtenerMatriculaById(matriculaId);
-      if (!mat) return res.status(404).json({ error: 'Matrícula no encontrada' });
-      if (String(mat.estado_matr || '').toLowerCase() !== 'pendiente')
-        return res.status(400).json({ error: 'La matrícula debe estar pendiente' });
-    }
+  if (!matriculaId) return res.status(400).json({ error: 'matricula_id requerido' });
+  const mat = await Pago.obtenerMatriculaById(matriculaId);
+  if (!mat) return res.status(404).json({ error: 'Matrícula no encontrada' });
+  
+  // Permitir pagos si está pendiente O si está activa (para completar pagos incompletos)
+  const estadoMat = String(mat.estado_matr || '').toLowerCase();
+  if (estadoMat !== 'pendiente' && estadoMat !== 'activo') {
+    return res.status(400).json({ error: 'La matrícula debe estar pendiente o activa para registrar pagos' });
+  }
+}
 
     const insertId = await Pago.crearPago({
       tipo_pago: tipoRaw,
+      monto_pago: montoRecibido,        // SIEMPRE igual a monto_recibido
       monto_recibido: montoRecibido,
       estado_pago: estadoPago,
       metodo_pago: datos.metodo_pago,
@@ -107,7 +169,9 @@ exports.crearPago = async (req, res) => {
       id_pago: insertId,
       tipo_pago: tipoRaw,
       monto_estimado: montoEstimado,
+      monto_final: montoFinal,
       monto_recibido: montoRecibido,
+      descuento_aplicado: descuentoAplicado,
       estado_pago: estadoPago,
       acumulado: acumuladoInfo
     });
@@ -131,49 +195,36 @@ exports.obtenerPagosIncompletos = async (req, res) => {
 exports.obtenerMensualidadesPendientes = async (req, res) => {
   try {
     const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Establecer a medianoche para comparación precisa
     const monthNum = hoy.getMonth() + 1;
     const year = hoy.getFullYear();
 
-    // ahora obtenemos todas las matrículas activas (incluye las que ya pagaron este mes)
     const pendientes = await Pago.obtenerMensualidadesPendientes(monthNum, year);
 
-    // mensualidades registradas (para calcular siguiente impaga)
     const mensualidadesRegistradas = await MensualidadModel.obtenerTodas();
     const normalizeMonth = s => String(s || '')
       .toLowerCase().trim()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
       .replace(/\s+/g, ' ')
-      .replace(/^setiembre$/, 'septiembre'); // mapa variantes
+      .replace(/^setiembre$/, 'septiembre');
 
-    const mesesOrden = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const mesesOrden = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const ordenadas = (Array.isArray(mensualidadesRegistradas) ? mensualidadesRegistradas : [])
       .map(m => ({ ...m, mes_norm: normalizeMonth(m.mes) }))
       .filter(m => mesesOrden.includes(m.mes_norm))
-      .sort((a,b) => mesesOrden.indexOf(a.mes_norm) - mesesOrden.indexOf(b.mes_norm));
+      .sort((a, b) => mesesOrden.indexOf(a.mes_norm) - mesesOrden.indexOf(b.mes_norm));
     const mapById = new Map();
     ordenadas.forEach((m, idx) => mapById.set(m.id_mes, { ...m, index: idx }));
 
     const listaPromises = pendientes.map(async r => {
-      // descuento vigente?
-      let descuento_valido = false;
-      let descuento_porcentaje = 0;
-      if (r.id_descuento && r.fecha_limite_descuento) {
-        const fechaLimiteDesc = new Date(r.fecha_limite_descuento);
-        fechaLimiteDesc.setHours(23,59,59,999);
-        if (hoy <= fechaLimiteDesc) {
-          descuento_valido = true;
-          descuento_porcentaje = Number(r.porcentaje_desc) || 0;
-        }
-      }
+      const descuento_porcentaje = r.id_descuento ? (Number(r.porcentaje_desc) || 0) : 0;
+      const tiene_descuento = r.id_descuento != null;
 
-      // obtener pagos ya realizados para esta matrícula
       const pagosMat = await Pago.obtenerPagosPorMatricula(r.id_matricula);
       const pagosMensuales = (pagosMat || []).filter(p => String(p.tipo_pago || '').toLowerCase() === 'mensualidad');
 
-      // si ya pagó este mes, marcarlo y no sugerir pago pendiente para este mes
       const yaPagadoEsteMes = Number(r.pagado_mes) === 1;
 
-      // calcular primer mensualidad registrada impaga (solo si no pagó este mes)
       let siguiente = null;
       let siguienteIndex = null;
       if (ordenadas.length > 0) {
@@ -191,38 +242,53 @@ exports.obtenerMensualidadesPendientes = async (req, res) => {
         }
       }
 
-      if (!yaPagadoEsteMes) {
-        // preferir la fecha de la mensualidad (siguiente)
-        if (siguiente && siguiente.fecha_limite) {
-          const fechaLimiteMes = new Date(); // fechaLimiteMes será día del mes (número)
-          // si fecha_limite en la tabla mensualidades es un número (día), comparar con día del mes actual
-          const limiteVal = Number(siguiente.fecha_limite);
-          if (!isNaN(limiteVal) && limiteVal >= 1 && limiteVal <= 31) {
-            const diaHoy = hoy.getDate();
-            if (diaHoy <= limiteVal) {
-              descuento_valido = (r.id_descuento != null);
-              descuento_porcentaje = descuento_valido ? (Number(r.porcentaje_desc) || 0) : 0;
+      // El descuento se aplica si existe descuento Y estamos dentro de la fecha límite de la mensualidad pendiente
+      let descuento_aplicable = false;
+      if (tiene_descuento && siguiente && siguiente.fecha_limite != null) {
+        const limiteVal = Number(siguiente.fecha_limite);
+
+        // Si fecha_limite es un número entre 1-31, es el día del mes
+        if (!isNaN(limiteVal) && limiteVal >= 1 && limiteVal <= 31) {
+          // Obtener el índice del mes de la mensualidad pendiente
+          const mesPendienteIndex = mesesOrden.indexOf(siguiente.mes_norm);
+
+          if (mesPendienteIndex !== -1) {
+            // Crear fecha límite usando el mes de la mensualidad pendiente
+            // Si el mes pendiente ya pasó en el año actual, usar el año siguiente
+            const mesPendienteNum = mesPendienteIndex + 1; // meses 1-12
+            let yearLimite = year;
+
+            // Si el mes pendiente es anterior al mes actual, significa que es del año pasado
+            if (mesPendienteNum < monthNum) {
+              // El mes pendiente ya pasó, el descuento no aplica
+              descuento_aplicable = false;
+            } else {
+              // Construir la fecha límite con el mes correcto
+              const fechaLimite = new Date(yearLimite, mesPendienteNum - 1, limiteVal, 23, 59, 59, 999);
+              descuento_aplicable = (hoy <= fechaLimite);
+
+              console.log(`DEBUG - Estudiante ${r.nombre_est}:`, {
+                fecha_actual: hoy.toISOString().split('T')[0],
+                fecha_limite: fechaLimite.toISOString().split('T')[0],
+                mes_pendiente: siguiente.mes,
+                mes_pendiente_num: mesPendienteNum,
+                dia_limite: limiteVal,
+                descuento_aplicable
+              });
             }
           } else {
-            // si fecha_limite viene como fecha completa, comparar fechas
-            const fLim = new Date(siguiente.fecha_limite);
-            fLim.setHours(23,59,59,999);
-            if (hoy <= fLim) {
-              descuento_valido = (r.id_descuento != null);
-              descuento_porcentaje = descuento_valido ? (Number(r.porcentaje_desc) || 0) : 0;
-            }
-          }
-        } else if (r.id_descuento && r.fecha_limite_descuento) {
-          const fechaLimiteDesc = new Date(r.fecha_limite_descuento);
-          fechaLimiteDesc.setHours(23,59,59,999);
-          if (hoy <= fechaLimiteDesc) {
-            descuento_valido = true;
-            descuento_porcentaje = Number(r.porcentaje_desc) || 0;
+            console.log(`DEBUG - Estudiante ${r.nombre_est}: mes pendiente no reconocido:`, siguiente.mes);
           }
         }
+      } else {
+        console.log(`DEBUG - Estudiante ${r.nombre_est}:`, {
+          tiene_descuento,
+          tiene_siguiente: !!siguiente,
+          fecha_limite: siguiente?.fecha_limite,
+          razon: !tiene_descuento ? 'No tiene descuento' : !siguiente ? 'No tiene mensualidad pendiente' : 'No tiene fecha límite'
+        });
       }
 
-      // representar último pago: tipo o nombre del mes
       let ultimoPagoDisplay = null;
       const tipoUltimo = (r.ultimo_pago_tipo || '').trim();
       if (tipoUltimo && tipoUltimo.toLowerCase() === 'mensualidad' && r.ultimo_pago_mensual_id) {
@@ -234,8 +300,8 @@ exports.obtenerMensualidadesPendientes = async (req, res) => {
         ultimoPagoDisplay = null;
       }
 
-      return {
-         id_matricula: r.id_matricula,
+      const resultado = {
+        id_matricula: r.id_matricula,
         id_estudiante: r.id_estudiante,
         nombre_est: r.nombre_est,
         apellido_est: r.apellido_est,
@@ -244,17 +310,26 @@ exports.obtenerMensualidadesPendientes = async (req, res) => {
         nivel: r.nombre_niv || null,
         grado: r.nombre_grad || null,
         seccion: r.seccion_nombre || null,
+        niveles_id_nivel: r.niveles_id_nivel || null,
+        grados_id_grado: r.grados_id_grado || null,
+        secciones_id_seccion: r.secciones_id_seccion || null,
         ultimo_pago: ultimoPagoDisplay,
-        // Mostrar siempre el siguiente mes impago encontrado (si existe) independientemente de pagado_mes
         pago_pendiente_mes: siguiente ? siguiente.mes : null,
         pago_pendiente_id_mes: siguiente ? siguiente.id_mes : null,
         pago_pendiente_index: siguienteIndex !== null ? siguienteIndex : null,
         vencimiento_dia: siguiente ? siguiente.fecha_limite : null,
-        descuento_aplicable: descuento_valido,
+        descuento_aplicable: descuento_aplicable,
         descuento_porcentaje: descuento_porcentaje,
-        // sigue devolviendo pagado_mes para UI (solo indicador)
         pagado_mes: !!Number(r.pagado_mes)
       };
+
+      console.log(`DEBUG - Resultado final para ${r.nombre_est}:`, {
+        descuento_aplicable: resultado.descuento_aplicable,
+        descuento_porcentaje: resultado.descuento_porcentaje,
+        mes_pendiente: resultado.pago_pendiente_mes
+      });
+
+      return resultado;
     });
 
     const lista = await Promise.all(listaPromises);
@@ -335,17 +410,17 @@ exports.obtenerTodosPagos = async (req, res) => {
       const montoFinal = (p.monto_pago != null) ? Number(p.monto_pago) : null;
 
       if (String(tipo).toLowerCase() === 'matricula') {
-  // SIEMPRE mostrar 'sin descuento' y null porcentaje, aunque el estudiante tenga descuento
-  descuento_display = 'sin descuento';
-  descuento_porcentaje = null;
-} else if (descuentoRecord && descuentoRecord.porcentaje_desc != null) {
+        // SIEMPRE mostrar 'sin descuento' y null porcentaje, aunque el estudiante tenga descuento
+        descuento_display = 'sin descuento';
+        descuento_porcentaje = null;
+      } else if (descuentoRecord && descuentoRecord.porcentaje_desc != null) {
         descuento_porcentaje = Number(descuentoRecord.porcentaje_desc) || 0;
         if (montoEstimado != null && montoFinal != null && montoFinal < montoEstimado - 0.0001) {
           // asumimos que se aplicó descuento
           descuento_display = `${descuento_porcentaje}%`;
         } else {
           // existe descuento pero monto final no es menor -> no se aplicó (posiblemente fecha límite superada)
-          descuento_display = 'no aplica (fecha limite superada)';
+          descuento_display = 'fecha límite superada';
         }
       } else {
         descuento_display = 'sin descuento';
@@ -357,6 +432,7 @@ exports.obtenerTodosPagos = async (req, res) => {
         mes_display: mesDisplay,
         fecha_limite_display: fechaLimiteDisplay,
         monto_estimado: montoEstimado,
+        monto_recibido: p.monto_recibido != null ? Number(p.monto_recibido) : null,
         monto_final: montoFinal,
         descuento_display,
         descuento_porcentaje

@@ -1,4 +1,4 @@
-import { requireSession, fetchAuth  } from '/js/auth.js';
+import { requireSession, fetchAuth } from '/js/auth.js';
 requireSession();
 
 (function () {
@@ -12,20 +12,20 @@ requireSession();
   }
 
   function escapeHtml(str) {
-  if (str === null || str === undefined) return '';
-  return String(str).replace(/[&<>"'`=\/]/g, function (s) {
-    return ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;',
-      '`': '&#96;',
-      '=': '&#61;',
-      '/': '&#47;'
-    })[s];
-  });
-}
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"'`=\/]/g, function (s) {
+      return ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '`': '&#96;',
+        '=': '&#61;',
+        '/': '&#47;'
+      })[s];
+    });
+  }
 
   async function obtenerMontosMatricula(nivelId = null, gradoId = null) {
     const qs = new URLSearchParams();
@@ -97,13 +97,13 @@ requireSession();
       const montoInp = document.getElementById('monto') || document.querySelector('input[name="monto"]');
 
       const changeHandler = function () {
-  const opt = this.options[this.selectedIndex] || null;
-  const montoBase = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
-  if (montoInp) {
-    montoInp.value = (montoBase === '' || Number.isNaN(montoBase)) ? '' : Number(montoBase).toFixed(2);
-  }
-  actualizarEstadoPago();
-};
+        const opt = this.options[this.selectedIndex] || null;
+        const montoBase = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
+        if (montoInp) {
+          montoInp.value = (montoBase === '' || Number.isNaN(montoBase)) ? '' : Number(montoBase).toFixed(2);
+        }
+        actualizarEstadoPago();
+      };
 
       select.addEventListener('change', changeHandler);
 
@@ -121,96 +121,156 @@ requireSession();
       select.appendChild(opt);
     }
   }
-  
-function aplicarDescuentoYMostrar(descuentoPct = 0, montoBase = 0, descuentoAplicable = true) {
-  const tipoActual = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
-  const descuentoEl = document.getElementById('descuento_aplicado');
-  const montoFinalEl = document.getElementById('monto_final');
-  const montoInp = document.getElementById('monto') || document.querySelector('input[name="monto"]');
 
-  // Forzar no descuento para matrícula
-  if (tipoActual === 'matricula') {
-    descuentoPct = 0;
-    descuentoAplicable = false;
-  }
+  function aplicarDescuentoYMostrar(descuentoPct = 0, montoBase = 0, descuentoAplicable = true) {
+    console.log('DEBUG - aplicarDescuentoYMostrar llamado con:', {
+      descuentoPct,
+      montoBase,
+      descuentoAplicable,
+      tipo_descuentoAplicable: typeof descuentoAplicable
+    });
 
-  if (montoInp) {
-    if (!isNaN(Number(montoBase))) montoInp.value = Number(montoBase).toFixed(2);
-    else montoInp.value = '';
-  }
+    const tipoActual = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
+    const descuentoEl = document.getElementById('descuento_aplicado');
+    const montoFinalEl = document.getElementById('monto_final');
+    const montoInp = document.getElementById('monto') || document.querySelector('input[name="monto"]');
 
-  if (descuentoEl) {
+    // Forzar no descuento para matrícula
     if (tipoActual === 'matricula') {
-      descuentoEl.value = '';            // Limpio
-      descuentoEl.dataset.pct = '0';
-      descuentoEl.dataset.aplicable = '0';
-    } else if (!descuentoAplicable) {
-      descuentoEl.value = 'No aplicable (pasó la fecha límite)';
-      descuentoEl.dataset.pct = String(descuentoPct || 0);
-      descuentoEl.dataset.aplicable = '0';
-    } else if (descuentoPct) {
-      descuentoEl.value = Number(descuentoPct).toFixed(2) + ' %';
-      descuentoEl.dataset.pct = String(descuentoPct);
-      descuentoEl.dataset.aplicable = '1';
-    } else {
-      descuentoEl.value = '';
-      descuentoEl.dataset.pct = '0';
-      descuentoEl.dataset.aplicable = '0';
+      descuentoPct = 0;
+      descuentoAplicable = false;
     }
+
+    if (montoInp) {
+      if (!isNaN(Number(montoBase))) montoInp.value = Number(montoBase).toFixed(2);
+      else montoInp.value = '';
+    }
+
+    if (descuentoEl) {
+      if (tipoActual === 'matricula') {
+        descuentoEl.value = '';
+        descuentoEl.dataset.pct = '0';
+        descuentoEl.dataset.aplicable = '0';
+      } else if (descuentoPct > 0) {
+        // Tiene descuento asociado
+        const descTexto = Number(descuentoPct).toFixed(2) + ' %';
+        if (!descuentoAplicable) {
+          // Tiene descuento pero pasó la fecha límite
+          descuentoEl.value = `${descTexto} (Pasó la fecha límite)`;
+          descuentoEl.dataset.pct = String(descuentoPct);
+          descuentoEl.dataset.aplicable = '0';
+        } else {
+          // Tiene descuento y está vigente
+          descuentoEl.value = descTexto;
+          descuentoEl.dataset.pct = String(descuentoPct);
+          descuentoEl.dataset.aplicable = '1';
+        }
+
+        console.log('DEBUG - Campo descuento actualizado:', {
+          value: descuentoEl.value,
+          'dataset.pct': descuentoEl.dataset.pct,
+          'dataset.aplicable': descuentoEl.dataset.aplicable
+        });
+      } else {
+        // No tiene descuento asociado
+        descuentoEl.value = '';
+        descuentoEl.dataset.pct = '0';
+        descuentoEl.dataset.aplicable = '0';
+      }
+    }
+
+    // Calcular monto final inicial (sin considerar monto recibido aún)
+    let montoFinal = Number(montoBase || 0);
+    if (tipoActual === 'mensualidad' && descuentoAplicable && descuentoPct) {
+      montoFinal = montoFinal * (1 - (Number(descuentoPct) / 100));
+      console.log('DEBUG - Descuento aplicado al monto final:', {
+        montoBase,
+        descuentoPct,
+        montoFinal
+      });
+    }
+    if (tipoActual === 'matricula') {
+      montoFinal = Number(montoBase || 0);
+    }
+
+    if (montoFinalEl) {
+      montoFinalEl.value = isNaN(montoFinal) ? '' : montoFinal.toFixed(2);
+    }
+    actualizarEstadoPago();
   }
 
-  let montoFinal = Number(montoBase || 0);
-  if (descuentoAplicable && descuentoPct) {
-    montoFinal = montoFinal * (1 - (Number(descuentoPct) / 100));
+
+  function actualizarEstadoPago() {
+    const estimado = Number(document.querySelector('input[name="monto"]')?.value || 0);
+    const recibido = Number(document.querySelector('input[name="monto_recibido"]')?.value || 0);
+    const estadoEl = document.getElementById('estado_pago_display');
+    if (!estadoEl) return;
+    if (!estimado) { estadoEl.value = ''; return; }
+    estadoEl.value = recibido >= estimado ? 'Completo' : 'Incompleto';
   }
-  if (tipoActual === 'matricula') {
-    montoFinal = Number(montoBase || 0); // sin descuento
+  document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', actualizarEstadoPago);
+
+
+  function sincronizarMontoFinal() {
+    const tipoActual = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
+    const montoEsperado = Number(document.querySelector('input[name="monto"]')?.value || 0);
+    const montoRecibido = Number(document.querySelector('input[name="monto_recibido"]')?.value || 0);
+    const finalEl = document.getElementById('monto_final');
+    const descuentoEl = document.getElementById('descuento_aplicado');
+
+    if (!finalEl) return;
+
+    // Para matrícula: siempre mostrar monto recibido (sin descuento)
+    if (tipoActual === 'matricula') {
+      finalEl.value = montoRecibido ? Number(montoRecibido).toFixed(2) : '';
+      actualizarEstadoPago();
+      return;
+    }
+
+    // Para mensualidad: lógica especial
+    if (tipoActual === 'mensualidad') {
+      const descuentoPct = Number(descuentoEl?.dataset?.pct || 0);
+      const descuentoAplicable = descuentoEl?.dataset?.aplicable === '1';
+
+      // Si monto recibido es diferente al esperado: mostrar monto recibido tal cual
+      if (Math.abs(montoRecibido - montoEsperado) > 0.01) {
+        finalEl.value = montoRecibido ? Number(montoRecibido).toFixed(2) : '';
+      }
+      // Si monto recibido = monto esperado Y descuento vigente: aplicar descuento
+      else if (descuentoAplicable && descuentoPct > 0) {
+        const conDescuento = montoEsperado * (1 - (descuentoPct / 100));
+        finalEl.value = conDescuento.toFixed(2);
+      }
+      // Si monto recibido = monto esperado pero NO hay descuento vigente: mostrar monto recibido
+      else {
+        finalEl.value = montoRecibido ? Number(montoRecibido).toFixed(2) : '';
+      }
+    } else {
+      // Otros tipos de pago: mostrar monto recibido
+      finalEl.value = montoRecibido ? Number(montoRecibido).toFixed(2) : '';
+    }
+
+    actualizarEstadoPago();
   }
 
-  if (montoFinalEl) {
-    montoFinalEl.value = isNaN(montoFinal) ? '' : montoFinal.toFixed(2);
+  function onCambioMontoEstimado() {
+    const sel = document.getElementById('monto_estimado');
+    const montoInp = document.querySelector('input[name="monto"]');
+    if (!sel || !montoInp) return;
+    const opt = sel.options[sel.selectedIndex];
+    const base = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
+    montoInp.value = (base === '' || isNaN(base)) ? '' : base.toFixed(2);
+    actualizarEstadoPago();
   }
-  actualizarEstadoPago();
-}
 
-function actualizarEstadoPago() {
-  const estimado = Number(document.querySelector('input[name="monto"]')?.value || 0);
-  const recibido = Number(document.querySelector('input[name="monto_recibido"]')?.value || 0);
-  const estadoEl = document.getElementById('estado_pago_display');
-  if (!estadoEl) return;
-  if (!estimado) { estadoEl.value = ''; return; }
-  estadoEl.value = recibido >= estimado ? 'Completo' : 'Incompleto';
-}
-document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', actualizarEstadoPago);
+  document.getElementById('monto_estimado')?.addEventListener('change', onCambioMontoEstimado);
 
-
-function sincronizarMontoFinal() {
-  const rec = document.querySelector('input[name="monto_recibido"]');
-  const finalEl = document.getElementById('monto_final');
-  if (rec && finalEl) {
-    finalEl.value = rec.value ? Number(rec.value).toFixed(2) : '';
-  }
-  actualizarEstadoPago();
-}
-
-function onCambioMontoEstimado() {
-  const sel = document.getElementById('monto_estimado');
-  const montoInp = document.querySelector('input[name="monto"]');
-  if (!sel || !montoInp) return;
-  const opt = sel.options[sel.selectedIndex];
-  const base = opt?.dataset?.monto ? Number(opt.dataset.monto) : '';
-  montoInp.value = (base === '' || isNaN(base)) ? '' : base.toFixed(2);
-  actualizarEstadoPago();
-}
-
-document.getElementById('monto_estimado')?.addEventListener('change', onCambioMontoEstimado);
-
-// Listener para monto recibido
-document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', sincronizarMontoFinal);
+  // Listener para monto recibido
+  document.querySelector('input[name="monto_recibido"]')?.addEventListener('input', sincronizarMontoFinal);
 
 
 
-async function crearPago(payload = {}, file = null) {
+  async function crearPago(payload = {}, file = null) {
     try {
       if (file) {
         const fd = new FormData();
@@ -241,51 +301,71 @@ async function crearPago(payload = {}, file = null) {
   }
 
   document.addEventListener('input', (e) => {
-  if (e.target.id === 'monto_final' || e.target.id === 'monto') actualizarEstadoPago();
-});
+    if (e.target.id === 'monto_final' || e.target.id === 'monto') actualizarEstadoPago();
+  });
 
-function recalcularMontoFinal() {
-  const tipo = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
-  const base = Number(document.getElementById('monto')?.value || 0);
-  // No descuento para matrícula
-  let descuentoPct = 0;
-  let aplicable = false;
-  if (tipo === 'mensualidad') {
-    const descEl = document.getElementById('descuento_aplicado');
-    if (descEl && descEl.dataset.pct && descEl.dataset.aplicable === '1') {
-      descuentoPct = Number(descEl.dataset.pct);
-      aplicable = true;
+  function recalcularMontoFinal() {
+    const tipo = (document.getElementById('tipo_pago')?.value || '').toLowerCase();
+    const montoEsperado = Number(document.getElementById('monto')?.value || 0);
+    const montoRecibido = Number(document.querySelector('input[name="monto_recibido"]')?.value || 0);
+
+    // No descuento para matrícula
+    let descuentoPct = 0;
+    let aplicable = false;
+    if (tipo === 'mensualidad') {
+      const descEl = document.getElementById('descuento_aplicado');
+      if (descEl && descEl.dataset.pct && descEl.dataset.aplicable === '1') {
+        descuentoPct = Number(descEl.dataset.pct);
+        aplicable = true;
+      }
     }
-  }
-  let final = base;
-  if (aplicable && descuentoPct > 0) {
-    final = base * (1 - descuentoPct / 100);
-  }
-  const finalEl = document.getElementById('monto_final');
-  if (finalEl) finalEl.value = base ? final.toFixed(2) : '';
-  actualizarEstadoPago();
-}
 
-document.addEventListener('input', (e) => {
-  if (e.target.id === 'monto_recibido') actualizarEstadoPago();
-});
+    let final = montoEsperado;
 
-document.getElementById('tipo_pago')?.addEventListener('change', () => {
-  // limpiar descuento al cambiar a matrícula
-  if ((document.getElementById('tipo_pago').value || '').toLowerCase() === 'matricula') {
-    const descEl = document.getElementById('descuento_aplicado');
-    if (descEl) {
-      descEl.value = '';
-      descEl.dataset.pct = '0';
-      descEl.dataset.aplicable = '0';
+    // Para mensualidad: aplicar lógica especial
+    if (tipo === 'mensualidad') {
+      // Si monto recibido es diferente al esperado: usar monto recibido
+      if (Math.abs(montoRecibido - montoEsperado) > 0.01) {
+        final = montoRecibido;
+      }
+      // Si son iguales y hay descuento aplicable: aplicar descuento
+      else if (aplicable && descuentoPct > 0) {
+        final = montoEsperado * (1 - descuentoPct / 100);
+      }
+      // Si son iguales pero no hay descuento aplicable: usar monto recibido
+      else {
+        final = montoRecibido;
+      }
+    } else {
+      // Para otros tipos: siempre monto recibido si existe
+      final = montoRecibido || montoEsperado;
     }
-    recalcularMontoFinal();
+
+    const finalEl = document.getElementById('monto_final');
+    if (finalEl) finalEl.value = final ? final.toFixed(2) : '';
+    actualizarEstadoPago();
   }
-});
+
+  document.addEventListener('input', (e) => {
+    if (e.target.id === 'monto_recibido') actualizarEstadoPago();
+  });
+
+  document.getElementById('tipo_pago')?.addEventListener('change', () => {
+    // limpiar descuento al cambiar a matrícula
+    if ((document.getElementById('tipo_pago').value || '').toLowerCase() === 'matricula') {
+      const descEl = document.getElementById('descuento_aplicado');
+      if (descEl) {
+        descEl.value = '';
+        descEl.dataset.pct = '0';
+        descEl.dataset.aplicable = '0';
+      }
+      recalcularMontoFinal();
+    }
+  });
 
 
   // CARGA TODOS LOS REGISTROS DE MENSUALIDADES REGISTRADAS
- async function cargarMensualidadesRegistradas(selectSelector = '#mes_a_pagar') {
+  async function cargarMensualidadesRegistradas(selectSelector = '#mes_a_pagar') {
     const sel = document.querySelector(selectSelector);
     if (!sel) return;
     sel.innerHTML = '';
@@ -306,10 +386,10 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
       empty.textContent = 'Seleccione mes a pagar';
       sel.appendChild(empty);
       // ordenar por mes si vienen desordenados (opcional): intentar usar orden calendario
-      const orden = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+      const orden = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
       meses
         .map(m => ({ ...m, mes_norm: String(m.mes || '').toLowerCase().trim() }))
-        .sort((a,b) => orden.indexOf(a.mes_norm) - orden.indexOf(b.mes_norm))
+        .sort((a, b) => orden.indexOf(a.mes_norm) - orden.indexOf(b.mes_norm))
         .forEach(m => {
           const opt = document.createElement('option');
           opt.value = m.id_mes;
@@ -354,7 +434,7 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
           <td>${m.titular_est}</td>
           <td>${m.tipo_mat}</td>
           <td>${m.estado_matr || m.estado_mat || ''}</td>
-          <td>${m.dni_est }</td>
+          <td>${m.dni_est}</td>
           <td>${m.fecha_matricula.split('T')[0]}</td>
           <td>${m.nombre_usuario || m.ingresado_por || ''}</td>
           <td>${m.nombre_niv}</td>
@@ -379,7 +459,7 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
   }
 
   // Función para cargar lista y renderizar mensualidades pendientes
-   async function cargarMensualidadesPendientes(tableBodySelector = '.mensualidades-pendientes-list') {
+  async function cargarMensualidadesPendientes(tableBodySelector = '.mensualidades-pendientes-list') {
     const tbody = document.querySelector(tableBodySelector);
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="11">Cargando...</td></tr>';
@@ -387,17 +467,31 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
       const res = await fetchAuth(`${API_BASE}/mensualidades-pendientes`);
       if (!res.ok) throw new Error('Error cargando mensualidades pendientes');
       const lista = await res.json();
+
+      console.log('DEBUG - Lista recibida del backend:', lista);
+
       if (!Array.isArray(lista) || lista.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11">No hay mensualidades pendientes</td></tr>';
         return;
       }
       tbody.innerHTML = '';
       lista.forEach(item => {
+        console.log(`DEBUG - Procesando estudiante ${item.nombre_est}:`, {
+          descuento_aplicable: item.descuento_aplicable,
+          descuento_porcentaje: item.descuento_porcentaje
+        });
+
         const ultimoPago = item.ultimo_pago ? String(item.ultimo_pago) : 'Nunca';
-        const descuentoTxt = item.descuento_aplicable ? `${Number(item.descuento_porcentaje).toFixed(2)} %` : 'Sin descuento';
+        // Mostrar siempre el descuento que tiene el estudiante, no basado en descuento_aplicable
+        const descuentoTxt = (item.descuento_porcentaje && item.descuento_porcentaje > 0)
+  ? (item.descuento_aplicable === true
+    ? `${Number(item.descuento_porcentaje).toFixed(2)} %`
+    : `${Number(item.descuento_porcentaje).toFixed(2)} % (No aplica)`)
+  : 'No tiene';
+
         const vencimientoTxt = item.vencimiento_dia ? `día ${item.vencimiento_dia}` : '';
         const disabled = !item.pago_pendiente_id_mes ? 'disabled' : '';
-        const titleBtn = item.pago_pendiente_id_mes ? 'Seleccionar' : 'No hay mensualidad siguiente registrada';
+        const titleBtn = item.pago_pendiente_id_mes ? 'Seleccionar' : 'N/A';
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${escapeHtml(item.nombre_est || '')} ${escapeHtml(item.apellido_est || '')}</td>
@@ -410,24 +504,39 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
           <td>${escapeHtml(item.pago_pendiente_mes || '')}</td>
           <td>${escapeHtml(vencimientoTxt)}</td>
           <td>${escapeHtml(descuentoTxt)}</td>
-          <td><button class="btn-seleccionar-mensual" data-id="${item.id_matricula}" data-desc="${item.descuento_porcentaje || 0}" data-desc-aplic="${item.descuento_aplicable ? 1 : 0}" data-mesid="${item.pago_pendiente_id_mes || ''}" ${disabled} title="${escapeHtml(titleBtn)}">${escapeHtml(titleBtn)}</button></td>
+          <td><button class="btn-seleccionar-mensual" data-id="${item.id_matricula}" data-desc="${item.descuento_porcentaje || 0}" data-desc-aplic="${item.descuento_aplicable ? '1' : '0'}" data-mesid="${item.pago_pendiente_id_mes || ''}" ${disabled} title="${escapeHtml(titleBtn)}">${escapeHtml(titleBtn)}</button></td>
         `;
         // attach raw for convenience
         tr.dataset.raw = JSON.stringify(item);
         // also expose descuento in dataset for selection (porcentaje y aplicabilidad)
         tr.dataset.descuento = String(item.descuento_porcentaje || 0);
         tr.dataset.descuentoAplicable = item.descuento_aplicable ? '1' : '0';
+
+        console.log(`DEBUG - Button data attributes:`, {
+          'data-desc': item.descuento_porcentaje || 0,
+          'data-desc-aplic': item.descuento_aplicable ? '1' : '0'
+        });
+
         tbody.appendChild(tr);
       });
 
       // bind seleccionar buttons
-       tbody.querySelectorAll('.btn-seleccionar-mensual').forEach(b => {
+      tbody.querySelectorAll('.btn-seleccionar-mensual').forEach(b => {
         b.addEventListener('click', async function (e) {
           const id = this.dataset.id;
           const raw = this.closest('tr').dataset.raw ? JSON.parse(this.closest('tr').dataset.raw) : null;
           const mesId = this.dataset.mesid || null;
-          const descuentoPct = this.dataset.desc || 0;
-          const descuentoAplicable = this.dataset.descAplic === '1' || this.dataset.descAplic === 'true' || this.dataset.descAplic === '1';
+
+          // CORRECCIÓN: Usar los valores del objeto raw (del backend), no del dataset del botón
+          const descuentoPct = raw && raw.descuento_porcentaje ? Number(raw.descuento_porcentaje) : 0;
+          const descuentoAplicable = raw && raw.descuento_aplicable === true;
+
+          console.log('DEBUG - Click en seleccionar:', {
+            descuentoPct,
+            descuentoAplicable,
+            rawData: raw
+          });
+
           // llenar formulario similar a onSeleccionarMatricula
           const f = document.querySelector('.formulario-pagos form') || document.querySelector('form');
           if (f) {
@@ -446,9 +555,9 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
             if (estudianteInp) estudianteInp.value = `${raw.nombre_est || ''} ${raw.apellido_est || ''}`.trim();
 
             // rellenar nivel/grado/seccion visibles e hidden ids si vienen en raw
-            const nivelNombre = raw.nombre_niv || raw.nivel || raw.nivel_nombre || '';
-            const gradoNombre = raw.nombre_grad || raw.grado || raw.grado_nombre || '';
-            const seccionNombre = raw.seccion_nombre || raw.seccion || raw.nombre_seccion || '';
+            const nivelNombre = raw.nivel || raw.nombre_niv || raw.nivel_nombre || '';
+            const gradoNombre = raw.grado || raw.nombre_grad || raw.grado_nombre || '';
+            const seccionNombre = raw.seccion || raw.seccion_nombre || raw.nombre_seccion || '';
             const nivelInp = document.querySelector('input[name="nivel"]');
             const gradoInp = document.querySelector('input[name="grado"]');
             const seccionInp = document.querySelector('input[name="seccion"]');
@@ -492,7 +601,15 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
               const optSel = sel.options[sel.selectedIndex] || Array.from(sel.options).find(o => o.value) || null;
               montoBase = optSel && optSel.dataset && optSel.dataset.monto ? Number(optSel.dataset.monto) : 0;
             }
-            aplicarDescuentoYMostrar(Number(descuentoPct || 0), montoBase, !!Number(this.dataset.descAplic));
+
+            console.log('DEBUG - Llamando aplicarDescuentoYMostrar con:', {
+              descuentoPct,
+              montoBase,
+              descuentoAplicable
+            });
+
+            // Aplicar descuento usando los valores del backend
+            aplicarDescuentoYMostrar(descuentoPct, montoBase, descuentoAplicable);
 
             // set mes_a_pagar select to the suggested next mes (if available)
             const mesSel = document.querySelector('#mes_a_pagar');
@@ -512,6 +629,8 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
       tbody.innerHTML = '<tr><td colspan="11">Error cargando mensualidades</td></tr>';
     }
   }
+
+
 
 
   // Maneja la selección de una matrícula: rellena input[name="estudiante"] y popula montos
@@ -567,7 +686,7 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
     await populateMontosSelect(nivelId, gradoId, '#monto_estimado');
 
     // rellenar inputs visibles de nivel/grado/seccion con nombres disponibles
-    const nivelTxt = (m.nombre_niv || m.nombre_nivel || (info && info.nivel_nombre) || '') ;
+    const nivelTxt = (m.nombre_niv || m.nombre_nivel || (info && info.nivel_nombre) || '');
     const gradoTxt = (m.nombre_grad || m.grado || (info && info.grado_nombre) || '');
     const seccionTxt = (m.seccion_nombre || m.seccion || (info && info.seccion_nombre) || '');
     const nivelInp = document.querySelector('input[name="nivel"]');
@@ -604,13 +723,13 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
     const sel = document.querySelector('#monto_estimado');
     if (sel) {
       if (estimarId) sel.value = String(estimarId);
-  const opt = sel.options[sel.selectedIndex];
-  const montoBase = opt && opt.dataset && opt.dataset.monto ? Number(opt.dataset.monto) : 0;
-  const montoInp = document.querySelector('input[name="monto"]');
-  if (montoInp) montoInp.value = montoBase ? montoBase.toFixed(2) : '';
-  actualizarEstadoPago();
-  sel.addEventListener('change', onCambioMontoEstimado);
-}
+      const opt = sel.options[sel.selectedIndex];
+      const montoBase = opt && opt.dataset && opt.dataset.monto ? Number(opt.dataset.monto) : 0;
+      const montoInp = document.querySelector('input[name="monto"]');
+      if (montoInp) montoInp.value = montoBase ? montoBase.toFixed(2) : '';
+      actualizarEstadoPago();
+      sel.addEventListener('change', onCambioMontoEstimado);
+    }
 
     // tambien escuchar cambios manuales en monto para recalcular monto final
     const montoInpManual = document.querySelector('input[name="monto"]') || document.getElementById('monto');
@@ -623,13 +742,13 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
   }
 
   document.getElementById('tipo_pago')?.addEventListener('change', () => {
-  const tipo = (document.getElementById('tipo_pago').value || '').toLowerCase();
-  document.querySelector('.pago-mensual')?.setAttribute('style', tipo === 'mensualidad' ? 'display:block' : 'display:none');
-  // Repoblar montos
-  populateMontosSelect(null, null, '#monto_estimado', tipo === 'mensualidad' ? 'Mensualidad' : 'Matricula')
-    .then(() => onCambioMontoEstimado())
-    .catch(() => {});
-});
+    const tipo = (document.getElementById('tipo_pago').value || '').toLowerCase();
+    document.querySelector('.pago-mensual')?.setAttribute('style', tipo === 'mensualidad' ? 'display:block' : 'display:none');
+    // Repoblar montos
+    populateMontosSelect(null, null, '#monto_estimado', tipo === 'mensualidad' ? 'Mensualidad' : 'Matricula')
+      .then(() => onCambioMontoEstimado())
+      .catch(() => { });
+  });
 
   // Auto-init cuando la página contiene la tabla de pendientes o el select monto_estimado
   document.addEventListener('DOMContentLoaded', () => {
@@ -638,13 +757,13 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
     document.querySelector('.tabla-montos-incompletos').style.display = 'none';
     document.getElementById('descuento').style.display = 'none';
     document.querySelector('.tabla-matriculas-pendientes').style.display = 'block';
-    document.getElementById('tipo_pago').addEventListener('change', function () {
-        document.querySelector('.pago-mensual').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
-        document.querySelector('.tabla-mensualidades-pendientes').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
-        document.querySelector('.tabla-matriculas-pendientes').style.display = this.value === 'Matricula' ? 'block' : 'none';
-        document.getElementById('descuento').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
-        document.querySelector('.tabla-montos-incompletos').style.display = this.value === 'Montos incompletos' ? 'block' : 'none';
-        populateMontosSelect(null, null, '#monto_estimado', this.value).catch(() => {});
+    document.getElementById('vista_pagos').addEventListener('change', function () {
+      document.querySelector('.pago-mensual').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
+      document.querySelector('.tabla-mensualidades-pendientes').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
+      document.querySelector('.tabla-matriculas-pendientes').style.display = this.value === 'Matricula' ? 'block' : 'none';
+      document.getElementById('descuento').style.display = this.value === 'Mensualidad' ? 'block' : 'none';
+      document.querySelector('.tabla-montos-incompletos').style.display = this.value === 'Montos incompletos' ? 'block' : 'none';
+      populateMontosSelect(null, null, '#monto_estimado', this.value).catch(() => { });
     });
     if (document.querySelector('.matriculas-pendientes-list')) {
       cargarMatriculasPendientes();
@@ -665,44 +784,62 @@ document.getElementById('tipo_pago')?.addEventListener('change', () => {
     }
     const pagoForm = document.querySelector('.formulario-pagos form') || document.querySelector('form');
 
-      if (pagoForm) {
-    pagoForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const f = e.target;
-      const tipo_pago = f.tipo_pago.value;
-      const montoEstimado = Number(f.monto.value || 0);          // referencia
-      const montoRecibido = Number(f.monto_recibido.value || 0); // ingreso usuario
-      if (!montoEstimado) return alert('Seleccione monto estimado');
-      if (!montoRecibido) return alert('Ingrese monto recibido');
 
-      const payload = {
-        tipo_pago,
-        monto: montoEstimado,                // referencia (por compatibilidad)
-        monto_recibido: montoRecibido,       // REAL
-        metodo_pago: f.metodo_pago.value,
-        descripcion: f.descripcion.value || null,
-        estimar_monto_id_estimar_monto: f.monto_estimado.value ? Number(f.monto_estimado.value) : null,
-        matricula_id: f.matricula_id ? Number(f.matricula_id.value) : null,
-        mensualidades_id_pago: f.mes_a_pagar ? Number(f.mes_a_pagar.value) : null,
-        usuarios_id_usuarios: 1,
-        descuento_pct: (tipo_pago.toLowerCase() === 'mensualidad' &&
-                        document.getElementById('descuento_aplicado')?.dataset.aplicable === '1')
-          ? Number(document.getElementById('descuento_aplicado')?.dataset.pct || 0)
-          : null
-      };
+    if (pagoForm) {
+      pagoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const tipo_pago = f.tipo_pago.value;
+        const montoEstimado = Number(f.monto.value || 0);
+        const montoRecibido = Number(f.monto_recibido.value || 0);
+        const montoFinal = Number(document.getElementById('monto_final')?.value || 0);
 
-      try {
-        const resp = await crearPago(payload);
-        alert(`Pago registrado. Estado: ${resp.estado_pago}`);
-        f.reset();
-        document.getElementById('estado_pago_display').value = '';
-        document.getElementById('monto_final').value = '';
-        populateMontosSelect(null, null, '#monto_estimado');
-      } catch (err) {
-        alert('Error: ' + (err.message || err));
-      }
-    });
-  }
+        if (!montoEstimado) return alert('Seleccione monto estimado');
+        if (!montoRecibido) return alert('Ingrese monto recibido');
+
+        // Determinar descuento a enviar
+        let descuentoPct = null;
+        if (tipo_pago.toLowerCase() === 'mensualidad') {
+          const descEl = document.getElementById('descuento_aplicado');
+          if (descEl?.dataset.aplicable === '1') {
+            descuentoPct = Number(descEl.dataset.pct || 0);
+          }
+        }
+
+        const payload = {
+          tipo_pago,
+          monto: montoEstimado,
+          monto_recibido: montoRecibido,
+          metodo_pago: f.metodo_pago.value,
+          descripcion: f.descripcion.value || null,
+          estimar_monto_id_estimar_monto: f.monto_estimado.value ? Number(f.monto_estimado.value) : null,
+          matricula_id: f.matricula_id ? Number(f.matricula_id.value) : null,
+          mensualidades_id_pago: f.mes_a_pagar ? Number(f.mes_a_pagar.value) : null,
+          usuarios_id_usuarios: 1,
+          descuento_pct: descuentoPct
+        };
+
+        try {
+          const resp = await crearPago(payload);
+          alert(`Pago registrado exitosamente.\nEstado: ${resp.estado_pago}`);
+          f.reset();
+          document.getElementById('estado_pago_display').value = '';
+          document.getElementById('monto_final').value = '';
+          document.getElementById('descuento_aplicado').value = '';
+
+          // Recargar listas
+          if (tipo_pago.toLowerCase() === 'mensualidad') {
+            cargarMensualidadesPendientes();
+          } else {
+            cargarMatriculasPendientes();
+          }
+
+          populateMontosSelect(null, null, '#monto_estimado');
+        } catch (err) {
+          alert('Error: ' + (err.message || err));
+        }
+      });
+    }
   });
 
   window.apiPagos = {

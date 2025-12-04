@@ -53,27 +53,26 @@
                                             <label for="">Estudiante</label>
                                             <input type="text" name="estudiante" placeholder="Estudiante...">
                                         </div>
-                                            <div>
-                                                <label for="">Nivel</label>
-                                                <input type="text" name="nivel" placeholder="Nivel..."
-                                                    style="max-width:100px">
-                                            </div>
-                                            <div>
-                                                <label for="">Grado</label>
-                                                <input type="text" name="grado" placeholder="Grado..."
-                                                    style="max-width:100px">
-                                            </div>
-                                            <div>
-                                                <label for="">Seccion</label>
-                                                <input type="text" name="seccion" placeholder="Seccion..."
-                                                    style="max-width:100px">
-                                            </div>
+                                        <div>
+                                            <label for="">Nivel</label>
+                                            <input type="text" name="nivel" placeholder="Nivel..."
+                                                style="max-width:100px">
+                                        </div>
+                                        <div>
+                                            <label for="">Grado</label>
+                                            <input type="text" name="grado" placeholder="Grado..."
+                                                style="max-width:100px">
+                                        </div>
+                                        <div>
+                                            <label for="">Seccion</label>
+                                            <input type="text" name="seccion" placeholder="Seccion..."
+                                                style="max-width:100px">
+                                        </div>
                                         <div>
                                             <label for="tipo_pago">Tipo de Pago</label>
                                             <select name="tipo_pago" id="tipo_pago" required>
                                                 <option value="Matricula">Matricula</option>
                                                 <option value="Mensualidad">Mensualidad</option>
-                                                <option value="Montos incompletos">Montos incompletos</option>
                                             </select>
                                         </div>
                                         <div>
@@ -83,8 +82,8 @@
                                         </div>
                                         <div>
                                             <label for="">Monto esperado</label>
-                                            <input type="number" name="monto" placeholder="Monto esperado..." step="0.01"
-                                                required readonly>
+                                            <input type="number" name="monto" placeholder="Monto esperado..."
+                                                step="0.01" required readonly>
                                         </div>
                                         <div>
                                             <label for="">Monto Recibido</label>
@@ -111,7 +110,7 @@
                                         <div>
                                             <label for="estado_pago_display">Estado del pago</label>
                                             <input type="text" id="estado_pago_display" readonly
-                                            placeholder="Completo / Incompleto">
+                                                placeholder="Completo / Incompleto">
                                         </div>
                                         <div>
                                             <label for="">Descripcion</label>
@@ -137,6 +136,21 @@
                         <div class="tabla-pagos-pendientes">
                             <div class="titulo-pagos-pendientes">
                                 <h2>Lista de pagos disponibles</h2>
+                            </div>
+                            <div class="filtrar">
+                                <div class="filtro-por-dni">
+                                    <input type="text" id="filtro_general" placeholder="Buscar por DNI">
+                                </div>
+                                <div>
+                                    <label for="vista_pagos">Vista pagos</label>
+                                    <select name="vista_pagos" id="vista_pagos" required>
+                                        <option value="Matricula">Matricula</option>
+                                        <option value="Mensualidad">Mensualidad</option>
+                                        <option value="Montos incompletos">Montos incompletos</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
                             </div>
                             <div class="tablas-pagos-pendientes">
                                 <div class="tabla-matriculas-pendientes">
@@ -197,7 +211,6 @@
                                                 <tr>
                                                     <th>Estudiante</th>
                                                     <th>DNI Estudiante</th>
-                                                    <th>Fecha Matricula</th>
                                                     <th>Nivel</th>
                                                     <th>Grado</th>
                                                     <th>Sección</th>
@@ -217,9 +230,8 @@
                                                     <th>Acciones</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="secuencias-incompletas-list">
-                                                <!-- Las mensualidades se agregarán aquí dinámicamente -->
-
+                                            <tbody id="pagosIncompletos-list">
+                                                <!-- Los periodos se agregarán aquí dinámicamente -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -232,7 +244,17 @@
         </div>
     </div>
     <script type="module" src="/js/api/user_secretario/apiPagos.js"></script>
-    <script type="module" src="/js/api/user_secretario/apiPagosIncompletos.js"></script>
+    <script type="module" src="/js/api/user_secretario/apiPagosIncompletosList.js"></script>
+    <script>
+        document.getElementById('filtro_general').addEventListener('keyup', function () {
+            let filtro = this.value.toLowerCase();
+            let filas = document.querySelectorAll('.tabla-detalles tbody tr');
+            filas.forEach(function (fila) {
+                let texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        });
+    </script>
 </body>
 
 </html>

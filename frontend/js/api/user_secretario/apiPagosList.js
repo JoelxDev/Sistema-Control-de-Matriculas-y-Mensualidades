@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${escapeHtml(fechaLim)}</td>
           <td>${escapeHtml(montoEstimado)}</td>
           <td>${escapeHtml(descuento)}</td>
-          <td>${escapeHtml(montoFinal)}</td>
+          <td>${escapeHtml(p.monto_recibido)}</td>
           <td>${escapeHtml(p.metodo_pago || '')}</td>
           <td>${escapeHtml(p.descripcion || '')}</td>
           <td>${escapeHtml(p.fecha_pago ? new Date(p.fecha_pago).toLocaleString() : '')}</td>

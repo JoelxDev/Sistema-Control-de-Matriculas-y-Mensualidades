@@ -184,33 +184,60 @@
       </form>
     </div>
   </div>
-    <script type="module">
-    const API_BASE = 'http://localhost:3000';
+    <script>
     const form = document.getElementById('form-login');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('text-email').value.trim();
       const password = document.getElementById('password').value.trim();
-      if (!username || !password) return alert('Completar campos');
+      
+      if (!username || !password) {
+        alert('Por favor completa todos los campos');
+        return;
+      }
 
       try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
+        console.log('Intentando login con:', { username }); // Debug
+        
+        // Hacer fetch directo sin API_CONFIG
+        const res = await fetch('/api/auth/login', {
           method: 'POST',
-          headers: { 'Content-Type':'application/json' },
-          body: JSON.stringify({ username, password }),
-          credentials: 'include'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
         });
-        const data = await res.json().catch(()=> ({}));
-        if (!res.ok) return alert(data.error || 'Credenciales inválidas');
 
-        const role = String(data.user?.role || '').toLowerCase();
-        if (role.includes('admin')) location.href = 'http://localhost:3000/admin/personal_administrativo';
-        else if (role.includes('secret')) location.href = 'http://localhost:3000/secretario/perfil';
-        else location.href = 'http://localhost:3000/';
+        console.log('Respuesta recibida:', res.status); // Debug
+        
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          console.error('Error del servidor:', data);
+          alert(data.error || data.message || 'Credenciales inválidas');
+          return;
+        }
+        
+        const data = await res.json();
+        console.log('Login exitoso:', data); // Debug
+
+        // Redirigir según el rol
+        const role = String(data.user?.role || data.user?.roll || '').toLowerCase();
+        
+        if (role.includes('admin')) {
+          location.href = '/admin/personal_administrativo';
+        } else if (role.includes('secret')) {
+          location.href = '/secretario/perfil';
+        } else {
+          console.warn('Rol no reconocido:', role);
+          alert('Rol no reconocido: ' + role);
+          location.href = '/';
+        }
+        
       } catch(err) {
-        console.error(err);
-        alert('Error de red');
+        console.error('Error completo:', err);
+        alert('Error de red: ' + err.message);
       }
     });
   </script>

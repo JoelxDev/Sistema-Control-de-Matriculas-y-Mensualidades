@@ -83,6 +83,30 @@
             </div>
         </div>
         <script type="module" src="/js/api/user_secretario/apiDeudoresList.js"></script>
+        <script>
+    function filtrarTabla() { 
+        let filtroNivel = document.getElementById('nivel').value.toLowerCase();
+        let filtroGrado = document.getElementById('grado').value.toLowerCase();
+        let filtroSeccion = document.getElementById('seccion').value.toLowerCase();
+        
+        let filas = document.querySelectorAll('.tabla-detalles tbody tr');
+        
+        filas.forEach(function(fila) {
+            let celdas = fila.querySelectorAll('td');
+            let textoFila = fila.textContent.toLowerCase();
+            
+            let mostrarNivel = !filtroNivel || textoFila.includes(filtroNivel);
+            let mostrarGrado = !filtroGrado || textoFila.includes(filtroGrado);
+            let mostrarSeccion = !filtroSeccion || textoFila.includes(filtroSeccion);
+            
+            fila.style.display = (mostrarNivel && mostrarGrado && mostrarSeccion) ? '' : 'none';
+        });
+    }
+    
+    document.getElementById('nivel').addEventListener('change', filtrarTabla);
+    document.getElementById('grado').addEventListener('change', filtrarTabla);
+    document.getElementById('seccion').addEventListener('change', filtrarTabla);
+</script>
 </body>
 
 </html>
